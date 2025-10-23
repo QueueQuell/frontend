@@ -20,12 +20,12 @@ export default function InventoryItemPage({ params }: Props) {
         </Typography>
         <Paper sx={{ p: 3, mb: 3 }}>
           <Grid container spacing={3}>
-            <Grid item xs={12} sm={2}>
+            <Grid size={{ xs: 12, sm: 2 }}>
               <Avatar sx={{ width: 80, height: 80, bgcolor: "primary.main" }}>
                 <Inventory2Icon sx={{ fontSize: 40 }} />
               </Avatar>
             </Grid>
-            <Grid item xs={12} sm={10}>
+            <Grid size={{ xs: 12, sm: 10 }}>
               <Typography variant="h5" gutterBottom>
                 Margherita Pizza
               </Typography>
@@ -35,19 +35,19 @@ export default function InventoryItemPage({ params }: Props) {
               <Chip label="Food" color="primary" size="small" sx={{ mr: 1 }} />
               <Chip label="Main Kitchen" color="secondary" size="small" />
             </Grid>
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
               <Typography variant="h6">Current Stock</Typography>
               <Typography variant="h4" color="primary">50 pcs</Typography>
             </Grid>
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
               <Typography variant="h6">Unit Cost</Typography>
               <Typography variant="h4">$12.99</Typography>
             </Grid>
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
               <Typography variant="h6">Total Value</Typography>
               <Typography variant="h4">$649.50</Typography>
             </Grid>
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
               <Typography variant="h6">Last Updated</Typography>
               <Typography variant="body1">2023-10-15</Typography>
             </Grid>

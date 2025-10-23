@@ -15,7 +15,7 @@ export default function InventoryAddPage() {
         </Typography>
         <Paper sx={{ p: 3, maxWidth: 800 }}>
           <Grid container spacing={3}>
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
                 label="Item Name"
@@ -23,7 +23,7 @@ export default function InventoryAddPage() {
                 required
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
                 label="SKU"
@@ -31,7 +31,7 @@ export default function InventoryAddPage() {
                 required
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
                 select
@@ -45,7 +45,7 @@ export default function InventoryAddPage() {
                 <MenuItem value="Dessert">Dessert</MenuItem>
               </TextField>
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
                 label="Quantity"
@@ -53,7 +53,7 @@ export default function InventoryAddPage() {
                 required
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
                 select
@@ -67,7 +67,7 @@ export default function InventoryAddPage() {
                 <MenuItem value="box">Boxes</MenuItem>
               </TextField>
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
                 label="Unit Cost"
@@ -76,7 +76,7 @@ export default function InventoryAddPage() {
                 required
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <TextField
                 fullWidth
                 select
@@ -89,7 +89,7 @@ export default function InventoryAddPage() {
                 <MenuItem value="Pantry">Pantry</MenuItem>
               </TextField>
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <Button variant="contained" color="primary" size="large">
                 Add Item
               </Button>

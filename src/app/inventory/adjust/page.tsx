@@ -15,7 +15,7 @@ export default function InventoryAdjustPage() {
         </Typography>
         <Paper sx={{ p: 3, maxWidth: 800 }}>
           <Grid container spacing={3}>
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <TextField
                 fullWidth
                 select
@@ -28,7 +28,7 @@ export default function InventoryAdjustPage() {
                 <MenuItem value="item3">Grilled Chicken Sandwich (Current: 20 pcs)</MenuItem>
               </TextField>
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <Typography variant="h6" gutterBottom>
                 Adjustment Type
               </Typography>
@@ -37,7 +37,7 @@ export default function InventoryAdjustPage() {
                 <FormControlLabel value="decrease" control={<Radio />} label="Decrease Stock" />
               </RadioGroup>
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
                 label="Adjustment Quantity"
@@ -45,7 +45,7 @@ export default function InventoryAdjustPage() {
                 required
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
                 select
@@ -60,7 +60,7 @@ export default function InventoryAdjustPage() {
                 <MenuItem value="correction">Correction</MenuItem>
               </TextField>
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <TextField
                 fullWidth
                 multiline
@@ -69,7 +69,7 @@ export default function InventoryAdjustPage() {
                 placeholder="Optional notes about this adjustment"
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <Button variant="contained" color="primary" size="large">
                 Apply Adjustment
               </Button>

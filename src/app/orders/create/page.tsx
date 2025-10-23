@@ -19,16 +19,16 @@ export default function CreateOrderPage() {
           Create New Order
         </Typography>
         <Grid container spacing={3}>
-          <Grid item xs={12} md={8}>
+          <Grid size={{ xs: 12, md: 8 }}>
             <Paper sx={{ p: 3 }}>
               <Typography variant="h6" gutterBottom>
                 Order Details
               </Typography>
               <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <TextField fullWidth label="Customer Name" variant="outlined" />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <FormControl fullWidth>
                     <InputLabel>Order Type</InputLabel>
                     <Select label="Order Type">
@@ -38,7 +38,7 @@ export default function CreateOrderPage() {
                     </Select>
                   </FormControl>
                 </Grid>
-                <Grid item xs={12}>
+                <Grid size={{ xs: 12 }}>
                   <TextField fullWidth label="Special Instructions" multiline rows={2} variant="outlined" />
                 </Grid>
               </Grid>
@@ -48,7 +48,7 @@ export default function CreateOrderPage() {
                 Add Items
               </Typography>
               <Grid container spacing={2}>
-                <Grid item xs={12} sm={8}>
+                <Grid size={{ xs: 12, sm: 8 }}>
                   <FormControl fullWidth>
                     <InputLabel>Select Item</InputLabel>
                     <Select label="Select Item">
@@ -60,7 +60,7 @@ export default function CreateOrderPage() {
                     </Select>
                   </FormControl>
                 </Grid>
-                <Grid item xs={12} sm={4}>
+                <Grid size={{ xs: 12, sm: 4 }}>
                   <Button variant="contained" fullWidth>
                     Add Item
                   </Button>
@@ -82,7 +82,7 @@ export default function CreateOrderPage() {
               </Box>
             </Paper>
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <Paper sx={{ p: 3 }}>
               <Typography variant="h6" gutterBottom>
                 Order Summary

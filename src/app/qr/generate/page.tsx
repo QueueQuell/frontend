@@ -15,13 +15,13 @@ export default function GenerateQRPage() {
           Create QR codes for tables, menus, or custom links
         </Typography>
         <Grid container spacing={3}>
-          <Grid item xs={12} md={8}>
+          <Grid size={{ xs: 12, md: 8 }}>
             <Paper sx={{ p: 3 }}>
               <Typography variant="h6" gutterBottom>
                 QR Code Settings
               </Typography>
               <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <FormControl fullWidth>
                     <InputLabel>QR Type</InputLabel>
                     <Select label="QR Type">
@@ -31,19 +31,19 @@ export default function GenerateQRPage() {
                     </Select>
                   </FormControl>
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <TextField fullWidth label="Table Number / Identifier" variant="outlined" />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid size={{ xs: 12 }}>
                   <TextField fullWidth label="Custom URL (optional)" variant="outlined" />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid size={{ xs: 12 }}>
                   <TextField fullWidth label="Description" multiline rows={2} variant="outlined" />
                 </Grid>
               </Grid>
             </Paper>
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <Paper sx={{ p: 3, textAlign: "center" }}>
               <Typography variant="h6" gutterBottom>
                 Preview
