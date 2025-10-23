@@ -1,0 +1,1 @@
+- [x] Update login page to use MUI sign-in template components
