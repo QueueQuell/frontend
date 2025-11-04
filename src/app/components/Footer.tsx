@@ -6,13 +6,16 @@ export default function Footer() {
       component="footer"
       sx={{
         p: 1.5,
-        borderTop: "1px solid #B2DFDB",
+        borderTop: 1,
+        borderColor: "divider",
         textAlign: "center",
-        bgcolor: "#C8E6C9",
+        bgcolor: "background.paper",
+        boxShadow: 1,
+        color: "text.primary",
       }}
     >
       <Typography variant="body2" sx={{ fontSize: 13 }}>
-        © {new Date().getFullYear()} Restaurant Management — Built with Next.js
+        © {new Date().getFullYear()} QueueQuell — Built with Next.js
       </Typography>
     </Box>
   );

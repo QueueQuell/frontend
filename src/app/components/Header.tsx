@@ -52,7 +52,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
       <Typography variant="h6" sx={{ my: 2 }}>
-        RestaurantMgmt
+        QueueQuell
       </Typography>
       <List>
         <ListItem disablePadding>
@@ -84,10 +84,10 @@ export default function Header({ onMenuClick }: HeaderProps) {
       <AppBar
         position="static"
         sx={{
-          bgcolor: "primary.main",
-          borderBottom: "1px solid",
-          borderBottomColor: "secondary.main",
-          boxShadow: "none",
+          bgcolor: "background.paper",
+          borderBottom: 1,
+          borderColor: "divider",
+          boxShadow: 1,
           color: "text.primary",
         }}
       >
@@ -98,7 +98,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
               aria-label="open drawer"
               edge="start"
               onClick={onMenuClick || handleDrawerToggle}
-              sx={{ mr: 2 }}
+              sx={{ mr: 2, color: "text.primary" }}
             >
               <MenuIcon />
             </IconButton>
@@ -109,11 +109,11 @@ export default function Header({ onMenuClick }: HeaderProps) {
               sx={{
                 fontWeight: 700,
                 textDecoration: "none",
-                color: "inherit",
+                color: "text.primary",
                 "&:hover": { textDecoration: "none" },
               }}
             >
-              RestaurantMgmt
+              QueueQuell
             </Typography>
 
           </Box>
@@ -123,8 +123,9 @@ export default function Header({ onMenuClick }: HeaderProps) {
               onClick={toggleTheme}
               sx={{
                 mr: 1,
+                color: "text.primary",
                 "&:hover": {
-                  bgcolor: "rgba(0, 0, 0, 0.04)",
+                  bgcolor: "action.hover",
                 },
               }}
             >
@@ -138,11 +139,11 @@ export default function Header({ onMenuClick }: HeaderProps) {
               onClick={handleClick}
               startIcon={<AccountCircle />}
               sx={{
-                color: "inherit",
+                color: "text.primary",
                 textTransform: "none",
                 fontSize: "15px",
                 "&:hover": {
-                  bgcolor: "rgba(0, 0, 0, 0.04)",
+                  bgcolor: "action.hover",
                 },
               }}
             >
@@ -155,6 +156,20 @@ export default function Header({ onMenuClick }: HeaderProps) {
               onClose={handleClose}
               MenuListProps={{
                 "aria-labelledby": "account-button",
+              }}
+              PaperProps={{
+                sx: {
+                  bgcolor: "background.paper",
+                  border: 1,
+                  borderColor: "divider",
+                  boxShadow: 1,
+                  "& .MuiMenuItem-root": {
+                    color: "text.primary",
+                    "&:hover": {
+                      bgcolor: "action.hover",
+                    },
+                  },
+                },
               }}
             >
               <MenuItem onClick={handleClose} component={Link} href="/users/profile">

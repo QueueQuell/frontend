@@ -42,13 +42,27 @@ export default function SidebarSection({
           component={Link}
           href={href}
           sx={{
-            borderRadius: 1,
-            bgcolor: open ? "#A5D6A7" : "transparent",
-            "&:hover": { bgcolor: "#A5D6A7" },
+            borderRadius: 2,
+            bgcolor: open ? "action.selected" : "transparent",
+            backdropFilter: "blur(10px)",
+            "&:hover": {
+              bgcolor: "rgba(255, 255, 255, 0.15)",
+              transform: "translateY(-1px)",
+              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+            },
+            transition: "all 0.3s ease",
           }}
         >
-          <ListItemIcon>{icon}</ListItemIcon>
-          <ListItemText primary={title} />
+          <ListItemIcon sx={{ color: "text.primary" }}>{icon}</ListItemIcon>
+          <ListItemText
+            primary={title}
+            sx={{
+              "& .MuiListItemText-primary": {
+                color: "text.primary",
+                fontWeight: 500,
+              },
+            }}
+          />
           <IconButton
             size="small"
             onClick={(e) => {
@@ -56,6 +70,7 @@ export default function SidebarSection({
               e.stopPropagation();
               onToggle();
             }}
+            sx={{ color: "text.primary" }}
           >
             {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
           </IconButton>
@@ -64,8 +79,33 @@ export default function SidebarSection({
       <Collapse in={open} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
           {subItems.map((item) => (
-            <ListItemButton key={item.href} component={Link} href={item.href} sx={{ pl: 4 }}>
-              <ListItemText primary={item.label} />
+            <ListItemButton
+              key={item.href}
+              component={Link}
+              href={item.href}
+              sx={{
+                pl: 4,
+                ml: 2,
+                mr: 2,
+                mt: 0.5,
+                mb: 0.5,
+                borderRadius: 1,
+                "&:hover": {
+                  bgcolor: "action.hover",
+                  transform: "translateX(4px)",
+                },
+                transition: "all 0.3s ease",
+              }}
+            >
+              <ListItemText
+                primary={item.label}
+                sx={{
+                  "& .MuiListItemText-primary": {
+                    color: "text.secondary",
+                    fontSize: "0.875rem",
+                  },
+                }}
+              />
             </ListItemButton>
           ))}
         </List>

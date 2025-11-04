@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Box, List } from "@mui/material";
+import { Box, List, Drawer, useMediaQuery, useTheme } from "@mui/material";
 import SidebarSection from "./SidebarSection";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -33,7 +33,14 @@ const DEFAULT_STATE: Record<SectionKey, boolean> = {
   qr: false,
 };
 
-export default function Sidebar() {
+interface SidebarProps {
+  mobileOpen?: boolean;
+  onMobileClose?: () => void;
+}
+
+export default function Sidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [open, setOpen] = useState<Record<SectionKey, boolean>>(DEFAULT_STATE);
 
   useEffect(() => {
@@ -61,15 +68,17 @@ export default function Sidebar() {
       return newState;
     });
 
-  return (
+  const sidebarContent = (
     <Box
       sx={{
-        width: 240,
-        bgcolor: "#E8F5E8",
-        borderRight: "1px solid #B2DFDB",
-        minHeight: "calc(100vh - 120px)",
-        p: 1.5,
+        width: 280,
+        bgcolor: "background.paper",
+        borderRight: 1,
+        borderColor: "divider",
+        minHeight: "100vh",
+        p: 2,
         boxSizing: "border-box",
+        boxShadow: 1,
       }}
     >
       <List sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
@@ -174,5 +183,51 @@ export default function Sidebar() {
         />
       </List>
     </Box>
+  );
+
+  if (isMobile) {
+    return (
+      <Drawer
+        variant="temporary"
+        open={mobileOpen}
+        onClose={onMobileClose}
+        ModalProps={{
+          keepMounted: true, // Better open performance on mobile.
+        }}
+        sx={{
+          display: { xs: 'block', md: 'none' },
+          '& .MuiDrawer-paper': {
+            boxSizing: 'border-box',
+            width: 280,
+            bgcolor: "background.paper",
+            borderRight: 1,
+            borderColor: "divider",
+            boxShadow: 1,
+          },
+        }}
+      >
+        {sidebarContent}
+      </Drawer>
+    );
+  }
+
+  return (
+    <Drawer
+      variant="permanent"
+      sx={{
+        display: { xs: 'none', md: 'block' },
+        '& .MuiDrawer-paper': {
+          boxSizing: 'border-box',
+          width: 280,
+          bgcolor: "background.paper",
+          borderRight: 1,
+          borderColor: "divider",
+          boxShadow: 1,
+        },
+      }}
+      open
+    >
+      {sidebarContent}
+    </Drawer>
   );
 }

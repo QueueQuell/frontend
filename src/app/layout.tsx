@@ -2,6 +2,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import MuiProviders from "./components/MuiProviders";
+import PageTransition from "./components/PageTransition";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,17 +19,22 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Do NOT wrap children with CommonLayout here so the landing/login page can render standalone.
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="queuequell-logo.png" />
+      </head>
       <body
         style={{
           margin: 0,
           fontFamily: "Segoe UI, Roboto, system-ui, sans-serif",
-          background: "#f5f6f8",
         }}
       >
-        <MuiProviders>{children}</MuiProviders>
+        <MuiProviders>
+          <PageTransition>
+            {children}
+          </PageTransition>
+        </MuiProviders>
       </body>
     </html>
   );

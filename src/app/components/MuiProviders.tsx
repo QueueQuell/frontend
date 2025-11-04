@@ -17,37 +17,113 @@ const lightTheme = createTheme({
   palette: {
     mode: "light",
     primary: {
-      main: "#C8E6C9",
+      main: "#1976d2",
     },
     secondary: {
-      main: "#B2DFDB",
+      main: "#dc004e",
     },
-    text: { primary: "#323438" }, // 25% darker steel gray
+    background: {
+      default: "#f5f5f5",
+      paper: "#ffffff",
+    },
+    text: {
+      primary: "#212121",
+      secondary: "#757575",
+    },
   },
   typography: {
     fontFamily: '"Roboto", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial',
     fontSize: 14,
-    h1: { fontSize: '2rem' },
-    h2: { fontSize: '1.75rem' },
-    h3: { fontSize: '1.5rem' },
-    h4: { fontSize: '1.25rem' },
-    h5: { fontSize: '1.125rem' },
-    h6: { fontSize: '1rem' },
-    body1: { fontSize: '0.875rem' },
-    body2: { fontSize: '0.75rem' },
+    h1: { fontSize: '2.5rem', fontWeight: 700 },
+    h2: { fontSize: '2rem', fontWeight: 600 },
+    h3: { fontSize: '1.75rem', fontWeight: 600 },
+    h4: { fontSize: '1.5rem', fontWeight: 500 },
+    h5: { fontSize: '1.25rem', fontWeight: 500 },
+    h6: { fontSize: '1.125rem', fontWeight: 500 },
+    body1: { fontSize: '1rem' },
+    body2: { fontSize: '0.875rem' },
+  },
+  shape: {
+    borderRadius: 16,
   },
   components: {
-    MuiSvgIcon: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          background: "#f5f5f5",
+          backgroundAttachment: "fixed",
+        },
+      },
+    },
+    MuiPaper: {
       styleOverrides: {
         root: {
-          fontSize: '1rem',
+          backgroundImage: "none",
+          backgroundColor: "#ffffff",
+          border: "1px solid #e2e8f0",
+          boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: 12,
+          textTransform: "none",
+          fontWeight: 600,
+          transition: "all 0.3s ease",
+          "&:hover": {
+            transform: "translateY(-2px)",
+            boxShadow: "0 6px 20px rgba(0, 0, 0, 0.15)",
+          },
+        },
+        contained: {
+          background: "#1976d2",
+          "&:hover": {
+            background: "#1565c0",
+          },
         },
       },
     },
     MuiCard: {
       styleOverrides: {
         root: {
-          padding: '4px',
+          borderRadius: 16,
+          backgroundColor: "#ffffff",
+          border: "1px solid #e2e8f0",
+          boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+          transition: "all 0.3s ease",
+          "&:hover": {
+            transform: "translateY(-4px)",
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+          },
+        },
+      },
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          "& .MuiOutlinedInput-root": {
+            borderRadius: 12,
+            backdropFilter: "blur(10px)",
+            backgroundColor: "rgba(255, 255, 255, 0.1)",
+            "& fieldset": {
+              borderColor: "rgba(255, 255, 255, 0.3)",
+            },
+            "&:hover fieldset": {
+              borderColor: "rgba(255, 255, 255, 0.5)",
+            },
+            "&.Mui-focused fieldset": {
+              borderColor: "#f093fb",
+            },
+          },
+        },
+      },
+    },
+    MuiSvgIcon: {
+      styleOverrides: {
+        root: {
+          fontSize: '1.2rem',
         },
       },
     },
@@ -58,37 +134,115 @@ const darkTheme = createTheme({
   palette: {
     mode: "dark",
     primary: {
-      main: "#1B5E20", // Darkest green
+      main: "#0f3460",
     },
     secondary: {
-      main: "#004D40", // Dark green (darker teal)
+      main: "#16213e",
     },
-    text: { primary: "#ffffff" },
+    background: {
+      default: "transparent",
+      paper: "rgba(255, 255, 255, 0.05)",
+    },
+    text: {
+      primary: "#ffffff",
+      secondary: "rgba(255, 255, 255, 0.7)",
+    },
   },
   typography: {
     fontFamily: '"Roboto", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial',
     fontSize: 14,
-    h1: { fontSize: '2rem' },
-    h2: { fontSize: '1.75rem' },
-    h3: { fontSize: '1.5rem' },
-    h4: { fontSize: '1.25rem' },
-    h5: { fontSize: '1.125rem' },
-    h6: { fontSize: '1rem' },
-    body1: { fontSize: '0.875rem' },
-    body2: { fontSize: '0.75rem' },
+    h1: { fontSize: '2.5rem', fontWeight: 700 },
+    h2: { fontSize: '2rem', fontWeight: 600 },
+    h3: { fontSize: '1.75rem', fontWeight: 600 },
+    h4: { fontSize: '1.5rem', fontWeight: 500 },
+    h5: { fontSize: '1.25rem', fontWeight: 500 },
+    h6: { fontSize: '1.125rem', fontWeight: 500 },
+    body1: { fontSize: '1rem' },
+    body2: { fontSize: '0.875rem' },
+  },
+  shape: {
+    borderRadius: 16,
   },
   components: {
-    MuiSvgIcon: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)",
+          backgroundAttachment: "fixed",
+        },
+      },
+    },
+    MuiPaper: {
       styleOverrides: {
         root: {
-          fontSize: '1rem',
+          backgroundImage: "none",
+          backdropFilter: "blur(10px)",
+          backgroundColor: "rgba(255, 255, 255, 0.05)",
+          border: "1px solid rgba(255, 255, 255, 0.1)",
+          boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3)",
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: 12,
+          textTransform: "none",
+          fontWeight: 600,
+          transition: "all 0.3s ease",
+          "&:hover": {
+            transform: "translateY(-2px)",
+            boxShadow: "0 6px 20px rgba(0, 0, 0, 0.3)",
+          },
+        },
+        contained: {
+          background: "linear-gradient(45deg, #0f3460 30%, #16213e 90%)",
+          "&:hover": {
+            background: "linear-gradient(45deg, #0d2c50 30%, #141b32 90%)",
+          },
         },
       },
     },
     MuiCard: {
       styleOverrides: {
         root: {
-          padding: '1px',
+          borderRadius: 16,
+          backdropFilter: "blur(10px)",
+          backgroundColor: "rgba(255, 255, 255, 0.05)",
+          border: "1px solid rgba(255, 255, 255, 0.1)",
+          boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3)",
+          transition: "all 0.3s ease",
+          "&:hover": {
+            transform: "translateY(-4px)",
+            boxShadow: "0 12px 40px rgba(0, 0, 0, 0.4)",
+          },
+        },
+      },
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          "& .MuiOutlinedInput-root": {
+            borderRadius: 12,
+            backdropFilter: "blur(10px)",
+            backgroundColor: "rgba(255, 255, 255, 0.05)",
+            "& fieldset": {
+              borderColor: "rgba(255, 255, 255, 0.2)",
+            },
+            "&:hover fieldset": {
+              borderColor: "rgba(255, 255, 255, 0.4)",
+            },
+            "&.Mui-focused fieldset": {
+              borderColor: "#e94560",
+            },
+          },
+        },
+      },
+    },
+    MuiSvgIcon: {
+      styleOverrides: {
+        root: {
+          fontSize: '1.2rem',
         },
       },
     },
