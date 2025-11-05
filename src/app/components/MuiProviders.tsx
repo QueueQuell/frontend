@@ -1,10 +1,10 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { ThemeProvider, createTheme, CssBaseline } from "@mui/material";
-import "@fontsource/roboto/300.css";
-import "@fontsource/roboto/400.css";
-import "@fontsource/roboto/500.css";
-import "@fontsource/roboto/700.css";
+import "@fontsource/inter/300.css";
+import "@fontsource/inter/400.css";
+import "@fontsource/inter/500.css";
+import "@fontsource/inter/700.css";
 
 const ThemeContext = createContext({
   toggleTheme: () => {},
@@ -17,24 +17,24 @@ const lightTheme = createTheme({
   palette: {
     mode: "light",
     primary: {
-      main: "#1976d2",
+      main: "#00b894",
     },
     secondary: {
-      main: "#dc004e",
+      main: "#000000",
     },
     background: {
-      default: "#f5f5f5",
+      default: "#f9fafc",
       paper: "#ffffff",
     },
     text: {
-      primary: "#212121",
-      secondary: "#757575",
+      primary: "#1e1e1e",
+      secondary: "#4f4f4f",
     },
   },
   typography: {
-    fontFamily: '"Roboto", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial',
+    fontFamily: '"Inter", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial',
     fontSize: 14,
-    h1: { fontSize: '2.5rem', fontWeight: 700 },
+    h1: { fontSize: '2.5rem', fontWeight: 600 },
     h2: { fontSize: '2rem', fontWeight: 600 },
     h3: { fontSize: '1.75rem', fontWeight: 600 },
     h4: { fontSize: '1.5rem', fontWeight: 500 },
@@ -44,13 +44,13 @@ const lightTheme = createTheme({
     body2: { fontSize: '0.875rem' },
   },
   shape: {
-    borderRadius: 16,
+    borderRadius: 20,
   },
   components: {
     MuiCssBaseline: {
       styleOverrides: {
         body: {
-          background: "#f5f5f5",
+          background: "#f9fafc",
           backgroundAttachment: "fixed",
         },
       },
@@ -60,8 +60,8 @@ const lightTheme = createTheme({
         root: {
           backgroundImage: "none",
           backgroundColor: "#ffffff",
-          border: "1px solid #e2e8f0",
-          boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+          border: "none",
+          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.08)",
         },
       },
     },
@@ -70,17 +70,17 @@ const lightTheme = createTheme({
         root: {
           borderRadius: 12,
           textTransform: "none",
-          fontWeight: 600,
-          transition: "all 0.3s ease",
+          fontWeight: 500,
+          transition: "all 0.2s ease",
           "&:hover": {
             transform: "translateY(-2px)",
             boxShadow: "0 6px 20px rgba(0, 0, 0, 0.15)",
           },
         },
         contained: {
-          background: "#1976d2",
+          background: "#00b894",
           "&:hover": {
-            background: "#1565c0",
+            background: "#00a085",
           },
         },
       },
@@ -88,14 +88,14 @@ const lightTheme = createTheme({
     MuiCard: {
       styleOverrides: {
         root: {
-          borderRadius: 16,
+          borderRadius: 20,
           backgroundColor: "#ffffff",
-          border: "1px solid #e2e8f0",
-          boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
-          transition: "all 0.3s ease",
+          border: "none",
+          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.08)",
+          transition: "all 0.2s ease",
           "&:hover": {
             transform: "translateY(-4px)",
-            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+            boxShadow: "0 8px 30px rgba(0, 0, 0, 0.12)",
           },
         },
       },
@@ -105,16 +105,15 @@ const lightTheme = createTheme({
         root: {
           "& .MuiOutlinedInput-root": {
             borderRadius: 12,
-            backdropFilter: "blur(10px)",
-            backgroundColor: "rgba(255, 255, 255, 0.1)",
+            backgroundColor: "#ffffff",
             "& fieldset": {
-              borderColor: "rgba(255, 255, 255, 0.3)",
+              borderColor: "#e2e8f0",
             },
             "&:hover fieldset": {
-              borderColor: "rgba(255, 255, 255, 0.5)",
+              borderColor: "#00b894",
             },
             "&.Mui-focused fieldset": {
-              borderColor: "#f093fb",
+              borderColor: "#00b894",
             },
           },
         },
@@ -149,9 +148,9 @@ const darkTheme = createTheme({
     },
   },
   typography: {
-    fontFamily: '"Roboto", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial',
+    fontFamily: '"Inter", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial',
     fontSize: 14,
-    h1: { fontSize: '2.5rem', fontWeight: 700 },
+    h1: { fontSize: '2.5rem', fontWeight: 600 },
     h2: { fontSize: '2rem', fontWeight: 600 },
     h3: { fontSize: '1.75rem', fontWeight: 600 },
     h4: { fontSize: '1.5rem', fontWeight: 500 },
