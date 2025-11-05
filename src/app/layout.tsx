@@ -1,17 +1,18 @@
 "use client";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
 import MuiProviders from "./components/MuiProviders";
 import PageTransition from "./components/PageTransition";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const poppins = Poppins({
+  variable: "--font-poppins",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export default function RootLayout({
@@ -27,8 +28,9 @@ export default function RootLayout({
       <body
         style={{
           margin: 0,
-          fontFamily: "Segoe UI, Roboto, system-ui, sans-serif",
+          fontFamily: "var(--font-inter), var(--font-poppins), Segoe UI, Roboto, system-ui, sans-serif",
         }}
+        className={`${inter.variable} ${poppins.variable}`}
       >
         <MuiProviders>
           <PageTransition>

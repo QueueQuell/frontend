@@ -10,6 +10,7 @@ import {
   IconButton,
 } from "@mui/material";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 
@@ -25,6 +26,7 @@ interface SidebarSectionProps {
   subItems: SubItem[];
   open: boolean;
   onToggle: () => void;
+  collapsed?: boolean;
 }
 
 export default function SidebarSection({
@@ -34,7 +36,11 @@ export default function SidebarSection({
   subItems,
   open,
   onToggle,
+  collapsed = false,
 }: SidebarSectionProps) {
+  const pathname = usePathname();
+  const isActive = pathname === href;
+
   return (
     <Box>
       <ListItem disablePadding>
@@ -43,40 +49,43 @@ export default function SidebarSection({
           href={href}
           sx={{
             borderRadius: 2,
-            bgcolor: open ? "action.selected" : "transparent",
-            backdropFilter: "blur(10px)",
+            bgcolor: isActive ? "#E6F7FF" : "transparent",
+            borderLeft: isActive ? "4px solid #00B4FF" : "none",
             "&:hover": {
-              bgcolor: "rgba(255, 255, 255, 0.15)",
+              bgcolor: "#E6F7FF",
               transform: "translateY(-1px)",
               boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
             },
             transition: "all 0.3s ease",
+            justifyContent: collapsed ? "center" : "flex-start",
+            px: collapsed ? 1 : 2,
           }}
         >
           <ListItemIcon sx={{ color: "text.primary", minWidth: collapsed ? 24 : 32 }}>{icon}</ListItemIcon>
           {!collapsed && (
-          <ListItemText
-            primary={title}
-            sx={{
-              "& .MuiListItemText-primary": {
-                color: "text.primary",
-                fontWeight: 500,
-              },
-            }}
-          />
+            <ListItemText
+              primary={title}
+              sx={{
+                "& .MuiListItemText-primary": {
+                  color: "text.primary",
+                  fontWeight: isActive ? 600 : 500,
+                  fontSize: "0.8rem",
+                },
+              }}
+            />
           )}
           {!collapsed && subItems.length > 0 && (
-          <IconButton
-            size="small"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              onToggle();
-            }}
-            sx={{ color: "text.primary" }}
-          >
-            {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-          </IconButton>
+            <IconButton
+              size="small"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onToggle();
+              }}
+              sx={{ color: "text.primary" }}
+            >
+              {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+            </IconButton>
           )}
         </ListItemButton>
       </ListItem>

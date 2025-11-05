@@ -1,1 +1,4 @@
-- [x] Update login page to use MUI sign-in template components
+- [ ] Add "home" to SectionKey type in Sidebar.tsx
+- [ ] Add home: false to DEFAULT_STATE in Sidebar.tsx
+- [ ] Import HomeIcon from @mui/icons-material in Sidebar.tsx
+- [ ] Add SidebarSection for Home at the top of the List in Sidebar.tsx

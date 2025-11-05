@@ -84,10 +84,9 @@ export default function Header({ onMenuClick }: HeaderProps) {
       <AppBar
         position="static"
         sx={{
-          bgcolor: "background.paper",
-          borderBottom: 1,
-          borderColor: "divider",
-          boxShadow: 1,
+          bgcolor: "#ffffff",
+          borderBottom: "1px solid #e2e8f0",
+          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.08)",
           color: "text.primary",
         }}
       >
