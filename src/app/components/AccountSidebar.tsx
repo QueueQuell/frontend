@@ -11,7 +11,9 @@ export default function AccountSidebar() {
     const router = useRouter();
 
     const handleSignOut = () => {
-        localStorage.removeItem("authToken");
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("tokenType");
         router.push("/login");
     };
 

@@ -53,7 +53,8 @@ export default function SidebarSection({
             transition: "all 0.3s ease",
           }}
         >
-          <ListItemIcon sx={{ color: "text.primary" }}>{icon}</ListItemIcon>
+          <ListItemIcon sx={{ color: "text.primary", minWidth: collapsed ? 24 : 32 }}>{icon}</ListItemIcon>
+          {!collapsed && (
           <ListItemText
             primary={title}
             sx={{
@@ -63,6 +64,8 @@ export default function SidebarSection({
               },
             }}
           />
+          )}
+          {!collapsed && subItems.length > 0 && (
           <IconButton
             size="small"
             onClick={(e) => {
@@ -74,6 +77,7 @@ export default function SidebarSection({
           >
             {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
           </IconButton>
+          )}
         </ListItemButton>
       </ListItem>
       <Collapse in={open} timeout="auto" unmountOnExit>
@@ -102,7 +106,7 @@ export default function SidebarSection({
                 sx={{
                   "& .MuiListItemText-primary": {
                     color: "text.secondary",
-                    fontSize: "0.875rem",
+                    fontSize: "0.75rem",
                   },
                 }}
               />

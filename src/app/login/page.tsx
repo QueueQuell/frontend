@@ -15,7 +15,6 @@ import {
   Snackbar,
   Link,
 } from "@mui/material";
-import Footer from "../components/Footer";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

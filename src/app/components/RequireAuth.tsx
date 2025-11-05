@@ -17,7 +17,7 @@ export default function RequireAuth({ children }: { children: React.ReactNode })
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    const token = typeof window !== "undefined" ? localStorage.getItem("authToken") : null;
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
     if (!token) {
       router.push(`/login?next=${encodeURIComponent(pathname)}`);
       return;
