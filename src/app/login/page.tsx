@@ -14,6 +14,7 @@ import {
   IconButton,
   Snackbar,
   Link,
+  CircularProgress,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
@@ -226,7 +227,14 @@ export default function SignInSide() {
               disabled={isLoading}
               sx={{ mt: 2 }}
             >
-              {isLoading ? "Signing in..." : "Sign in"}
+              {isLoading ? (
+                <>
+                  <CircularProgress size={20} sx={{ mr: 1, color: "white" }} />
+                  Signing in...
+                </>
+              ) : (
+                "Sign in"
+              )}
             </Button>
           </Box>
         </Box>
