@@ -1,6 +1,26 @@
-// API Configuration
+/**
+ * API Configuration Module
+ * Central configuration for API client and endpoints
+ */
+
+import { TokenManager } from './tokenManager';
+
+/**
+ * API Configuration
+ */
 export const API_CONFIG = {
   BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL || '/api',
+  TIMEOUT: 30000, // 30 seconds
+  RETRY: {
+    MAX_ATTEMPTS: 3,
+    DELAY: 1000, // 1 second
+    BACKOFF: 2, // Exponential backoff multiplier
+  },
+  CACHE: {
+    ENABLED: true,
+    DEFAULT_TTL: 5 * 60 * 1000, // 5 minutes
+    MAX_SIZE: 100,
+  },
   ENDPOINTS: {
     // Auth endpoints
     LOGIN: '/auth/login',
@@ -34,40 +54,36 @@ export const API_CONFIG = {
 
     // Orders endpoints
     ORDERS: '/api/orders',
-  }
+  },
 };
 
-// Helper function to get full API URL
+/**
+ * Helper function to get full API URL
+ * @param endpoint - API endpoint path
+ * @returns Full API URL
+ */
 export const getApiUrl = (endpoint: string): string => {
   return `${API_CONFIG.BASE_URL}${endpoint}`;
 };
 
-// API utility functions
-export const apiRequest = async <T>(
-  url: string,
-  options: RequestInit = {}
-): Promise<T> => {
-  const response = await fetch(url, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-    ...options,
-  });
-
-  if (!response.ok) {
-    throw new Error(`API request failed: ${response.statusText}`);
+/**
+ * Get auth headers (backward compatibility)
+ * @deprecated Use TokenManager.getAuthHeader() instead
+ */
+export const getAuthHeaders = (token?: string): Record<string, string> => {
+  if (token) {
+    return { Authorization: `Bearer ${token}` };
   }
-
-  return response.json();
+  return TokenManager.getAuthHeader();
 };
 
-export const getAuthHeaders = (token?: string) => {
-  const accessToken = token || localStorage.getItem('accessToken');
-  return accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
-};
-
-export const getOrgHeaders = (orgId?: string) => {
-  const xOrgId = orgId || localStorage.getItem('orgId');
-  return xOrgId ? { 'X-Org-Id': xOrgId } : {};
+/**
+ * Get org headers (backward compatibility)
+ * @deprecated Use TokenManager.getOrgHeader() instead
+ */
+export const getOrgHeaders = (orgId?: string): Record<string, string> => {
+  if (orgId) {
+    return { 'X-Org-Id': orgId };
+  }
+  return TokenManager.getOrgHeader();
 };

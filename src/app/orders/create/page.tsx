@@ -54,7 +54,7 @@ export default function CreateOrderPage() {
                     <Select label="Select Item">
                       {menuItems.map((item) => (
                         <MenuItem key={item.id} value={item.id}>
-                          {item.name} - ${item.price}
+                          {item.name} - ₹{item.price}
                         </MenuItem>
                       ))}
                     </Select>
@@ -76,7 +76,7 @@ export default function CreateOrderPage() {
                       </IconButton>
                     }
                   >
-                    <ListItemText primary="Margherita Pizza" secondary="$12.99" />
+                    <ListItemText primary="Margherita Pizza" secondary="₹12.99" />
                   </ListItem>
                 </List>
               </Box>
@@ -88,9 +88,9 @@ export default function CreateOrderPage() {
                 Order Summary
               </Typography>
               <Box sx={{ mb: 2 }}>
-                <Typography>Subtotal: $12.99</Typography>
-                <Typography>Tax: $1.17</Typography>
-                <Typography variant="h6">Total: $14.16</Typography>
+                <Typography>Subtotal: ₹12.99</Typography>
+                <Typography>Tax: ₹1.17</Typography>
+                <Typography variant="h6">Total: ₹14.16</Typography>
               </Box>
               <Button variant="contained" fullWidth startIcon={<ReceiptIcon />}>
                 Create Order

@@ -5,13 +5,12 @@ export default function Footer() {
     <Box
       component="footer"
       sx={{
+        backgroundColor: "#f1f3f5",
+        borderTop: "1px solid #e6e6e6",
         p: 1.5,
-        borderTop: 1,
-        borderColor: "divider",
         textAlign: "center",
-        bgcolor: "background.paper",
-        boxShadow: 1,
-        color: "text.primary",
+        fontSize: "0.8rem",
+        color: "#777",
       }}
     >
       <Typography variant="body2" sx={{ fontSize: 13 }}>

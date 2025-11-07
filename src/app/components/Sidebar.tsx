@@ -82,24 +82,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose, collapsed =
     });
 
   const sidebarContent = (
-    <Box
-      sx={{
-        width: collapsed ? 80 : { xs: 280, md: 260 },
-        bgcolor: "#FFFFFF",
-        borderRight: "1px solid #E6E6E6",
-        minHeight: "100vh",
-        p: collapsed ? 2 : 3,
-        boxSizing: "border-box",
-        boxShadow: "0 2px 12px rgba(0,0,0,0.08)",
-        borderRadius: "0 20px 20px 0",
-        overflowX: "hidden",
-        overflowY: "auto",
-        transition: "all 0.3s ease",
-        "&::-webkit-scrollbar": {
-          display: "none",
-        },
-      }}
-    >
+    <React.Fragment>
       {/* Logo */}
       <Box sx={{ display: "flex", justifyContent: "center", mb: 3, mt: 1 }}>
         <Box
@@ -111,6 +94,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose, collapsed =
       </Box>
 
       <List sx={{ display: "flex", flexDirection: "column", gap: 1, flexGrow: 1 }}>
+
         <SidebarSection
           title="Dashboard"
           icon={<HomeIcon />}
@@ -120,6 +104,34 @@ export default function Sidebar({ mobileOpen = false, onMobileClose, collapsed =
           onToggle={() => toggle("home")}
           collapsed={collapsed}
         />
+        
+        <SidebarSection
+          title="Menu"
+          icon={<RestaurantMenuIcon />}
+          href="/items"
+          subItems={[
+            { label: "Catalog", href: "/items/catalog" },
+            { label: "Categories", href: "/items/categories" },
+          ]}
+          open={open.items}
+          onToggle={() => toggle("items")}
+          collapsed={collapsed}
+        />
+
+        <SidebarSection
+          title="Order"
+          icon={<ShoppingCartIcon />}
+          href="/orders"
+          subItems={[
+            { label: "List Orders", href: "/orders/list" },
+            { label: "Create Order", href: "/orders/create" },
+          ]}
+          open={open.orders}
+          onToggle={() => toggle("orders")}
+          collapsed={collapsed}
+        />
+
+
 
         <SidebarSection
           title="Inventory"
@@ -135,18 +147,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose, collapsed =
           collapsed={collapsed}
         />
 
-        <SidebarSection
-          title="Queues"
-          icon={<ShoppingCartIcon />}
-          href="/orders"
-          subItems={[
-            { label: "List Orders", href: "/orders/list" },
-            { label: "Create Order", href: "/orders/create" },
-          ]}
-          open={open.orders}
-          onToggle={() => toggle("orders")}
-          collapsed={collapsed}
-        />
+
 
         <SidebarSection
           title="Users"
@@ -174,18 +175,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose, collapsed =
           collapsed={collapsed}
         />
 
-        <SidebarSection
-          title="Items"
-          icon={<RestaurantMenuIcon />}
-          href="/items"
-          subItems={[
-            { label: "Catalog", href: "/items/catalog" },
-            { label: "Add Item", href: "/items/add" },
-          ]}
-          open={open.items}
-          onToggle={() => toggle("items")}
-          collapsed={collapsed}
-        />
+
 
         <SidebarSection
           title="Suppliers"
@@ -235,7 +225,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose, collapsed =
           href="/analytics"
           subItems={[]}
           open={false}
-          onToggle={() => {}}
+          onToggle={() => { }}
           collapsed={collapsed}
         />
 
@@ -245,7 +235,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose, collapsed =
           href="/notifications"
           subItems={[]}
           open={false}
-          onToggle={() => {}}
+          onToggle={() => { }}
           collapsed={collapsed}
         />
 
@@ -255,7 +245,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose, collapsed =
           href="/settings"
           subItems={[]}
           open={false}
-          onToggle={() => {}}
+          onToggle={() => { }}
           collapsed={collapsed}
         />
       </List>
@@ -268,7 +258,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose, collapsed =
           href="/help"
           subItems={[]}
           open={false}
-          onToggle={() => {}}
+          onToggle={() => { }}
           collapsed={collapsed}
         />
 
@@ -288,7 +278,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose, collapsed =
           </IconButton>
         </Box>
       </Box>
-    </Box>
+    </ React.Fragment>
   );
 
   if (isMobile) {
@@ -318,23 +308,25 @@ export default function Sidebar({ mobileOpen = false, onMobileClose, collapsed =
   }
 
   return (
-    <Drawer
-      variant="permanent"
+    <Box
       sx={{
-        display: { xs: 'none', md: 'block' },
-        '& .MuiDrawer-paper': {
-          boxSizing: 'border-box',
-          width: collapsed ? 80 : { xs: 280, md: 260 },
-          bgcolor: "background.paper",
-          borderRight: 1,
-          borderColor: "divider",
-          boxShadow: 1,
-          transition: "width 0.3s ease",
-        },
+        width: collapsed ? 80 : 260,
+        backgroundColor: "#ffffff",
+        borderRight: "1px solid #e6e6e6",
+        boxShadow: "2px 0 8px rgba(0,0,0,0.05)",
+        transition: "width 0.3s ease",
+        overflowY: "auto",
+        display: "flex",
+        flexDirection: "column",
+        position: "fixed",
+        left: 0,
+        top: 0,
+        p: 2,
+        height: "100vh",
+        zIndex: 1000,
       }}
-      open
     >
       {sidebarContent}
-    </Drawer>
+    </ Box>
   );
 }

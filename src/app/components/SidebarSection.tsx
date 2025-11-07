@@ -48,7 +48,7 @@ export default function SidebarSection({
           component={Link}
           href={href}
           sx={{
-            borderRadius: 2,
+            borderRadius: .25,
             bgcolor: isActive ? "#E6F7FF" : "transparent",
             borderLeft: isActive ? "4px solid #00B4FF" : "none",
             "&:hover": {
@@ -102,7 +102,7 @@ export default function SidebarSection({
                 mr: 2,
                 mt: 0.5,
                 mb: 0.5,
-                borderRadius: 1,
+                borderRadius: .25,
                 "&:hover": {
                   bgcolor: "action.hover",
                   transform: "translateX(4px)",

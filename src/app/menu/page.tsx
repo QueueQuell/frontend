@@ -316,7 +316,7 @@ export default function MenuPage() {
                       <Chip label={`${item.weight}`} size="small" />
                       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                         <Typography variant="h6" color="primary">
-                          ${item.price}
+                          ₹{item.price}
                         </Typography>
                         <Button variant="contained" size="small" onClick={() => addToCart(item)}>
                           Add to Cart
@@ -374,7 +374,7 @@ export default function MenuPage() {
                     {item.name}
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
-                    ${item.price} x {item.quantity}
+                    ₹{item.price} x {item.quantity}
                   </Typography>
                 </Box>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
@@ -394,7 +394,7 @@ export default function MenuPage() {
           </Stack>
           <Box sx={{ display: "flex", alignItems: "center", gap: 2, minWidth: "fit-content" }}>
             <Typography variant="h6" color="primary">
-              Total: ${totalPrice.toFixed(2)}
+              Total: ₹{totalPrice.toFixed(2)}
             </Typography>
             <Button variant="contained" onClick={() => setCheckoutOpen(true)}>
               Checkout
@@ -415,14 +415,14 @@ export default function MenuPage() {
               <Typography>
                 {item.name} x {item.quantity}
               </Typography>
-              <Typography>${(item.price * item.quantity).toFixed(2)}</Typography>
+              <Typography>₹{(item.price * item.quantity).toFixed(2)}</Typography>
             </Box>
           ))}
           <Divider sx={{ my: 2 }} />
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             <Typography variant="h6">Total:</Typography>
             <Typography variant="h6" color="primary">
-              ${totalPrice.toFixed(2)}
+              ₹{totalPrice.toFixed(2)}
             </Typography>
           </Box>
           <TextField

@@ -36,7 +36,7 @@ export default function PaymentHistoryPage() {
                 <TableRow key={payment.id}>
                   <TableCell>#{payment.id}</TableCell>
                   <TableCell>{payment.orderId}</TableCell>
-                  <TableCell>${payment.amount}</TableCell>
+                  <TableCell>₹{payment.amount}</TableCell>
                   <TableCell>{payment.method}</TableCell>
                   <TableCell>
                     <Chip
