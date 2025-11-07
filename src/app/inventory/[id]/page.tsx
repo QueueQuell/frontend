@@ -1,4 +1,4 @@
-import CommonLayout from "@/app/components/CommonLayout";
+import CommonLayout from "../../components/layouts/CommonLayout";
 import { Typography, Box, Paper, Grid, Avatar, Button, Chip } from "@mui/material";
 import Link from "next/link";
 import React from "react";

@@ -1,8 +1,8 @@
 "use client";
 import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
-import MuiProviders from "./components/MuiProviders";
-import PageTransition from "./components/PageTransition";
+import MuiProviders from "./components/providers/MuiProviders";
+import PageTransition from "./components/ui/PageTransition";
 
 const inter = Inter({
   variable: "--font-inter",

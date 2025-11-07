@@ -1,12 +1,12 @@
 "use client";
-import CommonLayout from "../components/CommonLayout";
 import CommonCard from "../components/CommonCard";
-import PageHeader from "../components/PageHeader";
-import PageFooter from "../components/PageFooter";
 import { Box, Grid } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ListIcon from "@mui/icons-material/List";
 import AddIcon from "@mui/icons-material/Add";
+import CommonLayout from "../components/layouts/CommonLayout";
+import PageHeader from "../components/ui/PageHeader";
+import PageFooter from "../components/ui/PageFooter";
 
 const orderActions = [
   { href: "/orders/list", label: "Order List", icon: ListIcon, description: "View all orders and their status" },

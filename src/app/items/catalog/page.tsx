@@ -1,5 +1,5 @@
 "use client";
-import CommonLayout from "../../components/CommonLayout";
+import CommonLayout from "../../components/layouts/CommonLayout";
 import { Typography, Box, Grid, Card, CardContent, CardMedia, CardActions, Button, Chip, Dialog, DialogTitle, DialogContent, DialogActions, TextField, FormControl, InputLabel, Select, MenuItem, Alert } from "@mui/material";
 import Link from "next/link";
 import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";

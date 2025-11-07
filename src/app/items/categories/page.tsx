@@ -1,5 +1,5 @@
 "use client";
-import CommonLayout from "../../components/CommonLayout";
+import CommonLayout from "../../components/layouts/CommonLayout";
 import { Typography, Box, Paper, Grid, Button, Chip, IconButton, Alert, Dialog, DialogTitle, DialogContent, DialogActions, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, CircularProgress, TextField, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import Link from "next/link";
 import CategoryIcon from "@mui/icons-material/Category";

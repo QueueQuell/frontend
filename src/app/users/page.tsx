@@ -1,7 +1,7 @@
 "use client";
-import CommonLayout from "../components/CommonLayout";
+import CommonLayout from "../components/layouts/CommonLayout";
 import CommonCard from "../components/CommonCard";
-import PageHeader from "../components/PageHeader";
+import PageHeader from "../components/ui/PageHeader";
 import { Box, Grid } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import LocationOnIcon from "@mui/icons-material/LocationOn";

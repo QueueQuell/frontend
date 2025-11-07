@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 import Inventory2Icon from "@mui/icons-material/Inventory2";
 import Link from "next/link";
-import CommonLayout from "../../components/CommonLayout";
+import CommonLayout from "../../components/layouts/CommonLayout";
 import { inventoryApi } from "../../lib/api";
 import { ItemOut } from "../../lib/types";
 

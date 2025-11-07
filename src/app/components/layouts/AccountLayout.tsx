@@ -1,9 +1,9 @@
 "use client";
 import React from "react";
-import Header from "./Header";
-import Footer from "./Footer";
-import AccountSidebar from "./AccountSidebar";
-import RequireAuth from "./RequireAuth";
+import RequireAuth from "../auth/RequireAuth";
+import Header from "../navigation/Header";
+import AccountSidebar from "../AccountSidebar";
+import Footer from "../navigation/Footer";
 
 type Props = {
     children: React.ReactNode;

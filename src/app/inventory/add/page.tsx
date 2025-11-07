@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import CommonLayout from "../../components/CommonLayout";
+import CommonLayout from "../../components/layouts/CommonLayout";
 import { Typography, Box, TextField, Button, Paper, Grid, MenuItem } from "@mui/material";
 
 export default function InventoryAddPage() {

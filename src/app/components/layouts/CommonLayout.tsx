@@ -1,11 +1,10 @@
 "use client";
 import React, { useState } from "react";
-import Header from "./Header";
-import Sidebar from "./Sidebar";
-import RequireAuth from "./RequireAuth";
-import PageLoader from "./PageLoader";
 import { Box, useMediaQuery, useTheme } from "@mui/material";
-import Footer from "./Footer";
+import RequireAuth from "../auth/RequireAuth";
+import Sidebar from "../navigation/Sidebar";
+import Header from "../navigation/Header";
+import Footer from "../navigation/Footer";
 
 type Props = {
     children: React.ReactNode;

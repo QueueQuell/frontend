@@ -1,5 +1,5 @@
 "use client";
-import CommonLayout from "../../components/CommonLayout";
+import CommonLayout from "../../components/layouts/CommonLayout";
 import { Typography, Box, Grid, Card, CardContent, CardActions, Button, Switch, FormControlLabel } from "@mui/material";
 import Link from "next/link";
 import CreditCardIcon from "@mui/icons-material/CreditCard";

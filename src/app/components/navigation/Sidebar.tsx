@@ -2,8 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { Box, List, Drawer, useMediaQuery, useTheme } from "@mui/material";
-import { usePathname } from "next/navigation";
-import SidebarSection from "./SidebarSection";
 import HomeIcon from "@mui/icons-material/Home";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -20,6 +18,7 @@ import HelpIcon from "@mui/icons-material/Help";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { IconButton } from "@mui/material";
+import SidebarSection from "../SidebarSection";
 
 type SectionKey =
   | "home"

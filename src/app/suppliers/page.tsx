@@ -1,8 +1,8 @@
 "use client";
-import CommonLayout from "../components/CommonLayout";
+import CommonLayout from "../components/layouts/CommonLayout";
 import CommonCard from "../components/CommonCard";
-import PageHeader from "../components/PageHeader";
-import PageFooter from "../components/PageFooter";
+import PageHeader from "../components/ui/PageHeader";
+import PageFooter from "../components/ui/PageFooter";
 import { Box, Grid } from "@mui/material";
 import BusinessIcon from "@mui/icons-material/Business";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
