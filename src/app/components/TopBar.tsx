@@ -6,7 +6,7 @@ import { Box, Button, Menu, MenuItem, IconButton } from "@mui/material";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
-import { useTheme as useCustomTheme } from "./MuiProviders";
+import { useTheme as useCustomTheme } from "./providers/MuiProviders";
 
 export default function TopBar() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
