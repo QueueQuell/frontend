@@ -159,6 +159,7 @@ export default function SignInSide() {
             component="img"
             src="https://pub-c5e31b5cdafb419fb247a8ac2e78df7a.r2.dev/public/assets/illustrations/illustration-dashboard.webp"
             alt="Dashboard illustration"
+            loading="lazy"
             sx={{ maxWidth: "100%", height: "auto", mb: 4 }}
           />
         </Box>

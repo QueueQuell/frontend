@@ -64,11 +64,56 @@ const apiRequest = async <T>(
   });
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.detail || `API request failed: ${response.statusText}`);
+    let errorMessage = response.statusText || 'API request failed';
+    let errorData: any = {};
+
+    try {
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        errorData = await response.json();
+        errorMessage = errorData.detail || errorData.message || errorMessage;
+      } else {
+        const text = await response.text();
+        if (text) {
+          errorMessage = text;
+        }
+      }
+    } catch (e) {
+      // Failed to parse error response, use default message based on status
+      if (response.status === 404) {
+        errorMessage = 'Resource not found';
+      } else if (response.status === 401) {
+        errorMessage = 'Unauthorized';
+      } else if (response.status === 403) {
+        errorMessage = 'Forbidden';
+      }
+    }
+
+    const error = new Error(errorMessage);
+    (error as any).status = response.status;
+    (error as any).data = errorData;
+    throw error;
   }
 
-  return response.json();
+  // Check if response has content before parsing JSON
+  const contentType = response.headers.get('content-type');
+  if (!contentType || !contentType.includes('application/json')) {
+    // For non-JSON responses, return empty object or null
+    return (response.status === 204 ? null : {}) as T;
+  }
+
+  const text = await response.text();
+  
+  if (!text || text.trim() === '') {
+    return null as T;
+  }
+
+  try {
+    return JSON.parse(text);
+  } catch (e) {
+    // If JSON parsing fails, return the text as-is (for non-JSON responses)
+    return text as unknown as T;
+  }
 };
 
 // Auth API
@@ -430,4 +475,13 @@ export const ordersApi = {
       method: 'POST',
       body: JSON.stringify(data),
     }),
+};
+
+// Subscription API
+export const subscriptionApi = {
+  getSubscription: (): Promise<any> =>
+    apiRequest<any>('/api/subscription'),
+
+  getSubscriptionHistory: (): Promise<any[]> =>
+    apiRequest<any[]>('/api/subscription/history'),
 };

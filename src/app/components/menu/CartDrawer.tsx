@@ -64,7 +64,11 @@ export default function CartDrawer({
               borderRadius: 1,
             }}
           >
-            <Avatar src={item.image} sx={{ width: 40, height: 40 }} />
+            <Avatar 
+              src={item.image} 
+              sx={{ width: 40, height: 40 }}
+              slotProps={{ img: { loading: "lazy" } }}
+            />
             <Box sx={{ flex: 1, minWidth: 0 }}>
               <Typography variant="body2" noWrap>
                 {item.name}

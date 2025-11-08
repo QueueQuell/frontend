@@ -1,12 +1,13 @@
 "use client";
 import CommonLayout from "../../components/layouts/CommonLayout";
-import { Typography, Box, Paper, Grid, Button, Chip, IconButton, Alert, Dialog, DialogTitle, DialogContent, DialogActions, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, CircularProgress, TextField, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { Typography, Box, Paper, Grid, Button, Chip, IconButton, Alert, Dialog, DialogTitle, DialogContent, DialogActions, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, CircularProgress } from "@mui/material";
 import Link from "next/link";
-import CategoryIcon from "@mui/icons-material/Category";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import CategoryIcon from "@mui/icons-material/Category";
 import { useState, useEffect } from "react";
+import CategoryForm, { CategoryFormData } from "@/app/components/categories/CategoryForm";
 
 interface Category {
   id: string;
@@ -28,8 +29,11 @@ export default function CategoriesPage() {
     open: false,
     category: null,
   });
-  const [addDialog, setAddDialog] = useState(false);
-  const [formData, setFormData] = useState({
+  const [editDialog, setEditDialog] = useState<{ open: boolean; category: Category | null }>({
+    open: false,
+    category: null,
+  });
+  const [formData, setFormData] = useState<CategoryFormData>({
     name: "",
     description: "",
     displayOrder: "",
@@ -37,7 +41,6 @@ export default function CategoriesPage() {
     color: "#1976d2",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [success, setSuccess] = useState(false);
 
   // Mock data - replace with actual API call
   useEffect(() => {
@@ -119,46 +122,62 @@ export default function CategoriesPage() {
     }
   };
 
-  const handleChange = (field: string, value: any) => {
-    setFormData(prev => ({
+  const handleEditClick = (category: Category) => {
+    setFormData({
+      name: category.name,
+      description: category.description || "",
+      displayOrder: category.displayOrder.toString(),
+      isActive: category.isActive,
+      color: category.color,
+    });
+    setEditDialog({ open: true, category });
+  };
+
+  const handleChange = (field: keyof CategoryFormData, value: any) => {
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
-  const handleSubmit = async (event: React.FormEvent) => {
+  const handleEditSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    // Basic validation
     if (!formData.name.trim()) {
       setError("Category name is required");
       return;
     }
+
+    if (!editDialog.category) return;
 
     setIsSubmitting(true);
     setError(null);
 
     try {
       // TODO: Replace with actual API call
-      // const response = await api.createCategory(formData);
+      // const response = await api.updateCategory(editDialog.category.id, formData);
 
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      const newCategory: Category = {
-        id: Date.now().toString(),
-        name: formData.name,
-        description: formData.description,
-        displayOrder: parseInt(formData.displayOrder) || categories.length + 1,
-        isActive: formData.isActive,
-        color: formData.color,
-        itemCount: 0,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
+      // Mock update
+      setCategories((prev) =>
+        prev.map((c) =>
+          c.id === editDialog.category!.id
+            ? {
+                ...c,
+                name: formData.name,
+                description: formData.description,
+                displayOrder: parseInt(formData.displayOrder) || c.displayOrder,
+                isActive: formData.isActive,
+                color: formData.color,
+                updatedAt: new Date().toISOString(),
+              }
+            : c
+        )
+      );
 
-      setCategories(prev => [...prev, newCategory]);
-      setSuccess(true);
+      setEditDialog({ open: false, category: null });
       setFormData({
         name: "",
         description: "",
@@ -166,14 +185,8 @@ export default function CategoriesPage() {
         isActive: true,
         color: "#1976d2",
       });
-      setAddDialog(false);
-
-      setTimeout(() => {
-        setSuccess(false);
-      }, 3000);
-
     } catch (err: any) {
-      setError(err.message || "Failed to create category. Please try again.");
+      setError(err.message || "Failed to update category. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -202,7 +215,8 @@ export default function CategoriesPage() {
             </Typography>
           </Box>
           <Button
-            onClick={() => setAddDialog(true)}
+            component={Link}
+            href="/items/categories/create"
             variant="contained"
             startIcon={<AddIcon />}
           >
@@ -323,7 +337,11 @@ export default function CategoriesPage() {
                       />
                     </TableCell>
                     <TableCell align="center">
-                      <IconButton size="small" color="primary">
+                      <IconButton 
+                        size="small" 
+                        color="primary"
+                        onClick={() => handleEditClick(category)}
+                      >
                         <EditIcon fontSize="small" />
                       </IconButton>
                       <IconButton
@@ -340,6 +358,39 @@ export default function CategoriesPage() {
             </Table>
           </TableContainer>
         </Paper>
+
+        {/* Edit Category Dialog */}
+        <Dialog
+          open={editDialog.open}
+          onClose={() => setEditDialog({ open: false, category: null })}
+          maxWidth="sm"
+          fullWidth
+        >
+          <DialogTitle>Edit Category</DialogTitle>
+          <DialogContent>
+            <Box sx={{ pt: 2 }}>
+              <form onSubmit={handleEditSubmit}>
+                <CategoryForm formData={formData} onChange={handleChange} />
+              </form>
+            </Box>
+          </DialogContent>
+          <DialogActions>
+            <Button 
+              onClick={() => setEditDialog({ open: false, category: null })} 
+              disabled={isSubmitting}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleEditSubmit}
+              variant="contained"
+              disabled={isSubmitting}
+              startIcon={<CategoryIcon />}
+            >
+              {isSubmitting ? "Updating..." : "Update Category"}
+            </Button>
+          </DialogActions>
+        </Dialog>
 
         {/* Delete Confirmation Dialog */}
         <Dialog
@@ -363,99 +414,6 @@ export default function CategoriesPage() {
               variant="contained"
             >
               Delete
-            </Button>
-          </DialogActions>
-        </Dialog>
-
-        {/* Add Category Dialog */}
-        <Dialog
-          open={addDialog}
-          onClose={() => setAddDialog(false)}
-          maxWidth="sm"
-          fullWidth
-        >
-          <DialogTitle>Add New Category</DialogTitle>
-          <DialogContent>
-            <Box sx={{ pt: 2 }}>
-              <form onSubmit={handleSubmit}>
-                <Grid container spacing={3}>
-                  <Grid size={{ xs: 12 }}>
-                    <TextField
-                      fullWidth
-                      required
-                      label="Category Name"
-                      value={formData.name}
-                      onChange={(e) => handleChange("name", e.target.value)}
-                      placeholder="e.g., Appetizers, Main Courses, Desserts"
-                      helperText="Enter a descriptive name for the category"
-                    />
-                  </Grid>
-
-                  <Grid size={{ xs: 12 }}>
-                    <TextField
-                      fullWidth
-                      multiline
-                      rows={3}
-                      label="Description"
-                      value={formData.description}
-                      onChange={(e) => handleChange("description", e.target.value)}
-                      placeholder="Optional description for the category"
-                      helperText="Provide additional context about this category"
-                    />
-                  </Grid>
-
-                  <Grid size={{ xs: 12, sm: 6 }}>
-                    <TextField
-                      fullWidth
-                      type="number"
-                      label="Display Order"
-                      value={formData.displayOrder}
-                      onChange={(e) => handleChange("displayOrder", e.target.value)}
-                      placeholder="1"
-                      helperText="Order in which categories appear (lower numbers first)"
-                      inputProps={{ min: 1 }}
-                    />
-                  </Grid>
-
-                  <Grid size={{ xs: 12, sm: 6 }}>
-                    <FormControl fullWidth>
-                      <InputLabel>Status</InputLabel>
-                      <Select
-                        value={formData.isActive ? "true" : "false"}
-                        label="Status"
-                        onChange={(e) => handleChange("isActive", e.target.value === "true")}
-                      >
-                        <MenuItem value="true">Active</MenuItem>
-                        <MenuItem value="false">Inactive</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Grid>
-
-                  <Grid size={{ xs: 12 }}>
-                    <TextField
-                      fullWidth
-                      type="color"
-                      label="Category Color"
-                      value={formData.color}
-                      onChange={(e) => handleChange("color", e.target.value)}
-                      helperText="Choose a color to represent this category"
-                    />
-                  </Grid>
-                </Grid>
-              </form>
-            </Box>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setAddDialog(false)} disabled={isSubmitting}>
-              Cancel
-            </Button>
-            <Button
-              onClick={handleSubmit}
-              variant="contained"
-              disabled={isSubmitting}
-              startIcon={<CategoryIcon />}
-            >
-              {isSubmitting ? "Creating..." : "Create Category"}
             </Button>
           </DialogActions>
         </Dialog>

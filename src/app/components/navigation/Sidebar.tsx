@@ -83,7 +83,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose, collapsed =
   const sidebarContent = (
     <React.Fragment>
       {/* Logo */}
-      <Box sx={{ display: "flex", justifyContent: "center", mb: 3, mt: 1 }}>
+      <Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>
         <Box
           component="img"
           src="/queuequell-logo.png"
@@ -110,7 +110,9 @@ export default function Sidebar({ mobileOpen = false, onMobileClose, collapsed =
           href="/items"
           subItems={[
             { label: "Catalog", href: "/items/catalog" },
+            { label: "Create Item", href: "/items/catalog/create" },
             { label: "Categories", href: "/items/categories" },
+            { label: "Create Category", href: "/items/categories/create" },
           ]}
           open={open.items}
           onToggle={() => toggle("items")}
@@ -155,6 +157,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose, collapsed =
           subItems={[
             { label: "Profile", href: "/users/profile" },
             { label: "Address", href: "/users/address" },
+            { label: "Subscription", href: "/user/manage/subscription" },
           ]}
           open={open.users}
           onToggle={() => toggle("users")}

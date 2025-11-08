@@ -54,6 +54,7 @@ export default function MenuItems({
                 component="img"
                 image={item.image}
                 alt={item.name}
+                loading="lazy"
                 sx={{ width: 140, height: 140, objectFit: "cover" }}
               />
               <CardContent sx={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
