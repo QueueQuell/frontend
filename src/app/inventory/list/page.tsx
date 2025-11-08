@@ -1,5 +1,5 @@
 "use client";
-import React, { useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import {
   TableContainer,
   Paper,
@@ -14,10 +14,14 @@ import {
   Button,
   Stack,
   Chip,
+  CircularProgress,
+  Alert,
 } from "@mui/material";
 import Inventory2Icon from "@mui/icons-material/Inventory2";
 import Link from "next/link";
-import CommonLayout from "../../components/CommonLayout";
+import CommonLayout from "../../components/layouts/CommonLayout";
+import { inventoryApi } from "../../lib/api";
+import { ItemOut } from "../../lib/types";
 
 type Item = {
   id: string;
@@ -41,33 +45,32 @@ function randomDateWithinDays(days = 30) {
 }
 
 export default function InventoryListPage() {
-  const sampleData: Item[] = useMemo(() => {
-    const names = [
-      "Margherita Pizza",
-      "Caesar Salad",
-      "Grilled Chicken Sandwich",
-      "Spaghetti Bolognese",
-      "Beef Burger",
-      "French Fries",
-      "Tiramisu",
-      "Lemonade",
-    ];
-    const categories = ["Food", "Food", "Food", "Food", "Food", "Sides", "Dessert", "Beverage"];
-    const units = ["pcs", "kg", "ltr", "box"];
-    return names.map((n, i) => ({
-      id: `itm-${1000 + i}`,
-      name: n,
-      sku: `SKU-${randInt(10000, 99999)}`,
-      category: categories[i] ?? "Food",
-      quantity: randInt(0, 200),
-      unit: units[i % units.length],
-      unitCost: parseFloat((Math.random() * 20 + 1).toFixed(2)),
-      location: ["Main Kitchen", "Cold Room", "Pantry"][i % 3],
-      lastUpdated: randomDateWithinDays(90),
-    }));
+  const [items, setItems] = useState<ItemOut[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        setLoading(true);
+        const data = await inventoryApi.getItems();
+        setItems(data);
+      } catch (err) {
+        console.error('Failed to fetch inventory items:', err);
+        setError('Failed to load inventory items. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchItems();
   }, []);
 
-  const totalValue = sampleData.reduce((s, it) => s + it.quantity * it.unitCost, 0);
+  const totalValue = items.reduce((sum, item) => {
+    // Note: API doesn't provide unit cost, so we'll use a placeholder or calculate differently
+    // For now, we'll assume unit cost is not available from API
+    return sum;
+  }, 0);
 
   return (
     <CommonLayout>
@@ -105,52 +108,77 @@ export default function InventoryListPage() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {sampleData.map((row) => (
-                <TableRow key={row.id} hover>
-                  <TableCell>
-                    <Stack direction="row" spacing={2} alignItems="center">
-                      <Avatar sx={{ width: 34, height: 34, bgcolor: "primary.main" }}>
-                        {row.name.charAt(0)}
-                      </Avatar>
-                      <Box>
-                        <Typography variant="subtitle2">{row.name}</Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          {row.id}
-                        </Typography>
-                      </Box>
-                    </Stack>
-                  </TableCell>
-                  <TableCell>{row.sku}</TableCell>
-                  <TableCell>
-                    <Chip label={row.category} size="small" color="primary" />
-                  </TableCell>
-                  <TableCell align="right">
-                    <Typography variant="body1" fontWeight="medium">
-                      {row.quantity}
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={9} align="center" sx={{ py: 4 }}>
+                    <CircularProgress />
+                    <Typography variant="body2" sx={{ mt: 1 }}>
+                      Loading inventory items...
                     </Typography>
                   </TableCell>
-                  <TableCell>{row.unit}</TableCell>
-                  <TableCell align="right">${row.unitCost.toFixed(2)}</TableCell>
-                  <TableCell>{row.location}</TableCell>
-                  <TableCell align="right">
-                    ${(row.quantity * row.unitCost).toFixed(2)}
-                  </TableCell>
-                  <TableCell>
-                    <Button component={Link} href={`/inventory/${row.id}`} size="small" variant="outlined">
-                      View
-                    </Button>
+                </TableRow>
+              ) : error ? (
+                <TableRow>
+                  <TableCell colSpan={9} align="center" sx={{ py: 4 }}>
+                    <Alert severity="error">{error}</Alert>
                   </TableCell>
                 </TableRow>
-              ))}
-              <TableRow>
-                <TableCell colSpan={7} />
-                <TableCell align="right" sx={{ fontWeight: 700 }}>
-                  Total Value:
-                </TableCell>
-                <TableCell align="left" sx={{ fontWeight: 700 }}>
-                  ${totalValue.toFixed(2)}
-                </TableCell>
-              </TableRow>
+              ) : items.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={9} align="center" sx={{ py: 4 }}>
+                    <Typography variant="body2" color="text.secondary">
+                      No inventory items found.
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                items.map((item) => (
+                  <TableRow key={item.id} hover>
+                    <TableCell>
+                      <Stack direction="row" spacing={2} alignItems="center">
+                        <Avatar sx={{ width: 34, height: 34, bgcolor: "primary.main" }}>
+                          {item.name.charAt(0)}
+                        </Avatar>
+                        <Box>
+                          <Typography variant="subtitle2">{item.name}</Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {item.id}
+                          </Typography>
+                        </Box>
+                      </Stack>
+                    </TableCell>
+                    <TableCell>{item.sku}</TableCell>
+                    <TableCell>
+                      <Chip label="Food" size="small" color="primary" />
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography variant="body1" fontWeight="medium">
+                        0 {/* Placeholder - stock levels need separate API call */}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>{item.unit}</TableCell>
+                    <TableCell align="right">-</TableCell>
+                    <TableCell>-</TableCell>
+                    <TableCell align="right">-</TableCell>
+                    <TableCell>
+                      <Button component={Link} href={`/inventory/${item.id}`} size="small" variant="outlined">
+                        View
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+              {!loading && !error && items.length > 0 && (
+                <TableRow>
+                  <TableCell colSpan={7} />
+                  <TableCell align="right" sx={{ fontWeight: 700 }}>
+                    Total Value:
+                  </TableCell>
+                  <TableCell align="left" sx={{ fontWeight: 700 }}>
+                    ${totalValue.toFixed(2)}
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </TableContainer>

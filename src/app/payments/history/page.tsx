@@ -1,5 +1,5 @@
 "use client";
-import CommonLayout from "../../components/CommonLayout";
+import CommonLayout from "../../components/layouts/CommonLayout";
 import { Typography, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip } from "@mui/material";
 import Link from "next/link";
 import Button from "@mui/material/Button";
@@ -36,7 +36,7 @@ export default function PaymentHistoryPage() {
                 <TableRow key={payment.id}>
                   <TableCell>#{payment.id}</TableCell>
                   <TableCell>{payment.orderId}</TableCell>
-                  <TableCell>${payment.amount}</TableCell>
+                  <TableCell>₹{payment.amount}</TableCell>
                   <TableCell>{payment.method}</TableCell>
                   <TableCell>
                     <Chip

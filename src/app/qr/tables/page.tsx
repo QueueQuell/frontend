@@ -1,7 +1,7 @@
 "use client";
-import CommonLayout from "../../components/CommonLayout";
-import PageHeader from "../../components/PageHeader";
-import PageFooter from "../../components/PageFooter";
+import CommonLayout from "../../components/layouts/CommonLayout";
+import PageHeader from "../../components/ui/PageHeader";
+import PageFooter from "../../components/ui/PageFooter";
 import { Box, Grid, Card, CardContent, CardActions, Button, Chip, Drawer, Typography } from "@mui/material";
 import QrCodeIcon from "@mui/icons-material/QrCode";
 import TableRestaurantIcon from "@mui/icons-material/TableRestaurant";

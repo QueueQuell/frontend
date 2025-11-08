@@ -1,5 +1,5 @@
 "use client";
-import CommonLayout from "../../components/CommonLayout";
+import CommonLayout from "../../components/layouts/CommonLayout";
 import { Typography, Box, Grid, Card, CardContent, CardActions, Button, Chip, LinearProgress } from "@mui/material";
 import Link from "next/link";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";

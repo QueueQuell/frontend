@@ -1,5 +1,5 @@
 "use client";
-import CommonLayout from "../../components/CommonLayout";
+import CommonLayout from "../../components/layouts/CommonLayout";
 import CommonCard from "../../components/CommonCard";
 import { Typography, Box, Grid, Button, Chip } from "@mui/material";
 import Link from "next/link";

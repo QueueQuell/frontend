@@ -24,7 +24,7 @@ export default function CommonCard({
 }: CommonCardProps) {
   const cardContent = (
     <CardContent sx={{ textAlign: "center", p: 3 }}>
-      {Icon && <Icon sx={{ fontSize: 48, color: "primary.main", mb: 2 }} />}
+      {Icon && <Icon sx={{ fontSize: 48, color: "#00b894", mb: 2 }} />}
       <Typography variant="h6" component="div" gutterBottom>
         {title}
       </Typography>
@@ -38,7 +38,7 @@ export default function CommonCard({
   );
 
   const card = (
-    <Card sx={{ height: "100%" }} raised elevation={6}>
+    <Card sx={{ height: "100%" }}>
       {href || onClick ? (
         <CardActionArea
           component={href ? "a" : "div"}

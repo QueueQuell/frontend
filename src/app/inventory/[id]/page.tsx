@@ -1,5 +1,4 @@
-"use client";
-import CommonLayout from "@/app/components/CommonLayout";
+import CommonLayout from "../../components/layouts/CommonLayout";
 import { Typography, Box, Paper, Grid, Avatar, Button, Chip } from "@mui/material";
 import Link from "next/link";
 import React from "react";
@@ -41,11 +40,11 @@ export default function InventoryItemPage({ params }: Props) {
             </Grid>
             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
               <Typography variant="h6">Unit Cost</Typography>
-              <Typography variant="h4">$12.99</Typography>
+              <Typography variant="h4">₹12.99</Typography>
             </Grid>
             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
               <Typography variant="h6">Total Value</Typography>
-              <Typography variant="h4">$649.50</Typography>
+              <Typography variant="h4">₹649.50</Typography>
             </Grid>
             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
               <Typography variant="h6">Last Updated</Typography>
@@ -62,15 +61,24 @@ export default function InventoryItemPage({ params }: Props) {
           </Typography>
         </Paper>
         <Box sx={{ mt: 2 }}>
-          <Button component={Link} href="/inventory" variant="outlined">
-            ← Back to Inventory
-          </Button>
+          <Link href="/inventory">
+            <Button variant="outlined">
+              ← Back to Inventory
+            </Button>
+          </Link>
         </Box>
       </Box>
     </CommonLayout>
   );
 }
 
-type LayoutProps = {
-  children: React.ReactNode;
-};
+export async function generateStaticParams() {
+  // For static export, we need to provide static params for dynamic routes.
+  // Since this is a demo, we'll generate a few example IDs.
+  // In a real app, fetch from your data source.
+  return [
+    { id: '1' },
+    { id: '2' },
+    { id: '3' },
+  ];
+}

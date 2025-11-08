@@ -1,5 +1,5 @@
 "use client";
-import CommonLayout from "../../components/CommonLayout";
+import CommonLayout from "../../components/layouts/CommonLayout";
 import { Typography, Box, Paper, Grid, Card, CardContent, LinearProgress, Button } from "@mui/material";
 import Link from "next/link";
 import LoyaltyIcon from "@mui/icons-material/Loyalty";

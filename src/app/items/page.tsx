@@ -1,17 +1,18 @@
 "use client";
-import CommonLayout from "../components/CommonLayout";
+import CommonLayout from "../components/layouts/CommonLayout";
 import CommonCard from "../components/CommonCard";
-import PageHeader from "../components/PageHeader";
-import PageFooter from "../components/PageFooter";
+import PageHeader from "../components/ui/PageHeader";
+import PageFooter from "../components/ui/PageFooter";
 import { Box, Grid } from "@mui/material";
 import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
-import ListIcon from "@mui/icons-material/List";
+import CategoryIcon from "@mui/icons-material/Category";
 import AddIcon from "@mui/icons-material/Add";
 
 const itemActions = [
   { href: "/items/catalog", label: "Menu Catalog", icon: RestaurantMenuIcon, description: "Browse complete menu items" },
-  { href: "/items/list", label: "Item List", icon: ListIcon, description: "View all items with details" },
-  { href: "/items/add", label: "Add Item", icon: AddIcon, description: "Create new menu item" },
+  { href: "/items/catalog/create", label: "Create Item", icon: AddIcon, description: "Add a new item to the menu" },
+  { href: "/items/categories", label: "Categories", icon: CategoryIcon, description: "Manage item categories" },
+  { href: "/items/categories/create", label: "Create Category", icon: AddIcon, description: "Add a new category for menu items" },
 ];
 
 export default function ItemsPage() {

@@ -1,4 +1,4 @@
-import AccountLayout from "../../components/AccountLayout";
+import AccountLayout from "../../components/layouts/AccountLayout";
 import { Typography, Box, TextField, Button, Paper } from "@mui/material";
 
 export default function ProfilePage() {
