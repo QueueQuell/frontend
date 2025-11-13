@@ -19,10 +19,10 @@ interface MenuItem {
 }
 
 const menuItems: MenuItem[] = [
-  { id: 1, name: "Margherita Pizza", category: "Pizza", price: 12.99, image: "/api/placeholder/300/200", available: true },
-  { id: 2, name: "Caesar Salad", category: "Salads", price: 8.99, image: "/api/placeholder/300/200", available: true },
-  { id: 3, name: "Grilled Chicken", category: "Main Course", price: 15.99, image: "/api/placeholder/300/200", available: false },
-  { id: 4, name: "Chocolate Cake", category: "Desserts", price: 6.99, image: "/api/placeholder/300/200", available: true },
+  { id: 1, name: "Margherita Pizza", category: "Pizza", price: 12.99, image: "https://recipesblob.oetker.in/assets/d8a4b00c292a43adbb9f96798e028f01/1272x764/pizza-pollo-arrostojpg.webp", available: true },
+  { id: 2, name: "Caesar Salad", category: "Salads", price: 8.99, image: "https://recipesblob.oetker.in/assets/d8a4b00c292a43adbb9f96798e028f01/1272x764/pizza-pollo-arrostojpg.webp", available: true },
+  { id: 3, name: "Grilled Chicken", category: "Main Course", price: 15.99, image: "https://recipesblob.oetker.in/assets/d8a4b00c292a43adbb9f96798e028f01/1272x764/pizza-pollo-arrostojpg.webp", available: false },
+  { id: 4, name: "Chocolate Cake", category: "Desserts", price: 6.99, image: "https://recipesblob.oetker.in/assets/d8a4b00c292a43adbb9f96798e028f01/1272x764/pizza-pollo-arrostojpg.webp", available: true },
 ];
 
 export default function MenuCatalogPage() {
@@ -41,8 +41,20 @@ export default function MenuCatalogPage() {
     price: "",
     imageUrl: "",
     description: "",
-    availability: "available",
+    displayOrder: "",
+    tags: "",
+    availabilityDays: [],
+    availabilityTimeSlots: "",
+    spicyLevel: "",
+    featured: false,
+    recommended: false,
+    specialInstructions: "",
     preparationTime: "",
+    cuisine: "",
+    extraOptions: [],
+    sectionId: "",
+    active: true,
+    additionalInfo: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -54,8 +66,20 @@ export default function MenuCatalogPage() {
       price: item.price.toString(),
       imageUrl: item.image,
       description: "",
-      availability: item.available ? "available" : "unavailable",
+      displayOrder: "",
+      tags: "",
+      availabilityDays: [],
+      availabilityTimeSlots: "",
+      spicyLevel: "",
+      featured: false,
+      recommended: false,
+      specialInstructions: "",
       preparationTime: "",
+      cuisine: "",
+      extraOptions: [],
+      sectionId: "",
+      active: item.available,
+      additionalInfo: "",
     });
     setEditDialog({ open: true, item });
   };
@@ -105,7 +129,7 @@ export default function MenuCatalogPage() {
                 category: formData.category,
                 price: parseFloat(formData.price),
                 image: formData.imageUrl || i.image,
-                available: formData.availability === "available",
+                available: formData.active,
               }
             : i
         )
@@ -118,8 +142,20 @@ export default function MenuCatalogPage() {
         price: "",
         imageUrl: "",
         description: "",
-        availability: "available",
+        displayOrder: "",
+        tags: "",
+        availabilityDays: [],
+        availabilityTimeSlots: "",
+        spicyLevel: "",
+        featured: false,
+        recommended: false,
+        specialInstructions: "",
         preparationTime: "",
+        cuisine: "",
+        extraOptions: [],
+        sectionId: "",
+        active: true,
+        additionalInfo: "",
       });
     } catch (err: any) {
       setError(err.message || "Failed to update item. Please try again.");

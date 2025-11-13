@@ -4,7 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
+    "dev:local": "cross-env NODE_ENV=development next dev --turbopack",
+    "dev:prod": "cross-env NODE_ENV=production next dev --turbopack",
     "build": "next build --turbopack",
+    "build:dev": "cross-env NODE_ENV=development next build --turbopack",
+    "build:prod": "cross-env NODE_ENV=production next build --turbopack",
     "start": "next start",
     "lint": "eslint"
   },
@@ -28,6 +32,7 @@
     "@types/node": "^24.9.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "cross-env": "^7.0.3",
     "eslint": "^9",
     "eslint-config-next": "^16.0.0",
     "typescript": "^5"

@@ -18,8 +18,20 @@ export default function CreateItemPage() {
     price: "",
     imageUrl: "",
     description: "",
-    availability: "available",
+    displayOrder: "",
+    tags: "",
+    availabilityDays: [],
+    availabilityTimeSlots: "",
+    spicyLevel: "",
+    featured: false,
+    recommended: false,
+    specialInstructions: "",
     preparationTime: "",
+    cuisine: "",
+    extraOptions: [],
+    sectionId: "",
+    active: true,
+    additionalInfo: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -66,8 +78,20 @@ export default function CreateItemPage() {
         price: "",
         imageUrl: "",
         description: "",
-        availability: "available",
+        displayOrder: "",
+        tags: "",
+        availabilityDays: [],
+        availabilityTimeSlots: "",
+        spicyLevel: "",
+        featured: false,
+        recommended: false,
+        specialInstructions: "",
         preparationTime: "",
+        cuisine: "",
+        extraOptions: [],
+        sectionId: "",
+        active: true,
+        additionalInfo: "",
       });
 
       setTimeout(() => {

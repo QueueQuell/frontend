@@ -7,7 +7,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CategoryIcon from "@mui/icons-material/Category";
 import { useState, useEffect } from "react";
-import CategoryForm, { CategoryFormData } from "@/app/components/categories/CategoryForm";
+import SectionForm, { SectionFormData } from "@/app/components/section/SectionForm";
 
 interface Category {
   id: string;
@@ -33,7 +33,7 @@ export default function CategoriesPage() {
     open: false,
     category: null,
   });
-  const [formData, setFormData] = useState<CategoryFormData>({
+  const [formData, setFormData] = useState<SectionFormData>({
     name: "",
     description: "",
     displayOrder: "",
@@ -133,7 +133,7 @@ export default function CategoriesPage() {
     setEditDialog({ open: true, category });
   };
 
-  const handleChange = (field: keyof CategoryFormData, value: any) => {
+  const handleChange = (field: keyof SectionFormData, value: any) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
@@ -370,7 +370,7 @@ export default function CategoriesPage() {
           <DialogContent>
             <Box sx={{ pt: 2 }}>
               <form onSubmit={handleEditSubmit}>
-                <CategoryForm formData={formData} onChange={handleChange} />
+                <SectionForm formData={formData} onChange={handleChange} />
               </form>
             </Box>
           </DialogContent>

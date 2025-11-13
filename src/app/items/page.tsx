@@ -11,8 +11,8 @@ import AddIcon from "@mui/icons-material/Add";
 const itemActions = [
   { href: "/items/catalog", label: "Menu Catalog", icon: RestaurantMenuIcon, description: "Browse complete menu items" },
   { href: "/items/catalog/create", label: "Create Item", icon: AddIcon, description: "Add a new item to the menu" },
-  { href: "/items/categories", label: "Categories", icon: CategoryIcon, description: "Manage item categories" },
-  { href: "/items/categories/create", label: "Create Category", icon: AddIcon, description: "Add a new category for menu items" },
+  { href: "/items/sections", label: "Sections", icon: CategoryIcon, description: "Manage item Sections" },
+  { href: "/items/sections/create", label: "Create Section", icon: AddIcon, description: "Add a new section for menu items" },
 ];
 
 export default function ItemsPage() {

@@ -2,15 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { Box, List, Drawer, useMediaQuery, useTheme } from "@mui/material";
-import HomeIcon from "@mui/icons-material/Home";
-import InventoryIcon from "@mui/icons-material/Inventory";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import PeopleIcon from "@mui/icons-material/People";
-import PaymentIcon from "@mui/icons-material/Payment";
-import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
-import LocalShippingIcon from "@mui/icons-material/LocalShipping";
-import GroupIcon from "@mui/icons-material/Group";
-import QrCodeIcon from "@mui/icons-material/QrCode";
 import AnalyticsIcon from "@mui/icons-material/Analytics";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import SettingsIcon from "@mui/icons-material/Settings";
@@ -19,29 +10,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { IconButton } from "@mui/material";
 import SidebarSection from "../SidebarSection";
-
-type SectionKey =
-  | "home"
-  | "inventory"
-  | "orders"
-  | "users"
-  | "payments"
-  | "items"
-  | "suppliers"
-  | "customers"
-  | "qr";
-
-const DEFAULT_STATE: Record<SectionKey, boolean> = {
-  home: false,
-  inventory: false,
-  orders: false,
-  users: false,
-  payments: false,
-  items: false,
-  suppliers: false,
-  customers: false,
-  qr: false,
-};
+import { SectionKey, DEFAULT_STATE, SIDEBAR_ITEMS } from "./SidebarConfig";
 
 interface SidebarProps {
   mobileOpen?: boolean;
@@ -56,7 +25,6 @@ export default function Sidebar({ mobileOpen = false, onMobileClose, collapsed =
   const [open, setOpen] = useState<Record<SectionKey, boolean>>(DEFAULT_STATE);
 
   useEffect(() => {
-    // try to restore state from localStorage so expand/collapse persists per user
     try {
       const raw = localStorage.getItem("sidebar-open");
       if (raw) setOpen(JSON.parse(raw));
@@ -93,141 +61,27 @@ export default function Sidebar({ mobileOpen = false, onMobileClose, collapsed =
       </Box>
 
       <List sx={{ display: "flex", flexDirection: "column", gap: 1, flexGrow: 1 }}>
+        {SIDEBAR_ITEMS.map((item) => (
+          <SidebarSection
+            key={item.key}
+            title={item.title}
+            icon={item.icon}
+            href={item.href}
+            subItems={item.subItems}
+            open={open[item.key]}
+            onToggle={() => toggle(item.key)}
+            collapsed={collapsed}
+          />
+        ))}
 
-        <SidebarSection
-          title="Dashboard"
-          icon={<HomeIcon />}
-          href="/home"
-          subItems={[]}
-          open={open.home}
-          onToggle={() => toggle("home")}
-          collapsed={collapsed}
-        />
-        
-        <SidebarSection
-          title="Menu"
-          icon={<RestaurantMenuIcon />}
-          href="/items"
-          subItems={[
-            { label: "Catalog", href: "/items/catalog" },
-            { label: "Create Item", href: "/items/catalog/create" },
-            { label: "Categories", href: "/items/categories" },
-            { label: "Create Category", href: "/items/categories/create" },
-          ]}
-          open={open.items}
-          onToggle={() => toggle("items")}
-          collapsed={collapsed}
-        />
-
-        <SidebarSection
-          title="Order"
-          icon={<ShoppingCartIcon />}
-          href="/orders"
-          subItems={[
-            { label: "List Orders", href: "/orders/list" },
-            { label: "Create Order", href: "/orders/create" },
-          ]}
-          open={open.orders}
-          onToggle={() => toggle("orders")}
-          collapsed={collapsed}
-        />
-
-
-
-        <SidebarSection
-          title="Inventory"
-          icon={<InventoryIcon />}
-          href="/inventory"
-          subItems={[
-            { label: "List Inventory", href: "/inventory/list" },
-            { label: "Add Inventory", href: "/inventory/add" },
-            { label: "Stock Adjustment", href: "/inventory/adjust" },
-          ]}
-          open={open.inventory}
-          onToggle={() => toggle("inventory")}
-          collapsed={collapsed}
-        />
-
-
-
-        <SidebarSection
-          title="Users"
-          icon={<PeopleIcon />}
-          href="/users"
-          subItems={[
-            { label: "Profile", href: "/users/profile" },
-            { label: "Address", href: "/users/address" },
-            { label: "Subscription", href: "/user/manage/subscription" },
-          ]}
-          open={open.users}
-          onToggle={() => toggle("users")}
-          collapsed={collapsed}
-        />
-
-        <SidebarSection
-          title="Payments"
-          icon={<PaymentIcon />}
-          href="/payments"
-          subItems={[
-            { label: "Payment History", href: "/payments/history" },
-            { label: "Payment Methods", href: "/payments/methods" },
-          ]}
-          open={open.payments}
-          onToggle={() => toggle("payments")}
-          collapsed={collapsed}
-        />
-
-
-
-        <SidebarSection
-          title="Suppliers"
-          icon={<LocalShippingIcon />}
-          href="/suppliers"
-          subItems={[
-            { label: "List Suppliers", href: "/suppliers/list" },
-            { label: "Add Supplier", href: "/suppliers/add" },
-            { label: "Performance", href: "/suppliers/performance" },
-          ]}
-          open={open.suppliers}
-          onToggle={() => toggle("suppliers")}
-          collapsed={collapsed}
-        />
-
-        <SidebarSection
-          title="Customers"
-          icon={<GroupIcon />}
-          href="/customers"
-          subItems={[
-            { label: "List Customers", href: "/customers/list" },
-            { label: "Loyalty", href: "/customers/loyalty" },
-            { label: "Add Customer", href: "/customers/add" },
-          ]}
-          open={open.customers}
-          onToggle={() => toggle("customers")}
-          collapsed={collapsed}
-        />
-
-        <SidebarSection
-          title="QR Management"
-          icon={<QrCodeIcon />}
-          href="/qr"
-          subItems={[
-            { label: "Generate QR", href: "/qr/generate" },
-            { label: "Tables", href: "/qr/tables" },
-            { label: "Menus", href: "/qr/menus" },
-          ]}
-          open={open.qr}
-          onToggle={() => toggle("qr")}
-          collapsed={collapsed}
-        />
-
+        {/* Static sections without toggle */}
         <SidebarSection
           title="Analytics"
           icon={<AnalyticsIcon />}
           href="/analytics"
           subItems={[]}
           open={false}
-          onToggle={() => { }}
+          onToggle={() => {}}
           collapsed={collapsed}
         />
 
@@ -237,7 +91,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose, collapsed =
           href="/notifications"
           subItems={[]}
           open={false}
-          onToggle={() => { }}
+          onToggle={() => {}}
           collapsed={collapsed}
         />
 
@@ -247,7 +101,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose, collapsed =
           href="/settings"
           subItems={[]}
           open={false}
-          onToggle={() => { }}
+          onToggle={() => {}}
           collapsed={collapsed}
         />
       </List>
@@ -260,7 +114,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose, collapsed =
           href="/help"
           subItems={[]}
           open={false}
-          onToggle={() => { }}
+          onToggle={() => {}}
           collapsed={collapsed}
         />
 
@@ -280,7 +134,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose, collapsed =
           </IconButton>
         </Box>
       </Box>
-    </ React.Fragment>
+    </React.Fragment>
   );
 
   if (isMobile) {
@@ -329,6 +183,6 @@ export default function Sidebar({ mobileOpen = false, onMobileClose, collapsed =
       }}
     >
       {sidebarContent}
-    </ Box>
+    </Box>
   );
 }

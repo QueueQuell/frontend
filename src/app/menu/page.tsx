@@ -4,7 +4,7 @@ import { Box, useMediaQuery, useTheme, SwipeableDrawer } from "@mui/material";
 import { Restaurant, RestaurantMenu, Cake, LocalDrink } from "@mui/icons-material";
 import Footer from "../components/navigation/Footer";
 import MenuHeader from "../components/menu/MenuHeader";
-import MenuCategories from "../components/menu/MenuCategories";
+import MenuSections from "../components/menu/MenuSections";
 import MenuItems from "../components/menu/MenuItems";
 import CartDrawer from "../components/menu/CartDrawer";
 import CheckoutDialog from "../components/menu/CheckoutDialog";
@@ -169,7 +169,7 @@ export default function MenuPage() {
           onClose={() => setDrawerOpen(false)}
           onOpen={() => setDrawerOpen(true)}
         >
-          <MenuCategories
+          <MenuSections
             categories={menuData.categories}
             selectedCategory={selectedCategory}
             onCategorySelect={(categoryId) => {
@@ -182,7 +182,7 @@ export default function MenuPage() {
 
       <Box sx={{ display: "flex", flex: 1 }}>
         {!isSmallScreen && (
-          <MenuCategories
+          <MenuSections
             categories={menuData.categories}
             selectedCategory={selectedCategory}
             onCategorySelect={setSelectedCategory}
