@@ -172,6 +172,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose, collapsed =
         boxShadow: "2px 0 8px rgba(0,0,0,0.05)",
         transition: "width 0.3s ease",
         overflowY: "auto",
+        overflowX: "hidden",
         display: "flex",
         flexDirection: "column",
         position: "fixed",
@@ -180,6 +181,11 @@ export default function Sidebar({ mobileOpen = false, onMobileClose, collapsed =
         p: 2,
         height: "100vh",
         zIndex: 1000,
+        "&::-webkit-scrollbar": {
+          display: "none",
+        },
+        scrollbarWidth: "none",
+        msOverflowStyle: "none",
       }}
     >
       {sidebarContent}
