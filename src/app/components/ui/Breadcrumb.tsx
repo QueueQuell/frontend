@@ -26,9 +26,9 @@ export default function Breadcrumb({ items }: BreadcrumbProps) {
           <Link
             key={item.label}
             underline="hover"
-            color="inherit"
+            color="text.secondary"
             onClick={() => item.href && router.push(item.href)}
-            sx={{ cursor: item.href ? "pointer" : "default" }}
+            sx={{ cursor: item.href ? "pointer" : "default", fontWeight: "bold" }}
           >
             {item.label}
           </Link>
