@@ -60,7 +60,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose, collapsed =
         />
       </Box>
 
-      <List sx={{ display: "flex", flexDirection: "column", gap: 1, flexGrow: 1 }}>
+      <List sx={{ display: "flex", flexDirection: "column", gap: 0.25, flexGrow: 1 }}>
         {SIDEBAR_ITEMS.map((item) => (
           <SidebarSection
             key={item.key}
