@@ -8,6 +8,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
 import { useState } from "react";
 import ItemForm, { ItemFormData } from "@/app/components/items/ItemForm";
+import Breadcrumb from "../../components/ui/Breadcrumb";
 
 interface MenuItem {
   id: number;
@@ -124,13 +125,13 @@ export default function MenuCatalogPage() {
         prev.map((i) =>
           i.id === editDialog.item!.id
             ? {
-                ...i,
-                name: formData.name,
-                category: formData.category,
-                price: parseFloat(formData.price),
-                image: formData.imageUrl || i.image,
-                available: formData.active,
-              }
+              ...i,
+              name: formData.name,
+              category: formData.category,
+              price: parseFloat(formData.price),
+              image: formData.imageUrl || i.image,
+              available: formData.active,
+            }
             : i
         )
       );
@@ -181,12 +182,18 @@ export default function MenuCatalogPage() {
     <CommonLayout>
       <Box sx={{ p: 3 }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
-          <Typography variant="h4" gutterBottom>
-            Menu Catalog
-          </Typography>
-          <Button component={Link} href="/items/catalog/create" variant="contained" startIcon={<AddIcon />}>
-            Add Item
-          </Button>
+          <Breadcrumb
+            items={[
+              { label: "Home", href: "/home" },
+              { label: "Items", href: "/items" },
+              { label: "Catalog" },
+            ]}
+          />
+          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+            <Button component={Link} href="/items/catalog/create" variant="contained" startIcon={<AddIcon />}>
+              Add Item
+            </Button>
+          </Box>
         </Box>
         {error && (
           <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
@@ -223,15 +230,15 @@ export default function MenuCatalogPage() {
                   />
                 </CardContent>
                 <CardActions>
-                  <Button 
-                    size="small" 
+                  <Button
+                    size="small"
                     onClick={() => handleEditClick(item)}
                     startIcon={<EditIcon />}
                   >
                     Edit
                   </Button>
-                  <Button 
-                    size="small" 
+                  <Button
+                    size="small"
                     color="error"
                     onClick={() => setDeleteDialog({ open: true, item })}
                     startIcon={<DeleteIcon />}
@@ -260,8 +267,8 @@ export default function MenuCatalogPage() {
             </Box>
           </DialogContent>
           <DialogActions>
-            <Button 
-              onClick={() => setEditDialog({ open: false, item: null })} 
+            <Button
+              onClick={() => setEditDialog({ open: false, item: null })}
               disabled={isSubmitting}
             >
               Cancel

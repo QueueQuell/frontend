@@ -5,6 +5,7 @@ import Link from "next/link";
 import PersonIcon from "@mui/icons-material/Person";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import Breadcrumb from "../../components/ui/Breadcrumb";
 
 const customers = [
   { id: 1, name: "John Doe", email: "john@example.com", phone: "+1234567890", status: "Active", orders: 15 },
@@ -17,9 +18,13 @@ export default function CustomerListPage() {
     <CommonLayout>
       <Box sx={{ p: 3 }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
-          <Typography variant="h4" gutterBottom>
-            Customer List
-          </Typography>
+          <Breadcrumb
+            items={[
+              { label: "Home", href: "/home" },
+              { label: "Customers", href: "/customers" },
+              { label: "List" },
+            ]}
+          />
           <Button component={Link} href="/customers/add" variant="contained" startIcon={<PersonIcon />}>
             Add Customer
           </Button>

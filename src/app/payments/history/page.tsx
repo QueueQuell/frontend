@@ -4,6 +4,7 @@ import { Typography, Box, Paper, Table, TableBody, TableCell, TableContainer, Ta
 import Link from "next/link";
 import Button from "@mui/material/Button";
 import ReceiptIcon from "@mui/icons-material/Receipt";
+import Breadcrumb from "../../components/ui/Breadcrumb";
 
 const paymentHistory = [
   { id: 1001, orderId: "ORD-001", amount: 45.97, method: "Credit Card", status: "Completed", date: "2024-01-15" },
@@ -15,9 +16,13 @@ export default function PaymentHistoryPage() {
   return (
     <CommonLayout>
       <Box sx={{ p: 3 }}>
-        <Typography variant="h4" gutterBottom>
-          Payment History
-        </Typography>
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/home" },
+            { label: "Payments", href: "/payments" },
+            { label: "History" },
+          ]}
+        />
         <TableContainer component={Paper}>
           <Table>
             <TableHead>

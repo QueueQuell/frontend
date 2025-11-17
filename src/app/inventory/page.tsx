@@ -1,7 +1,7 @@
 "use client";
 import CommonLayout from "../components/layouts/CommonLayout";
 import CommonCard from "../components/CommonCard";
-import PageHeader from "../components/ui/PageHeader";
+import Breadcrumb from "../components/ui/Breadcrumb";
 import { Box, Grid } from "@mui/material";
 import ListIcon from "@mui/icons-material/List";
 import AddIcon from "@mui/icons-material/Add";
@@ -19,9 +19,11 @@ export default function InventoryPage() {
   return (
     <CommonLayout>
       <Box sx={{ p: 3 }}>
-        <PageHeader
-          title="Inventory"
-          description="Choose an area to manage"
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/home" },
+            { label: "Inventory" },
+          ]}
         />
         <Grid container spacing={3}>
           {inventoryActions.map((action) => (

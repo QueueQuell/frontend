@@ -6,6 +6,7 @@ import CreditCardIcon from "@mui/icons-material/CreditCard";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import SmartphoneIcon from "@mui/icons-material/Smartphone";
 import MoneyIcon from "@mui/icons-material/Money";
+import Breadcrumb from "../../components/ui/Breadcrumb";
 
 const paymentMethods = [
   { id: 1, name: "Credit Card", icon: CreditCardIcon, enabled: true, description: "Visa, Mastercard, American Express" },
@@ -18,12 +19,13 @@ export default function PaymentMethodsPage() {
   return (
     <CommonLayout>
       <Box sx={{ p: 3 }}>
-        <Typography variant="h4" gutterBottom>
-          Payment Methods
-        </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-          Configure available payment methods for your restaurant
-        </Typography>
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/home" },
+            { label: "Payments", href: "/payments" },
+            { label: "Methods" },
+          ]}
+        />
         <Grid container spacing={3}>
           {paymentMethods.map((method) => (
             <Grid size={{ xs: 12, sm: 6 }} key={method.id}>

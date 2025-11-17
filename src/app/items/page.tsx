@@ -1,7 +1,7 @@
 "use client";
 import CommonLayout from "../components/layouts/CommonLayout";
 import CommonCard from "../components/CommonCard";
-import PageHeader from "../components/ui/PageHeader";
+import Breadcrumb from "../components/ui/Breadcrumb";
 import PageFooter from "../components/ui/PageFooter";
 import { Box, Grid } from "@mui/material";
 import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
@@ -19,9 +19,11 @@ export default function ItemsPage() {
   return (
     <CommonLayout>
       <Box sx={{ p: 3 }}>
-        <PageHeader
-          title="Items"
-          description="Catalog of menu items and item management"
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/home" },
+            { label: "Items" },
+          ]}
         />
         <Grid container spacing={3}>
           {itemActions.map((action) => (

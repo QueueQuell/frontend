@@ -5,6 +5,7 @@ import Link from "next/link";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import TrendingDownIcon from "@mui/icons-material/TrendingDown";
 import StarIcon from "@mui/icons-material/Star";
+import Breadcrumb from "../../components/ui/Breadcrumb";
 
 const suppliers = [
   { id: 1, name: "Fresh Produce Co.", rating: 4.8, onTime: 95, quality: 92, reliability: 88 },
@@ -16,12 +17,13 @@ export default function SupplierPerformancePage() {
   return (
     <CommonLayout>
       <Box sx={{ p: 3 }}>
-        <Typography variant="h4" gutterBottom>
-          Supplier Performance
-        </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-          Monitor supplier performance metrics and ratings
-        </Typography>
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/home" },
+            { label: "Suppliers", href: "/suppliers" },
+            { label: "Performance" },
+          ]}
+        />
         <Grid container spacing={3}>
           {suppliers.map((supplier) => (
             <Grid size={{ xs: 12, md: 6 }} key={supplier.id}>

@@ -3,17 +3,19 @@ import CommonLayout from "../../components/layouts/CommonLayout";
 import { Typography, Box, Paper, TextField, Button, Grid, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import Link from "next/link";
 import QrCodeIcon from "@mui/icons-material/QrCode";
+import Breadcrumb from "../../components/ui/Breadcrumb";
 
 export default function GenerateQRPage() {
   return (
     <CommonLayout>
       <Box sx={{ p: 3 }}>
-        <Typography variant="h4" gutterBottom>
-          Generate QR Code
-        </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-          Create QR codes for tables, menus, or custom links
-        </Typography>
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/home" },
+            { label: "QR", href: "/qr" },
+            { label: "Generate" },
+          ]}
+        />
         <Grid container spacing={3}>
           <Grid size={{ xs: 12, md: 8 }}>
             <Paper sx={{ p: 3 }}>

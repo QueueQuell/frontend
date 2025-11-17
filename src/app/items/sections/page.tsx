@@ -8,6 +8,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import CategoryIcon from "@mui/icons-material/Category";
 import { useState, useEffect } from "react";
 import SectionForm, { SectionFormData } from "@/app/components/section/SectionForm";
+import Breadcrumb from "../../components/ui/Breadcrumb";
 
 interface Category {
   id: string;
@@ -165,14 +166,14 @@ export default function CategoriesPage() {
         prev.map((c) =>
           c.id === editDialog.category!.id
             ? {
-                ...c,
-                name: formData.name,
-                description: formData.description,
-                displayOrder: parseInt(formData.displayOrder) || c.displayOrder,
-                isActive: formData.isActive,
-                color: formData.color,
-                updatedAt: new Date().toISOString(),
-              }
+              ...c,
+              name: formData.name,
+              description: formData.description,
+              displayOrder: parseInt(formData.displayOrder) || c.displayOrder,
+              isActive: formData.isActive,
+              color: formData.color,
+              updatedAt: new Date().toISOString(),
+            }
             : c
         )
       );
@@ -206,14 +207,13 @@ export default function CategoriesPage() {
     <CommonLayout>
       <Box sx={{ p: 3 }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
-          <Box>
-            <Typography variant="h4" gutterBottom>
-              Menu Categories
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Organize your menu items into categories for better customer experience
-            </Typography>
-          </Box>
+          <Breadcrumb
+            items={[
+              { label: "Home", href: "/home" },
+              { label: "Items", href: "/items" },
+              { label: "Categories" },
+            ]}
+          />
           <Button
             component={Link}
             href="/items/categories/create"
@@ -337,8 +337,8 @@ export default function CategoriesPage() {
                       />
                     </TableCell>
                     <TableCell align="center">
-                      <IconButton 
-                        size="small" 
+                      <IconButton
+                        size="small"
                         color="primary"
                         onClick={() => handleEditClick(category)}
                       >
@@ -375,8 +375,8 @@ export default function CategoriesPage() {
             </Box>
           </DialogContent>
           <DialogActions>
-            <Button 
-              onClick={() => setEditDialog({ open: false, category: null })} 
+            <Button
+              onClick={() => setEditDialog({ open: false, category: null })}
               disabled={isSubmitting}
             >
               Cancel

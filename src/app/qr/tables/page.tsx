@@ -1,6 +1,6 @@
 "use client";
 import CommonLayout from "../../components/layouts/CommonLayout";
-import PageHeader from "../../components/ui/PageHeader";
+import Breadcrumb from "../../components/ui/Breadcrumb";
 import PageFooter from "../../components/ui/PageFooter";
 import { Box, Grid, Card, CardContent, CardActions, Button, Chip, Drawer, Typography } from "@mui/material";
 import QrCodeIcon from "@mui/icons-material/QrCode";
@@ -26,9 +26,12 @@ export default function QRTablesPage() {
   return (
     <CommonLayout>
       <Box sx={{ p: 3 }}>
-        <PageHeader
-          title="Table QR Codes"
-          description="Manage QR codes for restaurant tables"
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/home" },
+            { label: "QR", href: "/qr" },
+            { label: "Tables" },
+          ]}
         />
         <Grid container spacing={3}>
           {tables.map((table) => (

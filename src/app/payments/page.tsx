@@ -1,7 +1,7 @@
 "use client";
 import CommonLayout from "../components/layouts/CommonLayout";
 import CommonCard from "../components/CommonCard";
-import PageHeader from "../components/ui/PageHeader";
+import Breadcrumb from "../components/ui/Breadcrumb";
 import PageFooter from "../components/ui/PageFooter";
 import { Box, Grid } from "@mui/material";
 import PaymentIcon from "@mui/icons-material/Payment";
@@ -18,9 +18,11 @@ export default function PaymentsPage() {
   return (
     <CommonLayout>
       <Box sx={{ p: 3 }}>
-        <PageHeader
-          title="Payments"
-          description="Payment records and reconciliation management"
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/home" },
+            { label: "Payments" },
+          ]}
         />
         <Grid container spacing={3}>
           {paymentActions.map((action) => (

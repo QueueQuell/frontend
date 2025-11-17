@@ -2,17 +2,19 @@
 import Link from "next/link";
 import CommonLayout from "../../components/layouts/CommonLayout";
 import { Typography, Box, TextField, Button, Paper, Grid, MenuItem, FormControlLabel, RadioGroup, Radio } from "@mui/material";
+import Breadcrumb from "../../components/ui/Breadcrumb";
 
 export default function InventoryAdjustPage() {
   return (
     <CommonLayout>
       <Box sx={{ p: 3 }}>
-        <Typography variant="h4" gutterBottom>
-          Stock Adjustment
-        </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-          Increase or decrease stock for items
-        </Typography>
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/home" },
+            { label: "Inventory", href: "/inventory" },
+            { label: "Adjust" },
+          ]}
+        />
         <Paper sx={{ p: 3, maxWidth: 800 }}>
           <Grid container spacing={3}>
             <Grid size={{ xs: 12 }}>

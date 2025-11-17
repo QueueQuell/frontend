@@ -3,14 +3,19 @@ import CommonLayout from "../../components/layouts/CommonLayout";
 import { Typography, Box, Paper, TextField, Button, Grid } from "@mui/material";
 import Link from "next/link";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import Breadcrumb from "../../components/ui/Breadcrumb";
 
 export default function AddCustomerPage() {
   return (
     <CommonLayout>
       <Box sx={{ p: 3 }}>
-        <Typography variant="h4" gutterBottom>
-          Add New Customer
-        </Typography>
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/home" },
+            { label: "Customers", href: "/customers" },
+            { label: "Add" },
+          ]}
+        />
         <Paper sx={{ p: 3, mt: 2 }}>
           <Grid container spacing={3}>
             <Grid size={{ xs: 12, sm: 6 }}>

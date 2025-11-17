@@ -1,7 +1,7 @@
 "use client";
 import CommonLayout from "../components/layouts/CommonLayout";
 import CommonCard from "../components/CommonCard";
-import PageHeader from "../components/ui/PageHeader";
+import Breadcrumb from "../components/ui/Breadcrumb";
 import PageFooter from "../components/ui/PageFooter";
 import { Box, Grid } from "@mui/material";
 import PeopleIcon from "@mui/icons-material/People";
@@ -18,9 +18,11 @@ const CustomersPage = () => {
     return (
         <CommonLayout>
             <Box sx={{ p: 3 }}>
-                <PageHeader
-                    title="Customers"
-                    description="Customer profiles and loyalty management"
+                <Breadcrumb
+                  items={[
+                    { label: "Home", href: "/home" },
+                    { label: "Customers" },
+                  ]}
                 />
                 <Grid container spacing={3}>
                     {customerActions.map((action) => (

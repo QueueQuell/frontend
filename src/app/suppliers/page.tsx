@@ -1,7 +1,7 @@
 "use client";
 import CommonLayout from "../components/layouts/CommonLayout";
 import CommonCard from "../components/CommonCard";
-import PageHeader from "../components/ui/PageHeader";
+import Breadcrumb from "../components/ui/Breadcrumb";
 import PageFooter from "../components/ui/PageFooter";
 import { Box, Grid } from "@mui/material";
 import BusinessIcon from "@mui/icons-material/Business";
@@ -18,9 +18,11 @@ export default function SuppliersPage() {
   return (
     <CommonLayout>
       <Box sx={{ p: 3 }}>
-        <PageHeader
-          title="Suppliers"
-          description="Manage suppliers and procurement records"
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/home" },
+            { label: "Suppliers" },
+          ]}
         />
         <Grid container spacing={3}>
           {supplierActions.map((action) => (

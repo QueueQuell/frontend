@@ -6,7 +6,7 @@ import CategoryIcon from "@mui/icons-material/Category";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import PageHeader from "@/app/components/ui/PageHeader";
+import Breadcrumb from "@/app/components/ui/Breadcrumb";
 import PageFooter from "@/app/components/ui/PageFooter";
 import SectionForm, { SectionFormData } from "@/app/components/section/SectionForm";
 
@@ -65,9 +65,13 @@ export default function CreateCategoryPage() {
   return (
     <CommonLayout>
       <Box sx={{ p: 3 }}>
-        <PageHeader
-          title="Create New Category"
-          description="Add a new category to organize your menu items"
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/home" },
+            { label: "Items", href: "/items" },
+            { label: "Categories", href: "/items/categories" },
+            { label: "Create New Category" },
+          ]}
         />
 
         {error && (

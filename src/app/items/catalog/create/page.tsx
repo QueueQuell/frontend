@@ -6,7 +6,7 @@ import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import PageHeader from "@/app/components/ui/PageHeader";
+import Breadcrumb from "@/app/components/ui/Breadcrumb";
 import PageFooter from "@/app/components/ui/PageFooter";
 import ItemForm, { ItemFormData } from "@/app/components/items/ItemForm";
 
@@ -108,9 +108,13 @@ export default function CreateItemPage() {
   return (
     <CommonLayout>
       <Box sx={{ p: 3 }}>
-        <PageHeader
-          title="Create New Menu Item"
-          description="Add a new item to your menu catalog"
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/home" },
+            { label: "Items", href: "/items" },
+            { label: "Catalog", href: "/items/catalog" },
+            { label: "Create New Menu Item" },
+          ]}
         />
 
         {error && (

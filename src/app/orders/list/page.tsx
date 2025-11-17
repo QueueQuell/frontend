@@ -4,6 +4,7 @@ import { Typography, Box, Paper, Table, TableBody, TableCell, TableContainer, Ta
 import Link from "next/link";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import AddIcon from "@mui/icons-material/Add";
+import Breadcrumb from "../../components/ui/Breadcrumb";
 
 const orders = [
   { id: 1001, customer: "John Doe", items: 3, total: 45.97, status: "Completed", date: "2024-01-15" },
@@ -16,9 +17,13 @@ export default function OrderListPage() {
     <CommonLayout>
       <Box sx={{ p: 3 }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
-          <Typography variant="h4" gutterBottom>
-            Order List
-          </Typography>
+          <Breadcrumb
+            items={[
+              { label: "Home", href: "/home" },
+              { label: "Orders", href: "/orders" },
+              { label: "List" },
+            ]}
+          />
           <Button component={Link} href="/orders/create" variant="contained" startIcon={<AddIcon />}>
             Create Order
           </Button>

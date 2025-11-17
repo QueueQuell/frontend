@@ -1,7 +1,7 @@
 "use client";
 import CommonLayout from "../components/layouts/CommonLayout";
 import CommonCard from "../components/CommonCard";
-import PageHeader from "../components/ui/PageHeader";
+import Breadcrumb from "../components/ui/Breadcrumb";
 import { Box, Grid } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
@@ -15,9 +15,11 @@ export default function UsersPage() {
   return (
     <CommonLayout>
       <Box sx={{ p: 3 }}>
-        <PageHeader
-          title="User Management"
-          description="Manage users and roles"
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/home" },
+            { label: "User Management" },
+          ]}
         />
         <Grid container spacing={3}>
           {userActions.map((action) => (
