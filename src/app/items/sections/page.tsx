@@ -9,6 +9,7 @@ import CategoryIcon from "@mui/icons-material/Category";
 import { useState, useEffect } from "react";
 import SectionForm, { SectionFormData } from "@/app/components/section/SectionForm";
 import Breadcrumb from "../../components/ui/Breadcrumb";
+import PageFooter from "@/app/components/ui/PageFooter";
 
 interface Category {
   id: string;
@@ -417,12 +418,7 @@ export default function CategoriesPage() {
             </Button>
           </DialogActions>
         </Dialog>
-
-        <Box sx={{ mt: 3 }}>
-          <Button component={Link} href="/items" variant="outlined">
-            ← Back to Items
-          </Button>
-        </Box>
+        <PageFooter backHref="/items" backText="Back to Items" />
       </Box>
     </CommonLayout>
   );

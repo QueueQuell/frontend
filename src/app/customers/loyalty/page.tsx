@@ -6,6 +6,7 @@ import LoyaltyIcon from "@mui/icons-material/Loyalty";
 import StarIcon from "@mui/icons-material/Star";
 import CardGiftcardIcon from "@mui/icons-material/CardGiftcard";
 import Breadcrumb from "../../components/ui/Breadcrumb";
+import PageFooter from "../../components/ui/PageFooter";
 
 const loyaltyPrograms = [
   { id: 1, name: "Gold Member", members: 45, points: 1500, benefits: "Free delivery, Priority seating" },
@@ -52,11 +53,7 @@ export default function LoyaltyPage() {
             </Grid>
           ))}
         </Grid>
-        <Box sx={{ mt: 3 }}>
-          <Button component={Link} href="/customers" variant="outlined">
-            ← Back to Customers
-          </Button>
-        </Box>
+        <PageFooter backHref="/customers" backText="Back to Customers" />
       </Box>
     </CommonLayout>
   );

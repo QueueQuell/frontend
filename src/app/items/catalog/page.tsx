@@ -9,6 +9,7 @@ import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
 import { useState } from "react";
 import ItemForm, { ItemFormData } from "@/app/components/items/ItemForm";
 import Breadcrumb from "../../components/ui/Breadcrumb";
+import PageFooter from "@/app/components/ui/PageFooter";
 
 interface MenuItem {
   id: number;
@@ -309,12 +310,7 @@ export default function MenuCatalogPage() {
             </Button>
           </DialogActions>
         </Dialog>
-
-        <Box sx={{ mt: 3 }}>
-          <Button component={Link} href="/items" variant="outlined">
-            ← Back to Items
-          </Button>
-        </Box>
+        <PageFooter backHref="/items" backText="Back to Items" />
       </Box>
     </CommonLayout>
   );

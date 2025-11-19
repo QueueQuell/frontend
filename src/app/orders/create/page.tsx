@@ -4,6 +4,7 @@ import { Typography, Box, Button } from "@mui/material";
 import Link from "next/link";
 import OrderForm from "../../components/orders/OrderForm";
 import Breadcrumb from "../../components/ui/Breadcrumb";
+import PageFooter from "@/app/components/ui/PageFooter";
 
 export default function CreateOrderPage() {
   return (
@@ -17,11 +18,7 @@ export default function CreateOrderPage() {
           ]}
         />
         <OrderForm />
-        <Box sx={{ mt: 3 }}>
-          <Button component={Link} href="/orders" variant="outlined">
-            ← Back to Orders
-          </Button>
-        </Box>
+        <PageFooter backHref="/orders" backText="Back to Orders" />
       </Box>
     </CommonLayout>
   );

@@ -4,6 +4,7 @@ import { Typography, Box, Paper, TextField, Button, Grid, FormControl, InputLabe
 import Link from "next/link";
 import BusinessIcon from "@mui/icons-material/Business";
 import Breadcrumb from "../../components/ui/Breadcrumb";
+import PageFooter from "@/app/components/ui/PageFooter";
 
 export default function AddSupplierPage() {
   return (
@@ -72,11 +73,7 @@ export default function AddSupplierPage() {
             </Paper>
           </Grid>
         </Grid>
-        <Box sx={{ mt: 3 }}>
-          <Button component={Link} href="/suppliers" variant="outlined">
-            ← Back to Suppliers
-          </Button>
-        </Box>
+        <PageFooter backHref="/suppliers" backText="Back to Suppliers" />
       </Box>
     </CommonLayout>
   );

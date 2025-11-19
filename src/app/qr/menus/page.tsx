@@ -5,6 +5,7 @@ import { Typography, Box, Grid, Button, Chip } from "@mui/material";
 import Link from "next/link";
 import QrCodeIcon from "@mui/icons-material/QrCode";
 import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
+import PageFooter from "@/app/components/ui/PageFooter";
 
 const menus = [
   { id: 1, name: "Main Menu", type: "Full Menu", status: "Active", qrGenerated: true },
@@ -60,11 +61,7 @@ export default function QRMenuPage() {
             </Grid>
           ))}
         </Grid>
-        <Box sx={{ mt: 3 }}>
-          <Button component={Link} href="/qr" variant="outlined">
-            ← Back to QR Codes
-          </Button>
-        </Box>
+        <PageFooter backHref="/qr" backText="Back to QR Codes" />
       </Box>
     </CommonLayout>
   );

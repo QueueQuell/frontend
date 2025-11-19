@@ -5,6 +5,7 @@ import Link from "next/link";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import AddIcon from "@mui/icons-material/Add";
 import Breadcrumb from "../../components/ui/Breadcrumb";
+import PageFooter from "@/app/components/ui/PageFooter";
 
 const orders = [
   { id: 1001, customer: "John Doe", items: 3, total: 45.97, status: "Completed", date: "2024-01-15" },
@@ -68,11 +69,7 @@ export default function OrderListPage() {
             </TableBody>
           </Table>
         </TableContainer>
-        <Box sx={{ mt: 3 }}>
-          <Button component={Link} href="/orders" variant="outlined">
-            ← Back to Orders
-          </Button>
-        </Box>
+        <PageFooter backHref="/orders" backText="Back to Orders" />
       </Box>
     </CommonLayout>
   );

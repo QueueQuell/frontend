@@ -4,6 +4,7 @@ import { Typography, Box, Paper, TextField, Button, Grid, FormControl, InputLabe
 import Link from "next/link";
 import QrCodeIcon from "@mui/icons-material/QrCode";
 import Breadcrumb from "../../components/ui/Breadcrumb";
+import PageFooter from "@/app/components/ui/PageFooter";
 
 export default function GenerateQRPage() {
   return (
@@ -59,11 +60,7 @@ export default function GenerateQRPage() {
             </Paper>
           </Grid>
         </Grid>
-        <Box sx={{ mt: 3 }}>
-          <Button component={Link} href="/qr" variant="outlined">
-            ← Back to QR Codes
-          </Button>
-        </Box>
+        <PageFooter backHref="/qr" backText="Back to QR Codes" />
       </Box>
     </CommonLayout>
   );

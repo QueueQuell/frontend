@@ -7,6 +7,7 @@ import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import SmartphoneIcon from "@mui/icons-material/Smartphone";
 import MoneyIcon from "@mui/icons-material/Money";
 import Breadcrumb from "../../components/ui/Breadcrumb";
+import PageFooter from "@/app/components/ui/PageFooter";
 
 const paymentMethods = [
   { id: 1, name: "Credit Card", icon: CreditCardIcon, enabled: true, description: "Visa, Mastercard, American Express" },
@@ -50,11 +51,7 @@ export default function PaymentMethodsPage() {
             </Grid>
           ))}
         </Grid>
-        <Box sx={{ mt: 3 }}>
-          <Button component={Link} href="/payments" variant="outlined">
-            ← Back to Payments
-          </Button>
-        </Box>
+        <PageFooter backHref="/payments" backText="Back to Payments" />
       </Box>
     </CommonLayout>
   );

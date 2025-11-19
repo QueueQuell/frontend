@@ -5,6 +5,7 @@ import Link from "next/link";
 import Button from "@mui/material/Button";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import Breadcrumb from "../../components/ui/Breadcrumb";
+import PageFooter from "@/app/components/ui/PageFooter";
 
 const paymentHistory = [
   { id: 1001, orderId: "ORD-001", amount: 45.97, method: "Credit Card", status: "Completed", date: "2024-01-15" },
@@ -59,11 +60,7 @@ export default function PaymentHistoryPage() {
             </TableBody>
           </Table>
         </TableContainer>
-        <Box sx={{ mt: 3 }}>
-          <Button component={Link} href="/payments" variant="outlined">
-            ← Back to Payments
-          </Button>
-        </Box>
+        <PageFooter backHref="/payments" backText="Back to Payments" />
       </Box>
     </CommonLayout>
   );

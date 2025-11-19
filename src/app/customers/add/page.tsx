@@ -4,6 +4,7 @@ import { Typography, Box, Paper, TextField, Button, Grid } from "@mui/material";
 import Link from "next/link";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import Breadcrumb from "../../components/ui/Breadcrumb";
+import PageFooter from "@/app/components/ui/PageFooter";
 
 export default function AddCustomerPage() {
   return (
@@ -46,11 +47,7 @@ export default function AddCustomerPage() {
             </Button>
           </Box>
         </Paper>
-        <Box sx={{ mt: 3 }}>
-          <Button component={Link} href="/customers" variant="outlined">
-            ← Back to Customers
-          </Button>
-        </Box>
+        <PageFooter backHref="/customers" backText="Back to Customers" />
       </Box>
     </CommonLayout>
   );

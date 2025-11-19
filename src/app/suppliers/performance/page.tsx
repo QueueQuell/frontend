@@ -6,6 +6,7 @@ import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import TrendingDownIcon from "@mui/icons-material/TrendingDown";
 import StarIcon from "@mui/icons-material/Star";
 import Breadcrumb from "../../components/ui/Breadcrumb";
+import PageFooter from "@/app/components/ui/PageFooter";
 
 const suppliers = [
   { id: 1, name: "Fresh Produce Co.", rating: 4.8, onTime: 95, quality: 92, reliability: 88 },
@@ -69,11 +70,7 @@ export default function SupplierPerformancePage() {
             </Grid>
           ))}
         </Grid>
-        <Box sx={{ mt: 3 }}>
-          <Button component={Link} href="/suppliers" variant="outlined">
-            ← Back to Suppliers
-          </Button>
-        </Box>
+        <PageFooter backHref="/suppliers" backText="Back to Suppliers" />
       </Box>
     </CommonLayout>
   );

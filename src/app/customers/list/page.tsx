@@ -6,6 +6,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Breadcrumb from "../../components/ui/Breadcrumb";
+import PageFooter from "@/app/components/ui/PageFooter";
 
 const customers = [
   { id: 1, name: "John Doe", email: "john@example.com", phone: "+1234567890", status: "Active", orders: 15 },
@@ -68,11 +69,7 @@ export default function CustomerListPage() {
             </TableBody>
           </Table>
         </TableContainer>
-        <Box sx={{ mt: 3 }}>
-          <Button component={Link} href="/customers" variant="outlined">
-            ← Back to Customers
-          </Button>
-        </Box>
+        <PageFooter backHref="/customers" backText="Back to Customers" />
       </Box>
     </CommonLayout>
   );
