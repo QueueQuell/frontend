@@ -9,6 +9,9 @@ import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import GroupIcon from "@mui/icons-material/Group";
 import QrCodeIcon from "@mui/icons-material/QrCode";
 
+// Feature flags for phase management
+const PHASE_1_ENABLED = process.env.NEXT_PUBLIC_PHASE_1_ENABLED === 'true'; // Configurable via environment variable
+
 export type SectionKey =
   | "home"
   | "inventory"
@@ -70,8 +73,8 @@ export const SIDEBAR_ITEMS: SidebarItem[] = [
       { label: "Create Order", href: "/orders/create" },
     ],
   },
-  {
-    key: "inventory",
+  ...(PHASE_1_ENABLED ? [{
+    key: "inventory" as const,
     title: "Inventory",
     icon: <InventoryIcon />,
     href: "/inventory",
@@ -80,7 +83,7 @@ export const SIDEBAR_ITEMS: SidebarItem[] = [
       { label: "Add Inventory", href: "/inventory/add" },
       { label: "Stock Adjustment", href: "/inventory/adjust" },
     ],
-  },
+  }] : []),
   {
     key: "users",
     title: "Users",
@@ -92,8 +95,8 @@ export const SIDEBAR_ITEMS: SidebarItem[] = [
       { label: "Subscription", href: "/user/manage/subscription" },
     ],
   },
-  {
-    key: "payments",
+  ...(PHASE_1_ENABLED ? [{
+    key: "payments" as const,
     title: "Payments",
     icon: <PaymentIcon />,
     href: "/payments",
@@ -101,9 +104,9 @@ export const SIDEBAR_ITEMS: SidebarItem[] = [
       { label: "Payment History", href: "/payments/history" },
       { label: "Payment Methods", href: "/payments/methods" },
     ],
-  },
-  {
-    key: "suppliers",
+  }] : []),
+  ...(PHASE_1_ENABLED ? [{
+    key: "suppliers" as const,
     title: "Suppliers",
     icon: <LocalShippingIcon />,
     href: "/suppliers",
@@ -112,9 +115,9 @@ export const SIDEBAR_ITEMS: SidebarItem[] = [
       { label: "Add Supplier", href: "/suppliers/add" },
       { label: "Performance", href: "/suppliers/performance" },
     ],
-  },
-  {
-    key: "customers",
+  }] : []),
+  ...(PHASE_1_ENABLED ? [{
+    key: "customers" as const,
     title: "Customers",
     icon: <GroupIcon />,
     href: "/customers",
@@ -123,7 +126,7 @@ export const SIDEBAR_ITEMS: SidebarItem[] = [
       { label: "Loyalty", href: "/customers/loyalty" },
       { label: "Add Customer", href: "/customers/add" },
     ],
-  },
+  }] : []),
   {
     key: "qr",
     title: "QR Management",

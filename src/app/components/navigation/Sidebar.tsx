@@ -12,6 +12,9 @@ import { IconButton } from "@mui/material";
 import SidebarSection from "../SidebarSection";
 import { SectionKey, DEFAULT_STATE, SIDEBAR_ITEMS } from "./SidebarConfig";
 
+// Feature flags for phase management
+const PHASE_1_ENABLED = process.env.NEXT_PUBLIC_PHASE_1_ENABLED === 'true'; // Configurable via environment variable
+
 interface SidebarProps {
   mobileOpen?: boolean;
   onMobileClose?: () => void;
@@ -75,35 +78,41 @@ export default function Sidebar({ mobileOpen = false, onMobileClose, collapsed =
         ))}
 
         {/* Static sections without toggle */}
-        <SidebarSection
-          title="Analytics"
-          icon={<AnalyticsIcon />}
-          href="/analytics"
-          subItems={[]}
-          open={false}
-          onToggle={() => {}}
-          collapsed={collapsed}
-        />
+        {PHASE_1_ENABLED && (
+          <SidebarSection
+            title="Analytics"
+            icon={<AnalyticsIcon />}
+            href="/analytics"
+            subItems={[]}
+            open={false}
+            onToggle={() => {}}
+            collapsed={collapsed}
+          />
+        )}
 
-        <SidebarSection
-          title="Notifications"
-          icon={<NotificationsIcon />}
-          href="/notifications"
-          subItems={[]}
-          open={false}
-          onToggle={() => {}}
-          collapsed={collapsed}
-        />
+        {PHASE_1_ENABLED && (
+          <SidebarSection
+            title="Notifications"
+            icon={<NotificationsIcon />}
+            href="/notifications"
+            subItems={[]}
+            open={false}
+            onToggle={() => {}}
+            collapsed={collapsed}
+          />
+        )}
 
-        <SidebarSection
-          title="Settings"
-          icon={<SettingsIcon />}
-          href="/settings"
-          subItems={[]}
-          open={false}
-          onToggle={() => {}}
-          collapsed={collapsed}
-        />
+        {PHASE_1_ENABLED && (
+          <SidebarSection
+            title="Settings"
+            icon={<SettingsIcon />}
+            href="/settings"
+            subItems={[]}
+            open={false}
+            onToggle={() => {}}
+            collapsed={collapsed}
+          />
+        )}
       </List>
 
       {/* Help & Support at bottom */}

@@ -33,6 +33,9 @@ interface UserMenuDrawerProps {
   onClose: () => void;
 }
 
+// Feature flags for phase management
+const PHASE_1_ENABLED = process.env.NEXT_PUBLIC_PHASE_1_ENABLED === 'true'; // Configurable via environment variable
+
 export default function UserMenuDrawer({ open, onClose }: UserMenuDrawerProps) {
   const router = useRouter();
   const theme = useTheme();
@@ -59,16 +62,16 @@ export default function UserMenuDrawer({ open, onClose }: UserMenuDrawerProps) {
       text: "Subscription",
       href: "/user/manage/subscription",
     },
-    {
+    ...(PHASE_1_ENABLED ? [{
       icon: SecurityIcon,
       text: "Security",
       href: "/security",
-    },
-    {
+    }] : []),
+    ...(PHASE_1_ENABLED ? [{
       icon: SettingsIcon,
       text: "Account settings",
       href: "/account-settings",
-    },
+    }] : []),
   ];
 
   const drawerContent = (
