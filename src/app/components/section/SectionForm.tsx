@@ -1,7 +1,7 @@
 "use client";
 import { Grid, TextField, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 
-export interface CategoryFormData {
+export interface SectionFormData {
   name: string;
   description: string;
   displayOrder: string;
@@ -9,23 +9,23 @@ export interface CategoryFormData {
   color: string;
 }
 
-interface CategoryFormProps {
-  formData: CategoryFormData;
-  onChange: (field: keyof CategoryFormData, value: any) => void;
+interface SectionFormProps {
+  formData: SectionFormData;
+  onChange: (field: keyof SectionFormData, value: any) => void;
 }
 
-export default function CategoryForm({ formData, onChange }: CategoryFormProps) {
+export default function SectionForm({ formData, onChange }: SectionFormProps) {
   return (
     <Grid container spacing={3}>
       <Grid size={{ xs: 12 }}>
         <TextField
           fullWidth
           required
-          label="Category Name"
+          label="Section Name"
           value={formData.name}
           onChange={(e) => onChange("name", e.target.value)}
           placeholder="e.g., Appetizers, Main Courses, Desserts"
-          helperText="Enter a descriptive name for the category"
+          helperText="Enter a descriptive name for the section"
         />
       </Grid>
 
@@ -37,8 +37,8 @@ export default function CategoryForm({ formData, onChange }: CategoryFormProps) 
           label="Description"
           value={formData.description}
           onChange={(e) => onChange("description", e.target.value)}
-          placeholder="Optional description for the category"
-          helperText="Provide additional context about this category"
+          placeholder="Optional description for the section"
+          helperText="Provide additional context about this section"
         />
       </Grid>
 
@@ -50,7 +50,7 @@ export default function CategoryForm({ formData, onChange }: CategoryFormProps) 
           value={formData.displayOrder}
           onChange={(e) => onChange("displayOrder", e.target.value)}
           placeholder="1"
-          helperText="Order in which categories appear (lower numbers first)"
+          helperText="Order in which sections appear (lower numbers first)"
           inputProps={{ min: 1 }}
         />
       </Grid>
@@ -73,10 +73,10 @@ export default function CategoryForm({ formData, onChange }: CategoryFormProps) 
         <TextField
           fullWidth
           type="color"
-          label="Category Color"
+          label="Section Color"
           value={formData.color}
           onChange={(e) => onChange("color", e.target.value)}
-          helperText="Choose a color to represent this category"
+          helperText="Choose a color to represent this Section"
         />
       </Grid>
     </Grid>

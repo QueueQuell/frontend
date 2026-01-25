@@ -14,7 +14,7 @@ interface MenuCategoriesProps {
   onCategorySelect: (categoryId: string) => void;
 }
 
-export default function MenuCategories({
+export default function MenuSections({
   categories,
   selectedCategory,
   onCategorySelect,

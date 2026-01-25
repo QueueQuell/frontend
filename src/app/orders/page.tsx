@@ -5,7 +5,7 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ListIcon from "@mui/icons-material/List";
 import AddIcon from "@mui/icons-material/Add";
 import CommonLayout from "../components/layouts/CommonLayout";
-import PageHeader from "../components/ui/PageHeader";
+import Breadcrumb from "../components/ui/Breadcrumb";
 import PageFooter from "../components/ui/PageFooter";
 
 const orderActions = [
@@ -18,9 +18,11 @@ export default function OrdersPage() {
   return (
     <CommonLayout>
       <Box sx={{ p: 3 }}>
-        <PageHeader
-          title="Order Management"
-          description="View and manage customer orders"
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/home" },
+            { label: "Order Management" },
+          ]}
         />
         <Grid container spacing={3}>
           {orderActions.map((action) => (

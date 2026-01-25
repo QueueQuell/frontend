@@ -3,7 +3,7 @@
  * Central configuration for API client and endpoints
  */
 
-import { TokenManager } from './tokenManager';
+import { TokenManager } from "@/lib/utils/tokenManager";
 
 /**
  * API Configuration

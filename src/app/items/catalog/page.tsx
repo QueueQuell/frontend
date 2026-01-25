@@ -8,6 +8,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
 import { useState } from "react";
 import ItemForm, { ItemFormData } from "@/app/components/items/ItemForm";
+import Breadcrumb from "../../components/ui/Breadcrumb";
+import PageFooter from "@/app/components/ui/PageFooter";
 
 interface MenuItem {
   id: number;
@@ -19,10 +21,10 @@ interface MenuItem {
 }
 
 const menuItems: MenuItem[] = [
-  { id: 1, name: "Margherita Pizza", category: "Pizza", price: 12.99, image: "/api/placeholder/300/200", available: true },
-  { id: 2, name: "Caesar Salad", category: "Salads", price: 8.99, image: "/api/placeholder/300/200", available: true },
-  { id: 3, name: "Grilled Chicken", category: "Main Course", price: 15.99, image: "/api/placeholder/300/200", available: false },
-  { id: 4, name: "Chocolate Cake", category: "Desserts", price: 6.99, image: "/api/placeholder/300/200", available: true },
+  { id: 1, name: "Margherita Pizza", category: "Pizza", price: 12.99, image: "https://recipesblob.oetker.in/assets/d8a4b00c292a43adbb9f96798e028f01/1272x764/pizza-pollo-arrostojpg.webp", available: true },
+  { id: 2, name: "Caesar Salad", category: "Salads", price: 8.99, image: "https://recipesblob.oetker.in/assets/d8a4b00c292a43adbb9f96798e028f01/1272x764/pizza-pollo-arrostojpg.webp", available: true },
+  { id: 3, name: "Grilled Chicken", category: "Main Course", price: 15.99, image: "https://recipesblob.oetker.in/assets/d8a4b00c292a43adbb9f96798e028f01/1272x764/pizza-pollo-arrostojpg.webp", available: false },
+  { id: 4, name: "Chocolate Cake", category: "Desserts", price: 6.99, image: "https://recipesblob.oetker.in/assets/d8a4b00c292a43adbb9f96798e028f01/1272x764/pizza-pollo-arrostojpg.webp", available: true },
 ];
 
 export default function MenuCatalogPage() {
@@ -41,8 +43,20 @@ export default function MenuCatalogPage() {
     price: "",
     imageUrl: "",
     description: "",
-    availability: "available",
+    displayOrder: "",
+    tags: "",
+    availabilityDays: [],
+    availabilityTimeSlots: "",
+    spicyLevel: "",
+    featured: false,
+    recommended: false,
+    specialInstructions: "",
     preparationTime: "",
+    cuisine: "",
+    extraOptions: [],
+    sectionId: "",
+    active: true,
+    additionalInfo: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -54,8 +68,20 @@ export default function MenuCatalogPage() {
       price: item.price.toString(),
       imageUrl: item.image,
       description: "",
-      availability: item.available ? "available" : "unavailable",
+      displayOrder: "",
+      tags: "",
+      availabilityDays: [],
+      availabilityTimeSlots: "",
+      spicyLevel: "",
+      featured: false,
+      recommended: false,
+      specialInstructions: "",
       preparationTime: "",
+      cuisine: "",
+      extraOptions: [],
+      sectionId: "",
+      active: item.available,
+      additionalInfo: "",
     });
     setEditDialog({ open: true, item });
   };
@@ -100,13 +126,13 @@ export default function MenuCatalogPage() {
         prev.map((i) =>
           i.id === editDialog.item!.id
             ? {
-                ...i,
-                name: formData.name,
-                category: formData.category,
-                price: parseFloat(formData.price),
-                image: formData.imageUrl || i.image,
-                available: formData.availability === "available",
-              }
+              ...i,
+              name: formData.name,
+              category: formData.category,
+              price: parseFloat(formData.price),
+              image: formData.imageUrl || i.image,
+              available: formData.active,
+            }
             : i
         )
       );
@@ -118,8 +144,20 @@ export default function MenuCatalogPage() {
         price: "",
         imageUrl: "",
         description: "",
-        availability: "available",
+        displayOrder: "",
+        tags: "",
+        availabilityDays: [],
+        availabilityTimeSlots: "",
+        spicyLevel: "",
+        featured: false,
+        recommended: false,
+        specialInstructions: "",
         preparationTime: "",
+        cuisine: "",
+        extraOptions: [],
+        sectionId: "",
+        active: true,
+        additionalInfo: "",
       });
     } catch (err: any) {
       setError(err.message || "Failed to update item. Please try again.");
@@ -145,12 +183,18 @@ export default function MenuCatalogPage() {
     <CommonLayout>
       <Box sx={{ p: 3 }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
-          <Typography variant="h4" gutterBottom>
-            Menu Catalog
-          </Typography>
-          <Button component={Link} href="/items/catalog/create" variant="contained" startIcon={<AddIcon />}>
-            Add Item
-          </Button>
+          <Breadcrumb
+            items={[
+              { label: "Home", href: "/home" },
+              { label: "Items", href: "/items" },
+              { label: "Catalog" },
+            ]}
+          />
+          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+            <Button component={Link} href="/items/catalog/create" variant="contained" startIcon={<AddIcon />}>
+              Add Item
+            </Button>
+          </Box>
         </Box>
         {error && (
           <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
@@ -187,15 +231,15 @@ export default function MenuCatalogPage() {
                   />
                 </CardContent>
                 <CardActions>
-                  <Button 
-                    size="small" 
+                  <Button
+                    size="small"
                     onClick={() => handleEditClick(item)}
                     startIcon={<EditIcon />}
                   >
                     Edit
                   </Button>
-                  <Button 
-                    size="small" 
+                  <Button
+                    size="small"
                     color="error"
                     onClick={() => setDeleteDialog({ open: true, item })}
                     startIcon={<DeleteIcon />}
@@ -224,8 +268,8 @@ export default function MenuCatalogPage() {
             </Box>
           </DialogContent>
           <DialogActions>
-            <Button 
-              onClick={() => setEditDialog({ open: false, item: null })} 
+            <Button
+              onClick={() => setEditDialog({ open: false, item: null })}
               disabled={isSubmitting}
             >
               Cancel
@@ -266,12 +310,7 @@ export default function MenuCatalogPage() {
             </Button>
           </DialogActions>
         </Dialog>
-
-        <Box sx={{ mt: 3 }}>
-          <Button component={Link} href="/items" variant="outlined">
-            ← Back to Items
-          </Button>
-        </Box>
+        <PageFooter backHref="/items" backText="Back to Items" />
       </Box>
     </CommonLayout>
   );

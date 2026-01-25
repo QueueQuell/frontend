@@ -2,17 +2,19 @@
 import Link from "next/link";
 import CommonLayout from "../../components/layouts/CommonLayout";
 import { Typography, Box, TextField, Button, Paper, Grid, MenuItem } from "@mui/material";
+import Breadcrumb from "../../components/ui/Breadcrumb";
 
 export default function InventoryAddPage() {
   return (
     <CommonLayout>
       <Box sx={{ p: 3 }}>
-        <Typography variant="h4" gutterBottom>
-          Add Inventory Item
-        </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-          Create a new inventory record
-        </Typography>
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/home" },
+            { label: "Inventory", href: "/inventory" },
+            { label: "Add" },
+          ]}
+        />
         <Paper sx={{ p: 3, maxWidth: 800 }}>
           <Grid container spacing={3}>
             <Grid size={{ xs: 12, sm: 6 }}>

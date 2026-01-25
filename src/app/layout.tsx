@@ -23,7 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="icon" href="queuequell-logo.png" />
+        <link rel="icon" href="/queuequell-logo.png" />
       </head>
       <body
         style={{

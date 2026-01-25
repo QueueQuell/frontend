@@ -5,6 +5,8 @@ import Link from "next/link";
 import LoyaltyIcon from "@mui/icons-material/Loyalty";
 import StarIcon from "@mui/icons-material/Star";
 import CardGiftcardIcon from "@mui/icons-material/CardGiftcard";
+import Breadcrumb from "../../components/ui/Breadcrumb";
+import PageFooter from "../../components/ui/PageFooter";
 
 const loyaltyPrograms = [
   { id: 1, name: "Gold Member", members: 45, points: 1500, benefits: "Free delivery, Priority seating" },
@@ -17,16 +19,20 @@ export default function LoyaltyPage() {
     <CommonLayout>
       <Box sx={{ p: 3 }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
-          <Typography variant="h4" gutterBottom>
-            Loyalty Program
-          </Typography>
+          <Breadcrumb
+            items={[
+              { label: "Home", href: "/home" },
+              { label: "Customers", href: "/customers" },
+              { label: "Loyalty" },
+            ]}
+          />
           <Button component={Link} href="/customers/loyalty/add" variant="contained" startIcon={<LoyaltyIcon />}>
             Create Program
           </Button>
         </Box>
         <Grid container spacing={3}>
           {loyaltyPrograms.map((program) => (
-            <Grid size={{xs: 12, md: 4}} key={program.id}>
+            <Grid size={{ xs: 12, md: 4 }} key={program.id}>
               <Card>
                 <CardContent>
                   <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
@@ -47,11 +53,7 @@ export default function LoyaltyPage() {
             </Grid>
           ))}
         </Grid>
-        <Box sx={{ mt: 3 }}>
-          <Button component={Link} href="/customers" variant="outlined">
-            ← Back to Customers
-          </Button>
-        </Box>
+        <PageFooter backHref="/customers" backText="Back to Customers" />
       </Box>
     </CommonLayout>
   );

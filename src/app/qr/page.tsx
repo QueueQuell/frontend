@@ -1,7 +1,7 @@
 "use client";
 import CommonLayout from "../components/layouts/CommonLayout";
 import CommonCard from "../components/CommonCard";
-import PageHeader from "../components/ui/PageHeader";
+import Breadcrumb from "../components/ui/Breadcrumb";
 import PageFooter from "../components/ui/PageFooter";
 import { Box, Grid } from "@mui/material";
 import QrCodeIcon from "@mui/icons-material/QrCode";
@@ -18,9 +18,11 @@ export default function QRPage() {
   return (
     <CommonLayout>
       <Box sx={{ p: 3 }}>
-        <PageHeader
-          title="QR Management"
-          description="Generate and manage QR codes for menu and table linking"
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/home" },
+            { label: "QR" },
+          ]}
         />
         <Grid container spacing={3}>
           {qrActions.map((action) => (

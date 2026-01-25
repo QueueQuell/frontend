@@ -1,17 +1,23 @@
-import React from "react";
+"use client";
+import CommonLayout from "../components/layouts/CommonLayout";
 import { Box, Typography } from "@mui/material";
-import PageHeader from "@/app/components/ui/PageHeader";
+import Breadcrumb from "@/app/components/ui/Breadcrumb";
 
 export default function AccountSettingsPage() {
   return (
-    <Box>
-      <PageHeader title="Account Settings" />
+    <CommonLayout>
       <Box sx={{ p: 3 }}>
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/home" },
+            { label: "Account Settings" },
+          ]}
+        />
         <Typography variant="h6">Account Settings Page</Typography>
         <Typography variant="body1" color="text.secondary">
           This is a placeholder for the Account Settings section.
         </Typography>
       </Box>
-    </Box>
+    </CommonLayout>
   );
 }

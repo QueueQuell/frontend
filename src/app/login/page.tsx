@@ -20,6 +20,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { getApiUrl } from "../lib/config";
+import { authService } from "@/lib/api";
 
 export default function SignInSide() {
   const router = useRouter();
@@ -52,34 +53,16 @@ export default function SignInSide() {
     setError(null);
 
     try {
-      const response = await fetch(getApiUrl('/auth/login'), {
-        method: "POST",
-        headers: {
-          "accept": "application/json",
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          username_or_email: email,
-          password: password
-        })
-      });
+      const response = await authService.login({ username_or_email: email, password });
 
-      if (response.ok) {
-        const result = await response.json();
-        // Store both access and refresh tokens
-        localStorage.setItem("accessToken", result.access_token);
-        localStorage.setItem("refreshToken", result.refresh_token);
-        localStorage.setItem("tokenType", result.token_type);
+      if (response.success) {
+        // Token is already stored in authService.login
         router.push("/home");
-      } else if (response.status === 401) {
-        const errorData = await response.json();
-        setError(errorData.detail || "Invalid credentials");
       } else {
         setError("Login failed. Please try again.");
       }
-    } catch (error) {
-      console.error("Login error:", error);
-      setError("Network error. Please try again later.");
+    } catch (err: any) {
+      setError(err.message || "An error occurred during login. Please try again.");
     } finally {
       setIsLoading(false);
     }

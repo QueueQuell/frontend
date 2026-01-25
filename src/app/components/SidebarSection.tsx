@@ -82,7 +82,7 @@ export default function SidebarSection({
                 e.stopPropagation();
                 onToggle();
               }}
-              sx={{ color: "text.primary" }}
+              sx={{ color: "text.primary", ml: 0, p: 0.5 }}
             >
               {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
             </IconButton>

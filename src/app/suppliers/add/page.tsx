@@ -3,14 +3,20 @@ import CommonLayout from "../../components/layouts/CommonLayout";
 import { Typography, Box, Paper, TextField, Button, Grid, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import Link from "next/link";
 import BusinessIcon from "@mui/icons-material/Business";
+import Breadcrumb from "../../components/ui/Breadcrumb";
+import PageFooter from "@/app/components/ui/PageFooter";
 
 export default function AddSupplierPage() {
   return (
     <CommonLayout>
       <Box sx={{ p: 3 }}>
-        <Typography variant="h4" gutterBottom>
-          Add New Supplier
-        </Typography>
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/home" },
+            { label: "Suppliers", href: "/suppliers" },
+            { label: "Add" },
+          ]}
+        />
         <Grid container spacing={3}>
           <Grid size={{ xs: 12, md: 8 }} >
             <Paper sx={{ p: 3 }}>
@@ -67,11 +73,7 @@ export default function AddSupplierPage() {
             </Paper>
           </Grid>
         </Grid>
-        <Box sx={{ mt: 3 }}>
-          <Button component={Link} href="/suppliers" variant="outlined">
-            ← Back to Suppliers
-          </Button>
-        </Box>
+        <PageFooter backHref="/suppliers" backText="Back to Suppliers" />
       </Box>
     </CommonLayout>
   );

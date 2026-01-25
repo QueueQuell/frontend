@@ -1,13 +1,10 @@
-/**
- * API Types Module
- * TypeScript interfaces for API requests and responses
- * Based on OpenAPI specification
- */
+export interface ApiError {
+  success: false;
+  message: string;
+  errors?: Record<string, string[]>;
+}
 
-// ============================================================================
 // Authentication Types
-// ============================================================================
-
 export interface LoginRequest {
   username_or_email: string;
   password: string;
@@ -17,10 +14,18 @@ export interface LoginResponse {
   access_token: string;
   refresh_token: string;
   token_type?: string;
+  user: User;
 }
 
 export interface RefreshRequest {
   refresh_token: string;
+}
+
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+  role: string;
 }
 
 export interface UserCreate {
@@ -250,7 +255,7 @@ export interface MenuItem {
   name: string;
   description?: string;
   price: number;
-  category?: string;
+  section?: string;
   is_available: boolean;
   image_url?: string;
 }
@@ -319,7 +324,7 @@ export interface Order {
   updated_at?: string;
 }
 
-export type OrderStatus = 
+export type OrderStatus =
   | 'pending'
   | 'confirmed'
   | 'preparing'
@@ -327,7 +332,7 @@ export type OrderStatus =
   | 'completed'
   | 'cancelled';
 
-export type PaymentStatus = 
+export type PaymentStatus =
   | 'pending'
   | 'processing'
   | 'completed'
@@ -393,3 +398,222 @@ export type RequireFields<T, K extends keyof T> = T & Required<Pick<T, K>>;
  * Make specific properties of T optional
  */
 export type OptionalFields<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+
+// ============================================================================
+// Inventory Types (from old types)
+// ============================================================================
+
+export interface InventoryItem {
+  id: string;
+  name: string;
+  sku: string;
+  section: string;
+  quantity: number;
+  unit: string;
+  unitCost: number;
+  location: string;
+  lastUpdated: string;
+  minStock?: number;
+  maxStock?: number;
+}
+
+export interface CreateInventoryRequest {
+  name: string;
+  sku: string;
+  section: string;
+  quantity: number;
+  unit: string;
+  unitCost: number;
+  location: string;
+  minStock?: number;
+  maxStock?: number;
+}
+
+export interface StockAdjustmentRequest {
+  itemId: string;
+  adjustmentType: "increase" | "decrease";
+  quantity: number;
+  reason: string;
+  notes?: string;
+}
+
+// ============================================================================
+// Customer Types (from old types)
+// ============================================================================
+
+export interface Customer {
+  id: string;
+  name: string;
+  firstName?: string;
+  lastName?: string;
+  email: string;
+  phone: string;
+  address?: string;
+  status: "Active" | "Inactive";
+  orders: number;
+  loyaltyPoints?: number;
+  notes?: string;
+}
+
+export interface CreateCustomerRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  address?: string;
+  notes?: string;
+}
+
+export interface LoyaltyProgram {
+  id: string;
+  name: string;
+  members: number;
+  points: number;
+  benefits: string;
+}
+
+// ============================================================================
+// Menu Item Types (from old types)
+// ============================================================================
+
+export interface CreateMenuItemRequest {
+  name: string;
+  section: string;
+  price: number;
+  description?: string;
+  image?: string;
+  available: boolean;
+}
+
+// ============================================================================
+// Supplier Types (from old types)
+// ============================================================================
+
+export interface CreateSupplierRequest {
+  name: string;
+  section: string;
+  contactPerson: string;
+  email: string;
+  phone: string;
+  address?: string;
+}
+
+// ============================================================================
+// Payment Types (from old types)
+// ============================================================================
+
+export interface Payment {
+  id: string;
+  orderId: string;
+  amount: number;
+  method: string;
+  status: "Completed" | "Pending" | "Failed";
+  date: string;
+}
+
+export interface PaymentMethod {
+  id: string;
+  name: string;
+  enabled: boolean;
+  description: string;
+}
+
+export interface CreatePaymentRequest {
+  orderId: string;
+  amount: number;
+  method: string;
+}
+
+// ============================================================================
+// QR Types (from old types)
+// ============================================================================
+
+export interface QRCode {
+  id: string;
+  type: "table" | "menu" | "custom";
+  identifier: string;
+  url: string;
+  qrCodeData: string;
+  description?: string;
+  status: "Active" | "Inactive";
+}
+
+export interface GenerateQRRequest {
+  type: "table" | "menu" | "custom";
+  identifier: string;
+  customUrl?: string;
+  description?: string;
+}
+
+export interface Table {
+  id: string;
+  number: string;
+  status: "Active" | "Inactive";
+  qrGenerated: boolean;
+  qrCode?: string;
+}
+
+// ============================================================================
+// User Profile Types (from old types)
+// ============================================================================
+
+export interface UserProfile {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  address?: Address;
+}
+
+export interface Address {
+  street: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  country?: string;
+}
+
+export interface UpdateProfileRequest {
+  name?: string;
+  email?: string;
+  phone?: string;
+}
+
+export interface UpdateAddressRequest {
+  street: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  country?: string;
+}
+
+// ============================================================================
+// Section Types (from JSON schema)
+// ============================================================================
+
+export interface Section {
+  _id: string;
+  name: string;
+  description?: string;
+  active: boolean;
+  theme?: string;
+  displayOrder: number;
+}
+
+// ============================================================================
+// Order Types (from old types)
+// ============================================================================
+
+export interface CreateOrderRequest {
+  customer: string;
+  items: { itemId: string; quantity: number }[];
+  orderType: "dine-in" | "takeout" | "delivery";
+  specialInstructions?: string;
+}
+
+export interface OrderItem {
+  id: string;
+  name: string;
+  quantity: number;
+  price: number;
+}

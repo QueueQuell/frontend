@@ -4,10 +4,11 @@ import { Box, useMediaQuery, useTheme, SwipeableDrawer } from "@mui/material";
 import { Restaurant, RestaurantMenu, Cake, LocalDrink } from "@mui/icons-material";
 import Footer from "../components/navigation/Footer";
 import MenuHeader from "../components/menu/MenuHeader";
-import MenuCategories from "../components/menu/MenuCategories";
+import MenuSections from "../components/menu/MenuSections";
 import MenuItems from "../components/menu/MenuItems";
 import CartDrawer from "../components/menu/CartDrawer";
 import CheckoutDialog from "../components/menu/CheckoutDialog";
+import PageLoader from "../components/ui/PageLoader";
 
 interface MenuItem {
   id: number;
@@ -152,71 +153,73 @@ export default function MenuPage() {
   };
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-      <MenuHeader
-        totalItems={totalItems}
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-        onCartClick={() => setCheckoutOpen(true)}
-        onMenuClick={() => setDrawerOpen(true)}
-        isSmallScreen={isSmallScreen}
-      />
+    <PageLoader>
+      <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+        <MenuHeader
+          totalItems={totalItems}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          onCartClick={() => setCheckoutOpen(true)}
+          onMenuClick={() => setDrawerOpen(true)}
+          isSmallScreen={isSmallScreen}
+        />
 
-      {isSmallScreen && (
-        <SwipeableDrawer
-          anchor="left"
-          open={drawerOpen}
-          onClose={() => setDrawerOpen(false)}
-          onOpen={() => setDrawerOpen(true)}
-        >
-          <MenuCategories
-            categories={menuData.categories}
-            selectedCategory={selectedCategory}
-            onCategorySelect={(categoryId) => {
-              setSelectedCategory(categoryId);
-              setDrawerOpen(false);
-            }}
+        {isSmallScreen && (
+          <SwipeableDrawer
+            anchor="left"
+            open={drawerOpen}
+            onClose={() => setDrawerOpen(false)}
+            onOpen={() => setDrawerOpen(true)}
+          >
+            <MenuSections
+              categories={menuData.categories}
+              selectedCategory={selectedCategory}
+              onCategorySelect={(categoryId) => {
+                setSelectedCategory(categoryId);
+                setDrawerOpen(false);
+              }}
+            />
+          </SwipeableDrawer>
+        )}
+
+        <Box sx={{ display: "flex", flex: 1 }}>
+          {!isSmallScreen && (
+            <MenuSections
+              categories={menuData.categories}
+              selectedCategory={selectedCategory}
+              onCategorySelect={setSelectedCategory}
+            />
+          )}
+
+          <MenuItems
+            items={filteredItems}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            onAddToCart={addToCart}
+            isSmallScreen={isSmallScreen}
           />
-        </SwipeableDrawer>
-      )}
+        </Box>
 
-      <Box sx={{ display: "flex", flex: 1 }}>
-        {!isSmallScreen && (
-          <MenuCategories
-            categories={menuData.categories}
-            selectedCategory={selectedCategory}
-            onCategorySelect={setSelectedCategory}
+        {cart.length > 0 && (
+          <CartDrawer
+            cart={cart}
+            totalPrice={totalPrice}
+            onUpdateQuantity={updateQuantity}
+            onRemoveFromCart={removeFromCart}
+            onCheckout={() => setCheckoutOpen(true)}
           />
         )}
 
-        <MenuItems
-          items={filteredItems}
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          onAddToCart={addToCart}
-          isSmallScreen={isSmallScreen}
-        />
-      </Box>
-
-      {cart.length > 0 && (
-        <CartDrawer
+        <CheckoutDialog
+          open={checkoutOpen}
+          onClose={() => setCheckoutOpen(false)}
           cart={cart}
           totalPrice={totalPrice}
-          onUpdateQuantity={updateQuantity}
-          onRemoveFromCart={removeFromCart}
-          onCheckout={() => setCheckoutOpen(true)}
+          onPlaceOrder={handlePlaceOrder}
         />
-      )}
 
-      <CheckoutDialog
-        open={checkoutOpen}
-        onClose={() => setCheckoutOpen(false)}
-        cart={cart}
-        totalPrice={totalPrice}
-        onPlaceOrder={handlePlaceOrder}
-      />
-
-      <Footer />
-    </Box>
+        <Footer />
+      </Box>
+    </PageLoader>
   );
 }
