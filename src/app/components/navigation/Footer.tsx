@@ -9,11 +9,9 @@ export default function Footer() {
         borderTop: "1px solid #e6e6e6",
         p: 1.5,
         textAlign: "center",
-        fontSize: "0.8rem",
-        color: "#777",
       }}
     >
-      <Typography variant="body2" sx={{ fontSize: 13 }}>
+      <Typography variant="body2" sx={{ fontSize: 13, color: "#777" }}>
         © {new Date().getFullYear()} QueueQuell — Built with Next.js
       </Typography>
     </Box>
