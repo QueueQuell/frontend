@@ -1,11 +1,9 @@
 "use client";
 import Link from "next/link";
 import { Box, Typography, Button } from "@mui/material";
-import CommonLayout from "../components/layouts/CommonLayout";
 
 export default function NotFound() {
   return (
-    // <CommonLayout requireAuth={false}> {/* Don't require auth for 404 */}
       <Box
         sx={{
           display: "flex",
@@ -26,6 +24,5 @@ export default function NotFound() {
           Go back to Home
         </Button>
       </Box>
-    // </CommonLayout>
   );
 }
