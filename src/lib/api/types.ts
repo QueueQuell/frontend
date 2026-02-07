@@ -601,6 +601,43 @@ export interface Section {
 }
 
 // ============================================================================
+// Supplier Types
+// ============================================================================
+
+export interface Supplier {
+  id: string;
+  name: string;
+  category?: string;
+  contact?: string;
+  status: "Active" | "Inactive";
+  created_at?: string;
+  updated_at?: string;
+}
+
+// ============================================================================
+// Subscription Types
+// ============================================================================
+
+export interface Subscription {
+  id: string;
+  plan: string;
+  status: "active" | "inactive" | "cancelled" | "expired" | "trial";
+  start_date: string;
+  end_date?: string;
+  auto_renew: boolean;
+  features: string[];
+  currentPeriodStart: string;
+  currentPeriodEnd: string;
+  cancelAtPeriodEnd?: boolean;
+  billingCycle?: "monthly" | "yearly";
+  amount?: number;
+  currency?: string;
+  organizationName?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+// ============================================================================
 // Order Types (from old types)
 // ============================================================================
 

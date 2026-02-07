@@ -8,9 +8,15 @@ export { supplierService } from "./services/supplier.service";
 export { paymentService } from "./services/payment.service";
 export { qrService } from "./services/qr.service";
 export { userService } from "./services/user.service";
+export { adminService } from "./services/admin.service";
+export { pricingService } from "./services/pricing.service";
+export { subscriptionService } from "./services/subscription.service";
 
-// Export types
-export * from "./types";
+// Export all types
+export type * from "./types";
 
 // Export client
 export { apiClient } from "./client";
+
+// Export endpoints for direct access if needed
+export * from "./endpoints";
