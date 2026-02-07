@@ -2,20 +2,18 @@ import React from "react";
 import HomeIcon from "@mui/icons-material/Home";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import PeopleIcon from "@mui/icons-material/People";
 import PaymentIcon from "@mui/icons-material/Payment";
 import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import GroupIcon from "@mui/icons-material/Group";
 import QrCodeIcon from "@mui/icons-material/QrCode";
 
-const PHASE_1_ENABLED = process.env.NEXT_PUBLIC_PHASE_1_ENABLED === 'true';
+const PHASE_1_ENABLED = process.env.NEXT_PUBLIC_PHASE_1_ENABLED === "true";
 
 export type SectionKey =
   | "home"
   | "inventory"
   | "orders"
-  | "users"
   | "payments"
   | "items"
   | "suppliers"
@@ -26,7 +24,6 @@ export const DEFAULT_STATE: Record<SectionKey, boolean> = {
   home: false,
   inventory: false,
   orders: false,
-  users: false,
   payments: false,
   items: false,
   suppliers: false,
@@ -91,17 +88,6 @@ const ALL_SIDEBAR_ITEMS: SidebarItem[] = [
     phase1Only: true,
   },
   {
-    key: "users",
-    title: "Users",
-    icon: <PeopleIcon />,
-    href: "/users",
-    subItems: [
-      { label: "Profile", href: "/users/profile" },
-      { label: "Address", href: "/users/address" },
-      { label: "Subscription", href: "/user/manage/subscription" },
-    ],
-  },
-  {
     key: "payments",
     title: "Payments",
     icon: <PaymentIcon />,
@@ -151,5 +137,5 @@ const ALL_SIDEBAR_ITEMS: SidebarItem[] = [
 
 // Filter items based on phase flag
 export const SIDEBAR_ITEMS: SidebarItem[] = ALL_SIDEBAR_ITEMS.filter(
-  (item) => !item.phase1Only || PHASE_1_ENABLED
+  (item) => !item.phase1Only || PHASE_1_ENABLED,
 );

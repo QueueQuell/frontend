@@ -55,12 +55,17 @@ export default function UserMenuDrawer({ open, onClose }: UserMenuDrawerProps) {
     {
       icon: PersonIcon,
       text: "Profile",
-      href: "/users/profile",
+      href: "/user/profile",
     },
     {
       icon: PaymentIcon,
       text: "Subscription",
-      href: "/user/manage/subscription",
+      href: "/user/subscription",
+    },
+    {
+      icon: AssignmentIcon,
+      text: "Address",
+      href: "/user/address",
     },
     ...(PHASE_1_ENABLED ? [{
       icon: SecurityIcon,
@@ -89,7 +94,7 @@ export default function UserMenuDrawer({ open, onClose }: UserMenuDrawerProps) {
       {/* Profile Section */}
       <Box
         component={Link}
-        href="/users/profile"
+        href="/user/profile"
         onClick={onClose}
         sx={{
           px: 3,
@@ -97,7 +102,7 @@ export default function UserMenuDrawer({ open, onClose }: UserMenuDrawerProps) {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          bgcolor: "grey.50",
+          bgcolor: "grey.20",
           borderBottom: 1,
           borderColor: "divider",
           textDecoration: "none",
@@ -112,7 +117,8 @@ export default function UserMenuDrawer({ open, onClose }: UserMenuDrawerProps) {
             width: 80,
             height: 80,
             mb: 2,
-            border: "3px solid",
+            border: "1px solid",
+            boxShadow: 5,
             borderColor: "success.main",
           }}
           src="/api/placeholder/80/80" // Placeholder; replace with real user avatar if available
@@ -133,13 +139,13 @@ export default function UserMenuDrawer({ open, onClose }: UserMenuDrawerProps) {
       {/* Menu Items */}
       <List sx={{ flexGrow: 1, p: 0 }}>
         {menuItems.map((item) => (
-          <ListItem key={item.text} disablePadding sx={{ px: 2 }}>
+          <ListItem key={item.text} disablePadding sx={{ px: 1 }}>
             <ListItemButton
               component={Link}
               href={item.href}
               onClick={onClose}
               sx={{
-                borderRadius: 1,
+                borderRadius: 0.5,
                 mx: 1,
                 my: 0.5,
                 "&:hover": {
@@ -170,7 +176,7 @@ export default function UserMenuDrawer({ open, onClose }: UserMenuDrawerProps) {
           onClick={handleLogout}
           fullWidth
           sx={{
-            borderRadius: 1,
+            borderRadius: 0.5,
             textTransform: "none",
             py: 1.5,
           }}
@@ -194,7 +200,7 @@ export default function UserMenuDrawer({ open, onClose }: UserMenuDrawerProps) {
       slotProps={{
         paper: {
           sx: {
-            borderRadius: "8px 0 0 8px",
+            borderRadius: "5px 0 0 5px",
             boxShadow: 3,
           },
         },

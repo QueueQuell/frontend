@@ -77,10 +77,10 @@ export default function TopBar() {
           },
         }}
       >
-        <MenuItem onClick={handleClose} component={Link} href="/users/profile">
+        <MenuItem onClick={handleClose} component={Link} href="/user/profile">
           Profile
         </MenuItem>
-        <MenuItem onClick={handleClose} component={Link} href="/users/address">
+        <MenuItem onClick={handleClose} component={Link} href="/user/address">
           Address
         </MenuItem>
         <MenuItem

@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardActionArea, CardActions, Typography, Box } from '@mui/material';
 import { SvgIconTypeMap } from '@mui/material/SvgIcon';
 import { OverridableComponent } from '@mui/material/OverridableComponent';
+import Link from 'next/link';
 
 interface CommonCardProps {
   title: string;
@@ -41,7 +42,7 @@ export default function CommonCard({
     <Card sx={{ height: "100%" }}>
       {href || onClick ? (
         <CardActionArea
-          component={href ? "a" : "div"}
+          component={href ? Link : "div"}
           href={href}
           onClick={onClick}
           sx={{ height: "100%" }}

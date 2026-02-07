@@ -6,8 +6,8 @@ import PersonIcon from "@mui/icons-material/Person";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 
 const userActions = [
-  { href: "/users/profile", label: "Profile", icon: PersonIcon, description: "Manage your profile information" },
-  { href: "/users/address", label: "Address", icon: LocationOnIcon, description: "Manage your addresses" },
+  { href: "/user/profile", label: "Profile", icon: PersonIcon, description: "Manage your profile information" },
+  { href: "/user/address", label: "Address", icon: LocationOnIcon, description: "Manage your addresses" },
 ];
 
 export default function UsersPage() {
