@@ -1,5 +1,4 @@
 "use client";
-import CommonLayout from "@/components/layouts/CommonLayout";
 import { Typography, Box, Accordion, AccordionSummary, AccordionDetails, Grid, Paper, List, ListItem, ListItemText } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import HelpIcon from "@mui/icons-material/Help";
@@ -172,61 +171,59 @@ const faqData = [
 
 export default function HelpPage() {
   return (
-    <CommonLayout>
-      <Box sx={{ p: 3 }}>
-        <Breadcrumb
-          items={[
-            { label: "Home", href: "/home" },
-            { label: "Help" },
-          ]}
-        />
+    <Box sx={{ p: 3 }}>
+      <Breadcrumb
+        items={[
+          { label: "Home", href: "/home" },
+          { label: "Help" },
+        ]}
+      />
 
-        <Box sx={{ textAlign: "center", mb: 4 }}>
-          <HelpIcon sx={{ fontSize: 48, color: "primary.main", mb: 2 }} />
-          <Typography variant="h4" gutterBottom>
-            Help & Support Center
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
-            Find answers to common questions and learn how to use all features of your restaurant management system
-          </Typography>
-        </Box>
-
-        <Grid container spacing={3}>
-          {faqData.map((category) => (
-            <Grid size={{ xs: 12, md: 6 }} key={category.category}>
-              <Paper sx={{ p: 2 }}>
-                <Typography variant="h6" gutterBottom sx={{ display: "flex", alignItems: "center" }}>
-                  <span style={{ marginRight: 8 }}>{category.icon}</span>
-                  {category.category}
-                </Typography>
-                {category.questions.map((faq, index) => (
-                  <Accordion key={index} sx={{ mb: 1 }}>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                      <Typography variant="subtitle2">{faq.question}</Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                      <Typography variant="body2" sx={{ whiteSpace: "pre-line" }}>
-                        {faq.answer}
-                      </Typography>
-                    </AccordionDetails>
-                  </Accordion>
-                ))}
-              </Paper>
-            </Grid>
-          ))}
-        </Grid>
-
-        <Box sx={{ mt: 4, textAlign: "center" }}>
-          <Paper sx={{ p: 3, bgcolor: "primary.light", color: "primary.contrastText" }}>
-            <Typography variant="h6" gutterBottom>
-              Still need help?
-            </Typography>
-            <Typography variant="body2">
-              Contact our support team at support@restaurantapp.com or call 1-800-RESTAURANT
-            </Typography>
-          </Paper>
-        </Box>
+      <Box sx={{ textAlign: "center", mb: 4 }}>
+        <HelpIcon sx={{ fontSize: 48, color: "primary.main", mb: 2 }} />
+        <Typography variant="h4" gutterBottom>
+          Help & Support Center
+        </Typography>
+        <Typography variant="body1" color="text.secondary">
+          Find answers to common questions and learn how to use all features of your restaurant management system
+        </Typography>
       </Box>
-    </CommonLayout>
+
+      <Grid container spacing={3}>
+        {faqData.map((category) => (
+          <Grid size={{ xs: 12, md: 6 }} key={category.category}>
+            <Paper sx={{ p: 2 }}>
+              <Typography variant="h6" gutterBottom sx={{ display: "flex", alignItems: "center" }}>
+                <span style={{ marginRight: 8 }}>{category.icon}</span>
+                {category.category}
+              </Typography>
+              {category.questions.map((faq, index) => (
+                <Accordion key={index} sx={{ mb: 1 }}>
+                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography variant="subtitle2">{faq.question}</Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <Typography variant="body2" sx={{ whiteSpace: "pre-line" }}>
+                      {faq.answer}
+                    </Typography>
+                  </AccordionDetails>
+                </Accordion>
+              ))}
+            </Paper>
+          </Grid>
+        ))}
+      </Grid>
+
+      <Box sx={{ mt: 4, textAlign: "center" }}>
+        <Paper sx={{ p: 3, bgcolor: "primary.light", color: "primary.contrastText" }}>
+          <Typography variant="h6" gutterBottom>
+            Still need help?
+          </Typography>
+          <Typography variant="body2">
+            Contact our support team at support@restaurantapp.com or call 1-800-RESTAURANT
+          </Typography>
+        </Paper>
+      </Box>
+    </Box>
   );
 }

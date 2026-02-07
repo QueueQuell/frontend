@@ -1,5 +1,4 @@
 "use client";
-import CommonLayout from "@/components/layouts/CommonLayout";
 import CommonCard from "@/components/CommonCard";
 import { Typography, Box, Grid, Button, Chip } from "@mui/material";
 import Link from "next/link";
@@ -16,53 +15,51 @@ const menus = [
 
 export default function QRMenuPage() {
   return (
-    <CommonLayout>
-      <Box sx={{ p: 3 }}>
-        <Typography variant="h4" gutterBottom>
-          Menu QR Codes
-        </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-          Generate QR codes for different menu categories
-        </Typography>
-        <Grid container spacing={3}>
-          {menus.map((menu) => (
-            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={menu.id}>
-              <CommonCard
-                title={menu.name}
-                icon={RestaurantMenuIcon}
-                actions={
-                  <>
-                    <Box sx={{ mb: 2 }}>
-                      <Chip
-                        label={menu.type}
-                        color="primary"
-                        size="small"
-                        sx={{ mr: 1 }}
-                      />
-                      <Chip
-                        label={menu.status}
-                        color={menu.status === "Active" ? "success" : "default"}
-                        size="small"
-                        sx={{ mr: 1 }}
-                      />
-                      <Chip
-                        label={menu.qrGenerated ? "QR Generated" : "No QR"}
-                        color={menu.qrGenerated ? "primary" : "warning"}
-                        size="small"
-                      />
-                    </Box>
-                    <Button size="small" startIcon={<QrCodeIcon />}>
-                      {menu.qrGenerated ? "Regenerate" : "Generate"} QR
-                    </Button>
-                    <Button size="small">Edit Menu</Button>
-                  </>
-                }
-              />
-            </Grid>
-          ))}
-        </Grid>
-        <PageFooter backHref="/qr" backText="Back to QR Codes" />
-      </Box>
-    </CommonLayout>
+    <Box sx={{ p: 3 }}>
+      <Typography variant="h4" gutterBottom>
+        Menu QR Codes
+      </Typography>
+      <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+        Generate QR codes for different menu categories
+      </Typography>
+      <Grid container spacing={3}>
+        {menus.map((menu) => (
+          <Grid size={{ xs: 12, sm: 6, md: 4 }} key={menu.id}>
+            <CommonCard
+              title={menu.name}
+              icon={RestaurantMenuIcon}
+              actions={
+                <>
+                  <Box sx={{ mb: 2 }}>
+                    <Chip
+                      label={menu.type}
+                      color="primary"
+                      size="small"
+                      sx={{ mr: 1 }}
+                    />
+                    <Chip
+                      label={menu.status}
+                      color={menu.status === "Active" ? "success" : "default"}
+                      size="small"
+                      sx={{ mr: 1 }}
+                    />
+                    <Chip
+                      label={menu.qrGenerated ? "QR Generated" : "No QR"}
+                      color={menu.qrGenerated ? "primary" : "warning"}
+                      size="small"
+                    />
+                  </Box>
+                  <Button size="small" startIcon={<QrCodeIcon />}>
+                    {menu.qrGenerated ? "Regenerate" : "Generate"} QR
+                  </Button>
+                  <Button size="small">Edit Menu</Button>
+                </>
+              }
+            />
+          </Grid>
+        ))}
+      </Grid>
+      <PageFooter backHref="/qr" backText="Back to QR Codes" />
+    </Box>
   );
 }

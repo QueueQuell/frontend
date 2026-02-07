@@ -5,7 +5,6 @@ import PersonIcon from "@mui/icons-material/Person";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PageFooter from "@/components/ui/PageFooter";
-import CommonLayout from "@/components/layouts/CommonLayout";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 
 const customers = [
@@ -16,61 +15,59 @@ const customers = [
 
 export default function CustomerListPage() {
   return (
-    <CommonLayout>
-      <Box sx={{ p: 3 }}>
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
-          <Breadcrumb
-            items={[
-              { label: "Home", href: "/home" },
-              { label: "Customers", href: "/customers" },
-              { label: "List" },
-            ]}
-          />
-          <Button component={Link} href="/customers/add" variant="contained" startIcon={<PersonIcon />}>
-            Add Customer
-          </Button>
-        </Box>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Phone</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Orders</TableCell>
-                <TableCell>Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {customers.map((customer) => (
-                <TableRow key={customer.id}>
-                  <TableCell>{customer.name}</TableCell>
-                  <TableCell>{customer.email}</TableCell>
-                  <TableCell>{customer.phone}</TableCell>
-                  <TableCell>
-                    <Chip
-                      label={customer.status}
-                      color={customer.status === "Active" ? "success" : "default"}
-                      size="small"
-                    />
-                  </TableCell>
-                  <TableCell>{customer.orders}</TableCell>
-                  <TableCell>
-                    <Button size="small" startIcon={<EditIcon />}>
-                      Edit
-                    </Button>
-                    <Button size="small" color="error" startIcon={<DeleteIcon />}>
-                      Delete
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <PageFooter backHref="/customers" backText="Back to Customers" />
+    <Box sx={{ p: 3 }}>
+      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/home" },
+            { label: "Customers", href: "/customers" },
+            { label: "List" },
+          ]}
+        />
+        <Button component={Link} href="/customers/add" variant="contained" startIcon={<PersonIcon />}>
+          Add Customer
+        </Button>
       </Box>
-    </CommonLayout>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Name</TableCell>
+              <TableCell>Email</TableCell>
+              <TableCell>Phone</TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell>Orders</TableCell>
+              <TableCell>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {customers.map((customer) => (
+              <TableRow key={customer.id}>
+                <TableCell>{customer.name}</TableCell>
+                <TableCell>{customer.email}</TableCell>
+                <TableCell>{customer.phone}</TableCell>
+                <TableCell>
+                  <Chip
+                    label={customer.status}
+                    color={customer.status === "Active" ? "success" : "default"}
+                    size="small"
+                  />
+                </TableCell>
+                <TableCell>{customer.orders}</TableCell>
+                <TableCell>
+                  <Button size="small" startIcon={<EditIcon />}>
+                    Edit
+                  </Button>
+                  <Button size="small" color="error" startIcon={<DeleteIcon />}>
+                    Delete
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <PageFooter backHref="/customers" backText="Back to Customers" />
+    </Box>
   );
 }

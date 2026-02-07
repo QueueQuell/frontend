@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import CommonLayout from "@/components/layouts/CommonLayout";
 import { Typography, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Chip, CircularProgress, Alert } from "@mui/material";
 import Link from "next/link";
 import BusinessIcon from "@mui/icons-material/Business";
@@ -34,9 +33,8 @@ export default function SupplierListPage() {
   };
 
   return (
-    <CommonLayout>
-      <Box sx={{ p: 3 }}>
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+    <Box sx={{ p: 3 }}>
+      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
           <Breadcrumb
             items={[
               { label: "Home", href: "/home" },
@@ -99,6 +97,5 @@ export default function SupplierListPage() {
         )}
         <PageFooter backHref="/suppliers" backText="Back to Suppliers" />
       </Box>
-    </CommonLayout>
   );
 }

@@ -1,5 +1,4 @@
 "use client";
-import CommonLayout from "@/components/layouts/CommonLayout";
 import { Box, Button, Alert, Paper } from "@mui/material";
 import Link from "next/link";
 import CategoryIcon from "@mui/icons-material/Category";
@@ -63,57 +62,55 @@ export default function CreateCategoryPage() {
   };
 
   return (
-    <CommonLayout>
-      <Box sx={{ p: 3 }}>
-        <Breadcrumb
-          items={[
-            { label: "Home", href: "/home" },
-            { label: "Items", href: "/items" },
-            { label: "Categories", href: "/items/categories" },
-            { label: "Create New Category" },
-          ]}
-        />
+    <Box sx={{ p: 3 }}>
+      <Breadcrumb
+        items={[
+          { label: "Home", href: "/home" },
+          { label: "Items", href: "/items" },
+          { label: "Categories", href: "/items/categories" },
+          { label: "Create New Category" },
+        ]}
+      />
 
-        {error && (
-          <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
-            {error}
-          </Alert>
-        )}
+      {error && (
+        <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
+          {error}
+        </Alert>
+      )}
 
-        {success && (
-          <Alert severity="success" sx={{ mb: 3 }}>
-            Category created successfully! Redirecting to categories...
-          </Alert>
-        )}
+      {success && (
+        <Alert severity="success" sx={{ mb: 3 }}>
+          Category created successfully! Redirecting to categories...
+        </Alert>
+      )}
 
-        <Paper sx={{ p: 4, maxWidth: 700, mx: "auto" }}>
-          <form onSubmit={handleSubmit}>
-            <SectionForm formData={formData} onChange={handleChange} />
-            <Box sx={{ display: "flex", gap: 2, justifyContent: "flex-end", mt: 3 }}>
-              <Button
-                component={Link}
-                href="/items/categories"
-                variant="outlined"
-                startIcon={<ArrowBackIcon />}
-                disabled={isSubmitting}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                variant="contained"
-                disabled={isSubmitting}
-                startIcon={<CategoryIcon />}
-              >
-                {isSubmitting ? "Creating..." : "Create Category"}
-              </Button>
-            </Box>
-          </form>
-        </Paper>
+      <Paper sx={{ p: 4, maxWidth: 700, mx: "auto" }}>
+        <form onSubmit={handleSubmit}>
+          <SectionForm formData={formData} onChange={handleChange} />
+          <Box sx={{ display: "flex", gap: 2, justifyContent: "flex-end", mt: 3 }}>
+            <Button
+              component={Link}
+              href="/items/categories"
+              variant="outlined"
+              startIcon={<ArrowBackIcon />}
+              disabled={isSubmitting}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              disabled={isSubmitting}
+              startIcon={<CategoryIcon />}
+            >
+              {isSubmitting ? "Creating..." : "Create Category"}
+            </Button>
+          </Box>
+        </form>
+      </Paper>
 
-        <PageFooter backHref="/items/categories" backText="Back to Categories" />
-      </Box>
-    </CommonLayout>
+      <PageFooter backHref="/items/categories" backText="Back to Categories" />
+    </Box>
   );
 }
 

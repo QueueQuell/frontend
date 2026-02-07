@@ -1,5 +1,4 @@
 "use client";
-import CommonLayout from "@/components/layouts/CommonLayout";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import PageFooter from "@/components/ui/PageFooter";
 import { Box } from "@mui/material";
@@ -27,17 +26,15 @@ export default function PaymentsPage() {
   };
 
   return (
-    <CommonLayout>
-      <Box sx={{ p: 3 }}>
-        <Breadcrumb
-          items={[
-            { label: "Home", href: "/home" },
-            { label: "Payments" },
-          ]}
-        />
-        {renderContent()}
-        <PageFooter backHref="/home" backText="Back to Home" />
-      </Box>
-    </CommonLayout>
+    <Box sx={{ p: 3 }}>
+      <Breadcrumb
+        items={[
+          { label: "Home", href: "/home" },
+          { label: "Payments" },
+        ]}
+      />
+      {renderContent()}
+      <PageFooter backHref="/home" backText="Back to Home" />
+    </Box>
   );
 }

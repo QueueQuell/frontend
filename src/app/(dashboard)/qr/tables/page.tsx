@@ -1,5 +1,4 @@
 "use client";
-import CommonLayout from "@/components/layouts/CommonLayout";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import PageFooter from "@/components/ui/PageFooter";
 import { Box, Grid, Card, CardContent, CardActions, Button, Chip, Drawer, Typography } from "@mui/material";
@@ -24,7 +23,7 @@ export default function QRTablesPage() {
   };
 
   return (
-    <CommonLayout>
+    <>
       <Box sx={{ p: 3 }}>
         <Breadcrumb
           items={[
@@ -99,6 +98,6 @@ export default function QRTablesPage() {
           </Box>
         )}
       </Drawer>
-    </CommonLayout>
+    </>
   );
 }

@@ -9,7 +9,6 @@ import { useState } from "react";
 import ItemForm, { ItemFormData } from "@/components/items/ItemForm";
 import PageFooter from "@/components/ui/PageFooter";
 import Breadcrumb from "@/components/ui/Breadcrumb";
-import CommonLayout from "@/components/layouts/CommonLayout";
 
 interface MenuItem {
   id: number;
@@ -180,138 +179,136 @@ export default function MenuCatalogPage() {
   };
 
   return (
-    <CommonLayout>
-      <Box sx={{ p: 3 }}>
+    <Box sx={{ p: 3 }}>
+      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/home" },
+            { label: "Items", href: "/items" },
+            { label: "Catalog" },
+          ]}
+        />
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
-          <Breadcrumb
-            items={[
-              { label: "Home", href: "/home" },
-              { label: "Items", href: "/items" },
-              { label: "Catalog" },
-            ]}
-          />
-          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
-            <Button component={Link} href="/items/catalog/create" variant="contained" startIcon={<AddIcon />}>
-              Add Item
-            </Button>
-          </Box>
+          <Button component={Link} href="/items/catalog/create" variant="contained" startIcon={<AddIcon />}>
+            Add Item
+          </Button>
         </Box>
-        {error && (
-          <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
-            {error}
-          </Alert>
-        )}
-
-        <Grid container spacing={3}>
-          {items.map((item) => (
-            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={item.id}>
-              <Card>
-                <CardMedia
-                  component="img"
-                  height="140"
-                  image={item.image}
-                  alt={item.name}
-                  loading="lazy"
-                />
-                <CardContent>
-                  <Typography variant="h6" component="div">
-                    {item.name}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {item.category}
-                  </Typography>
-                  <Typography variant="h6" color="primary">
-                    ₹{item.price}
-                  </Typography>
-                  <Chip
-                    label={item.available ? "Available" : "Unavailable"}
-                    color={item.available ? "success" : "error"}
-                    size="small"
-                    sx={{ mt: 1 }}
-                  />
-                </CardContent>
-                <CardActions>
-                  <Button
-                    size="small"
-                    onClick={() => handleEditClick(item)}
-                    startIcon={<EditIcon />}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    size="small"
-                    color="error"
-                    onClick={() => setDeleteDialog({ open: true, item })}
-                    startIcon={<DeleteIcon />}
-                  >
-                    Delete
-                  </Button>
-                </CardActions>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-
-        {/* Edit Item Dialog */}
-        <Dialog
-          open={editDialog.open}
-          onClose={() => setEditDialog({ open: false, item: null })}
-          maxWidth="md"
-          fullWidth
-        >
-          <DialogTitle>Edit Menu Item</DialogTitle>
-          <DialogContent>
-            <Box sx={{ pt: 2 }}>
-              <form onSubmit={handleEditSubmit}>
-                <ItemForm formData={formData} onChange={handleChange} />
-              </form>
-            </Box>
-          </DialogContent>
-          <DialogActions>
-            <Button
-              onClick={() => setEditDialog({ open: false, item: null })}
-              disabled={isSubmitting}
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={handleEditSubmit}
-              variant="contained"
-              disabled={isSubmitting}
-              startIcon={<RestaurantMenuIcon />}
-            >
-              {isSubmitting ? "Updating..." : "Update Item"}
-            </Button>
-          </DialogActions>
-        </Dialog>
-
-        {/* Delete Confirmation Dialog */}
-        <Dialog
-          open={deleteDialog.open}
-          onClose={() => setDeleteDialog({ open: false, item: null })}
-        >
-          <DialogTitle>Delete Menu Item</DialogTitle>
-          <DialogContent>
-            <Typography>
-              Are you sure you want to delete "{deleteDialog.item?.name}"?
-              This action cannot be undone.
-            </Typography>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setDeleteDialog({ open: false, item: null })}>
-              Cancel
-            </Button>
-            <Button
-              onClick={() => deleteDialog.item && handleDelete(deleteDialog.item)}
-              color="error"
-              variant="contained"
-            >
-              Delete
-            </Button>
-          </DialogActions>
-        </Dialog>
-        <PageFooter backHref="/items" backText="Back to Items" />
       </Box>
-    </CommonLayout>
+      {error && (
+        <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
+          {error}
+        </Alert>
+      )}
+
+      <Grid container spacing={3}>
+        {items.map((item) => (
+          <Grid size={{ xs: 12, sm: 6, md: 4 }} key={item.id}>
+            <Card>
+              <CardMedia
+                component="img"
+                height="140"
+                image={item.image}
+                alt={item.name}
+                loading="lazy"
+              />
+              <CardContent>
+                <Typography variant="h6" component="div">
+                  {item.name}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {item.category}
+                </Typography>
+                <Typography variant="h6" color="primary">
+                  ₹{item.price}
+                </Typography>
+                <Chip
+                  label={item.available ? "Available" : "Unavailable"}
+                  color={item.available ? "success" : "error"}
+                  size="small"
+                  sx={{ mt: 1 }}
+                />
+              </CardContent>
+              <CardActions>
+                <Button
+                  size="small"
+                  onClick={() => handleEditClick(item)}
+                  startIcon={<EditIcon />}
+                >
+                  Edit
+                </Button>
+                <Button
+                  size="small"
+                  color="error"
+                  onClick={() => setDeleteDialog({ open: true, item })}
+                  startIcon={<DeleteIcon />}
+                >
+                  Delete
+                </Button>
+              </CardActions>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+
+      {/* Edit Item Dialog */}
+      <Dialog
+        open={editDialog.open}
+        onClose={() => setEditDialog({ open: false, item: null })}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle>Edit Menu Item</DialogTitle>
+        <DialogContent>
+          <Box sx={{ pt: 2 }}>
+            <form onSubmit={handleEditSubmit}>
+              <ItemForm formData={formData} onChange={handleChange} />
+            </form>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setEditDialog({ open: false, item: null })}
+            disabled={isSubmitting}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleEditSubmit}
+            variant="contained"
+            disabled={isSubmitting}
+            startIcon={<RestaurantMenuIcon />}
+          >
+            {isSubmitting ? "Updating..." : "Update Item"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteDialog.open}
+        onClose={() => setDeleteDialog({ open: false, item: null })}
+      >
+        <DialogTitle>Delete Menu Item</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to delete "{deleteDialog.item?.name}"?
+            This action cannot be undone.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteDialog({ open: false, item: null })}>
+            Cancel
+          </Button>
+          <Button
+            onClick={() => deleteDialog.item && handleDelete(deleteDialog.item)}
+            color="error"
+            variant="contained"
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <PageFooter backHref="/items" backText="Back to Items" />
+    </Box>
   );
 }
