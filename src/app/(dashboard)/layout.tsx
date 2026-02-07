@@ -6,6 +6,7 @@ import RequireAuth from "@/components/auth/RequireAuth";
 import Sidebar from "@/components/navigation/Sidebar";
 import Header from "@/components/navigation/Header";
 import Footer from "@/components/navigation/Footer";
+import PageTransition from "@/components/ui/PageTransition";
 
 function LoadingFallback() {
   return (
@@ -14,7 +15,7 @@ function LoadingFallback() {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        minHeight: "50vh"
+        minHeight: "50vh",
       }}
     >
       <CircularProgress />
@@ -30,7 +31,7 @@ export default function DashboardLayout({
   const [mobileOpen, setMobileOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -61,10 +62,16 @@ export default function DashboardLayout({
           }}
         >
           <Header />
-          <Box sx={{ flex: 1, pr: 3, pl: 3, pt: 2, pb: 1, overflowY: "auto", backgroundColor: "#F9FAFC" }}>
-            <Suspense fallback={<LoadingFallback />}>
-              {children}
-            </Suspense>
+          <Box
+            sx={{
+              flex: 1,
+              p: 1,
+              overflowY: "auto",
+            }}
+          >
+            <PageTransition>
+              <Suspense fallback={<LoadingFallback />}>{children}</Suspense>
+            </PageTransition>
           </Box>
           <Footer />
         </Box>

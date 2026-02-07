@@ -1,10 +1,6 @@
-// src/app/layout.tsx
-"use client";
 import { Inter, Poppins } from "next/font/google";
-import "./globals.css";
 import MuiProviders from "../components/providers/MuiProviders";
-import PageTransition from "../components/ui/PageTransition";
-import type { Metadata } from "next";
+import "./globals.css";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -16,10 +12,6 @@ const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
-
-// Note: metadata export doesn't work in client components, 
-// so you might want to add this in a separate metadata file
-// or move this layout to server component if possible
 
 export default function RootLayout({
   children,
@@ -36,15 +28,12 @@ export default function RootLayout({
       <body
         style={{
           margin: 0,
-          fontFamily: "var(--font-inter), var(--font-poppins), Segoe UI, Roboto, system-ui, sans-serif",
+          fontFamily:
+            "var(--font-inter), var(--font-poppins), Segoe UI, Roboto, system-ui, sans-serif",
         }}
         className={`${inter.variable} ${poppins.variable}`}
       >
-        <MuiProviders>
-          <PageTransition>
-            {children}
-          </PageTransition>
-        </MuiProviders>
+        <MuiProviders>{children}</MuiProviders>
       </body>
     </html>
   );
