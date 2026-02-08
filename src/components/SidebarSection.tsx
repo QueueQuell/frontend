@@ -14,6 +14,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 interface SubItem {
   label: string;
@@ -29,6 +30,7 @@ interface SidebarSectionProps {
   onToggle: () => void;
   collapsed?: boolean;
   onPopoverOpen?: (event: React.MouseEvent<HTMLElement>) => void;
+  onPopoverClose?: () => void;
 }
 
 export default function SidebarSection({
@@ -40,18 +42,19 @@ export default function SidebarSection({
   onToggle,
   collapsed = false,
   onPopoverOpen,
+  onPopoverClose,
 }: SidebarSectionProps) {
   const pathname = usePathname();
   const hasSubItems = subItems && subItems.length > 0;
-  
+
   // Check if current path is this section or any of its sub-items
-  const isActive = pathname === href || subItems.some((item) => pathname === item.href);
+  const isActive =
+    pathname === href || subItems.some((item) => pathname === item.href);
 
   const handleMainClick = (event: React.MouseEvent<HTMLElement>) => {
-    if (collapsed && hasSubItems && onPopoverOpen) {
-      // When collapsed with sub-items, show popover instead of navigating
+    // When collapsed with sub-items, prevent navigation (popover handles it)
+    if (collapsed && hasSubItems) {
       event.preventDefault();
-      onPopoverOpen(event);
     }
     // When expanded (even with sub-items), allow normal Link navigation
     // The IconButton handles the expand/collapse separately
@@ -63,11 +66,28 @@ export default function SidebarSection({
     onToggle();
   };
 
+  // Handle mouse enter for popover (hover)
+  const handleMouseEnter = (event: React.MouseEvent<HTMLElement>) => {
+    if (collapsed && hasSubItems && onPopoverOpen) {
+      onPopoverOpen(event);
+    }
+  };
+
+  // Handle mouse leave for popover
+  const handleMouseLeave = () => {
+    if (collapsed && hasSubItems && onPopoverClose) {
+      // Small delay to allow moving to popover
+      onPopoverClose();
+    }
+  };
+
   const mainButton = (
     <ListItemButton
       component={Link}
       href={href}
       onClick={handleMainClick}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       sx={{
         borderRadius: 0.25,
         bgcolor: isActive ? "#E6F7FF" : "transparent",
@@ -80,12 +100,15 @@ export default function SidebarSection({
         transition: "all 0.3s ease",
         justifyContent: collapsed ? "center" : "flex-start",
         px: collapsed ? 1 : 2,
+        position: "relative", // For positioning the arrow
       }}
     >
-      <ListItemIcon sx={{ color: "text.primary", minWidth: collapsed ? 24 : 32 }}>
+      <ListItemIcon
+        sx={{ color: "text.primary", minWidth: collapsed ? 24 : 32 }}
+      >
         {icon}
       </ListItemIcon>
-      
+
       {!collapsed && (
         <ListItemText
           primary={title}
@@ -98,7 +121,23 @@ export default function SidebarSection({
           }}
         />
       )}
-      
+
+      {/* Show right arrow when collapsed and has sub-items */}
+      {collapsed && hasSubItems && (
+        <ChevronRightIcon
+          sx={{
+            position: "absolute",
+            right: 1,
+            top: "50%",
+            transform: "translateY(-50%)",
+            fontSize: "1rem",
+            color: "text.secondary",
+            opacity: 0.7,
+          }}
+        />
+      )}
+
+      {/* Show expand/collapse icon when expanded and has sub-items */}
       {!collapsed && hasSubItems && (
         <IconButton
           size="small"
@@ -112,18 +151,8 @@ export default function SidebarSection({
   );
 
   return (
-    <Box>
-      <ListItem disablePadding>
-        {collapsed ? (
-          // When collapsed, wrap in tooltip
-          <Tooltip title={title} placement="right" arrow>
-            {mainButton}
-          </Tooltip>
-        ) : (
-          // When expanded, no tooltip needed
-          mainButton
-        )}
-      </ListItem>
+    <Box mb={1} >
+      <ListItem disablePadding>{mainButton}</ListItem>
 
       {/* Sub-items (only show when expanded and open) */}
       {!collapsed && hasSubItems && (
@@ -131,7 +160,7 @@ export default function SidebarSection({
           <List component="div" disablePadding>
             {subItems.map((item) => {
               const isSubItemActive = pathname === item.href;
-              
+
               return (
                 <ListItemButton
                   key={item.href}
@@ -156,7 +185,9 @@ export default function SidebarSection({
                     primary={item.label}
                     sx={{
                       "& .MuiListItemText-primary": {
-                        color: isSubItemActive ? "primary.main" : "text.secondary",
+                        color: isSubItemActive
+                          ? "primary.main"
+                          : "text.secondary",
                         fontSize: "0.75rem",
                         fontWeight: isSubItemActive ? 600 : 400,
                       },

@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
-import {
-  Box,
-  List,
-  Drawer,
-  useMediaQuery,
-  useTheme,
-  IconButton,
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { 
+  Box, 
+  List, 
+  Drawer, 
+  useMediaQuery, 
+  useTheme, 
+  IconButton, 
   Tooltip,
   Popover,
   MenuItem,
@@ -81,23 +81,26 @@ interface SidebarProps {
   onToggleCollapsed?: () => void;
 }
 
-export default function Sidebar({
-  mobileOpen = false,
-  onMobileClose,
-  collapsed = false,
-  onToggleCollapsed
+export default function Sidebar({ 
+  mobileOpen = false, 
+  onMobileClose, 
+  collapsed = false, 
+  onToggleCollapsed 
 }: SidebarProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [open, setOpen] = useState<Record<SectionKey, boolean>>(DEFAULT_STATE);
-
-  // Popover state
+  
+  // Popover state - using anchor element for hover
   const [popoverAnchor, setPopoverAnchor] = useState<HTMLElement | null>(null);
   const [popoverContent, setPopoverContent] = useState<{
     title: string;
-    href: string; // NEW: Store main href
+    href: string;
     items: { label: string; href: string }[];
   } | null>(null);
+  
+  // Timeout for closing popover with delay
+  const closeTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
   // Load state from localStorage on mount
   useEffect(() => {
@@ -125,38 +128,68 @@ export default function Sidebar({
     return () => clearTimeout(timeoutId);
   }, [open]);
 
-  // Toggle section (only when expanded)
+  // Toggle section (only when expanded) - Accordion behavior
   const toggle = useCallback((key: SectionKey) => {
-  if (!collapsed) {
-    setOpen((prevState) => {
-      const newState = { ...DEFAULT_STATE }; // ← Close ALL sections first
-      newState[key] = !prevState[key];       // ← Then toggle the clicked one
-      return newState;
-    });
-  }
-}, [collapsed]);
-
-  // Handle popover open (when collapsed)
-  const handlePopoverOpen = useCallback((
-    event: React.MouseEvent<HTMLElement>,
-    title: string,
-    href: string, // NEW: Accept main href
-    items: { label: string; href: string }[]
-  ) => {
-    if (collapsed && items.length > 0) {
-      setPopoverAnchor(event.currentTarget);
-      setPopoverContent({ title, href, items }); // NEW: Store href
+    if (!collapsed) {
+      setOpen((prevState) => {
+        const newState = { ...DEFAULT_STATE }; // Close all sections
+        newState[key] = !prevState[key]; // Toggle the clicked one
+        return newState;
+      });
     }
   }, [collapsed]);
 
-  // Handle popover close
+  // Handle popover open on hover
+  const handlePopoverOpen = useCallback((
+    event: React.MouseEvent<HTMLElement>,
+    title: string,
+    href: string,
+    items: { label: string; href: string }[]
+  ) => {
+    if (collapsed && items.length > 0) {
+      // Clear any pending close timeout
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current);
+        closeTimeoutRef.current = null;
+      }
+      setPopoverAnchor(event.currentTarget);
+      setPopoverContent({ title, href, items });
+    }
+  }, [collapsed]);
+
+  // Handle popover close with delay
   const handlePopoverClose = useCallback(() => {
-    setPopoverAnchor(null);
-    setPopoverContent(null);
+    // Clear any existing timeout
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+    }
+    
+    // Set a delay before closing to allow mouse movement to popover
+    closeTimeoutRef.current = setTimeout(() => {
+      setPopoverAnchor(null);
+      setPopoverContent(null);
+    }, 100); // 100ms delay
+  }, []);
+
+  // Handle popover enter (cancel closing)
+  const handlePopoverEnter = useCallback(() => {
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+  }, []);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current);
+      }
+    };
   }, []);
 
   // Memoized static section component
-  const StaticSection = useMemo(() =>
+  const StaticSection = useMemo(() => 
     ({ title, icon, href }: { title: string; icon: React.ReactNode; href: string }) => (
       <SidebarSection
         title={title}
@@ -164,7 +197,7 @@ export default function Sidebar({
         href={href}
         subItems={[]}
         open={false}
-        onToggle={() => { }}
+        onToggle={() => {}}
         collapsed={collapsed}
       />
     ), [collapsed]
@@ -173,12 +206,12 @@ export default function Sidebar({
   const sidebarContent = useMemo(() => (
     <>
       {/* Logo - clickable */}
-      <Box
+      <Box 
         component={Link}
         href="/home"
-        sx={{
-          display: "flex",
-          justifyContent: "center",
+        sx={{ 
+          display: "flex", 
+          justifyContent: "center", 
           mb: 3,
           cursor: "pointer",
           transition: "opacity 0.2s",
@@ -189,20 +222,20 @@ export default function Sidebar({
           component="img"
           src="/queuequell-logo.png"
           alt="QueueQuell Logo"
-          sx={{
-            width: collapsed ? 40 : 50,
+          sx={{ 
+            width: collapsed ? 40 : 50, 
             height: "auto",
             transition: "width 0.3s ease"
           }}
         />
       </Box>
 
-      <List
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 0.25,
-          flexGrow: 1
+      <List 
+        sx={{ 
+          display: "flex", 
+          flexDirection: "column", 
+          gap: 0.25, 
+          flexGrow: 1 
         }}
         role="navigation"
         aria-label="Main navigation"
@@ -219,11 +252,12 @@ export default function Sidebar({
             onToggle={() => toggle(item.key)}
             collapsed={collapsed}
             onPopoverOpen={(event) => handlePopoverOpen(event, item.title, item.href, item.subItems)}
+            onPopoverClose={handlePopoverClose}
           />
         ))}
 
         {/* Static items */}
-        {STATIC_ITEMS.map((item) =>
+        {STATIC_ITEMS.map((item) => 
           (!item.phase1Only || PHASE_1_ENABLED) && (
             <StaticSection key={item.title} {...item} />
           )
@@ -236,8 +270,8 @@ export default function Sidebar({
 
         {/* Collapse Toggle Button - Desktop only */}
         {!isMobile && onToggleCollapsed && (
-          <Tooltip
-            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          <Tooltip 
+            title={collapsed ? "Expand sidebar" : "Collapse sidebar"} 
             placement="right"
           >
             <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
@@ -261,11 +295,14 @@ export default function Sidebar({
         )}
       </Box>
 
-      {/* Popover Menu for Collapsed State */}
+      {/* Popover Menu for Collapsed State - Hover Based */}
       <Popover
         open={Boolean(popoverAnchor)}
         anchorEl={popoverAnchor}
-        onClose={handlePopoverClose}
+        onClose={() => {
+          setPopoverAnchor(null);
+          setPopoverContent(null);
+        }}
         anchorOrigin={{
           vertical: 'top',
           horizontal: 'right',
@@ -274,18 +311,25 @@ export default function Sidebar({
           vertical: 'top',
           horizontal: 'left',
         }}
+        disableRestoreFocus
         sx={{
+          pointerEvents: 'none',
           ml: 1,
           '& .MuiPopover-paper': {
+            pointerEvents: 'auto',
             boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
             borderRadius: .5,
             minWidth: 200,
           },
         }}
+        PaperProps={{
+          onMouseEnter: handlePopoverEnter,
+          onMouseLeave: handlePopoverClose,
+        }}
       >
         {popoverContent && (
           <Box sx={{ py: 0.5 }}>
-            {/* Popover Title - NOW CLICKABLE */}
+            {/* Popover Title - Clickable */}
             <MenuItem
               component={Link}
               href={popoverContent.href}
@@ -301,7 +345,7 @@ export default function Sidebar({
                 },
               }}
             >
-              <ListItemText
+              <ListItemText 
                 primary={popoverContent.title}
                 primaryTypographyProps={{
                   fontSize: '0.875rem',
@@ -325,13 +369,13 @@ export default function Sidebar({
                   borderRadius: .5,
                   mx: 0.5,
                   px: 2,
-                  py: 1,
+                  py: 1.5,
                   '&:hover': {
                     bgcolor: 'action.hover',
                   },
                 }}
               >
-                <ListItemText
+                <ListItemText 
                   primary={subItem.label}
                   primaryTypographyProps={{
                     fontSize: '0.875rem',
@@ -346,16 +390,17 @@ export default function Sidebar({
       </Popover>
     </>
   ), [
-    collapsed,
-    open,
-    toggle,
-    isMobile,
-    onToggleCollapsed,
-    StaticSection,
-    popoverAnchor,
-    popoverContent,
-    handlePopoverOpen,
+    collapsed, 
+    open, 
+    toggle, 
+    isMobile, 
+    onToggleCollapsed, 
+    StaticSection, 
+    popoverAnchor, 
+    popoverContent, 
+    handlePopoverOpen, 
     handlePopoverClose,
+    handlePopoverEnter,
   ]);
 
   if (isMobile) {
@@ -364,7 +409,7 @@ export default function Sidebar({
         variant="temporary"
         open={mobileOpen}
         onClose={onMobileClose}
-        ModalProps={{
+        ModalProps={{ 
           keepMounted: true,
           'aria-labelledby': 'mobile-navigation-drawer'
         }}
