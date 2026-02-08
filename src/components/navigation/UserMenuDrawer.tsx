@@ -34,7 +34,7 @@ interface UserMenuDrawerProps {
 }
 
 // Feature flags for phase management
-const PHASE_1_ENABLED = process.env.NEXT_PUBLIC_PHASE_1_ENABLED === 'true'; // Configurable via environment variable
+const PHASE_1_ENABLED = process.env.NEXT_PUBLIC_PHASE_1_ENABLED === "true"; // Configurable via environment variable
 
 export default function UserMenuDrawer({ open, onClose }: UserMenuDrawerProps) {
   const router = useRouter();
@@ -58,25 +58,33 @@ export default function UserMenuDrawer({ open, onClose }: UserMenuDrawerProps) {
       href: "/user/profile",
     },
     {
-      icon: PaymentIcon,
-      text: "Subscription",
-      href: "/user/subscription",
-    },
-    {
       icon: AssignmentIcon,
       text: "Address",
       href: "/user/address",
     },
-    ...(PHASE_1_ENABLED ? [{
-      icon: SecurityIcon,
-      text: "Security",
-      href: "/security",
-    }] : []),
-    ...(PHASE_1_ENABLED ? [{
-      icon: SettingsIcon,
-      text: "Account settings",
-      href: "/account-settings",
-    }] : []),
+    {
+      icon: PaymentIcon,
+      text: "Subscription",
+      href: "/user/subscription",
+    },
+    ...(PHASE_1_ENABLED
+      ? [
+          {
+            icon: SecurityIcon,
+            text: "Security",
+            href: "/security",
+          },
+        ]
+      : []),
+    ...(PHASE_1_ENABLED
+      ? [
+          {
+            icon: SettingsIcon,
+            text: "Account settings",
+            href: "/account-settings",
+          },
+        ]
+      : []),
   ];
 
   const drawerContent = (
@@ -93,8 +101,6 @@ export default function UserMenuDrawer({ open, onClose }: UserMenuDrawerProps) {
     >
       {/* Profile Section */}
       <Box
-        component={Link}
-        href="/user/profile"
         onClick={onClose}
         sx={{
           px: 3,
@@ -102,13 +108,12 @@ export default function UserMenuDrawer({ open, onClose }: UserMenuDrawerProps) {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          bgcolor: "grey.20",
-          borderBottom: 1,
+          bgcolor: "cyan.200",
+          borderBottom: 0.5,
           borderColor: "divider",
           textDecoration: "none",
-          cursor: "pointer",
           "&:hover": {
-            bgcolor: "grey.100",
+            bgcolor: "grey.50",
           },
         }}
       >
@@ -125,7 +130,10 @@ export default function UserMenuDrawer({ open, onClose }: UserMenuDrawerProps) {
         >
           JF
         </Avatar>
-        <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5, color: "text.primary" }}>
+        <Typography
+          variant="h6"
+          sx={{ fontWeight: 600, mb: 0.5, color: "text.primary" }}
+        >
           Jaydon Frankie
         </Typography>
         <Typography variant="body2" color="text.secondary">
@@ -148,6 +156,7 @@ export default function UserMenuDrawer({ open, onClose }: UserMenuDrawerProps) {
                 borderRadius: 0.5,
                 mx: 1,
                 my: 0.5,
+                py: 1.5,
                 "&:hover": {
                   bgcolor: "action.hover",
                 },
@@ -158,7 +167,12 @@ export default function UserMenuDrawer({ open, onClose }: UserMenuDrawerProps) {
               </ListItemIcon>
               <ListItemText
                 primary={item.text}
-                primaryTypographyProps={{ fontWeight: item.text === "Account settings" ? "normal" : "medium" }}
+                slotProps={{
+                  primary: {
+                    fontWeight:
+                      item.text === "Account settings" ? "normal" : "medium",
+                  },
+                }}
                 sx={{ my: 0 }}
               />
             </ListItemButton>
