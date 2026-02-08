@@ -108,7 +108,6 @@ export default function UserMenuDrawer({ open, onClose }: UserMenuDrawerProps) {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          bgcolor: "cyan.200",
           borderBottom: 0.5,
           borderColor: "divider",
           textDecoration: "none",
@@ -157,12 +156,15 @@ export default function UserMenuDrawer({ open, onClose }: UserMenuDrawerProps) {
                 mx: 1,
                 my: 0.5,
                 py: 1.5,
+                color: "text.secondary",
                 "&:hover": {
                   bgcolor: "action.hover",
+                  color: "text.primary !important",
+                  transform: "translateX(1px)",
                 },
               }}
             >
-              <ListItemIcon sx={{ minWidth: 40, color: "text.primary" }}>
+              <ListItemIcon sx={{ minWidth: 40 }}>
                 <item.icon fontSize="small" />
               </ListItemIcon>
               <ListItemText
