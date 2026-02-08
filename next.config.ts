@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  trailingSlash: true,
+  trailingSlash: false,
   images: {
     unoptimized: true,
   },
