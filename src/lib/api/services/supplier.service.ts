@@ -1,6 +1,6 @@
 import { apiClient } from "../client";
 import { SUPPLIER_ENDPOINTS } from "../endpoints";
-import { Supplier, CreateSupplierRequest } from "../types";
+import { Supplier } from "../types";
 
 export const supplierService = {
   async getAll() {
@@ -11,11 +11,11 @@ export const supplierService = {
     return apiClient.get<Supplier>(SUPPLIER_ENDPOINTS.GET(id));
   },
 
-  async create(data: CreateSupplierRequest) {
+  async create(data: Omit<Supplier, 'id' | 'created_at' | 'updated_at'>) {
     return apiClient.post<Supplier>(SUPPLIER_ENDPOINTS.CREATE, data);
   },
 
-  async update(id: string, data: Partial<CreateSupplierRequest>) {
+  async update(id: string, data: Partial<Supplier>) {
     return apiClient.put<Supplier>(SUPPLIER_ENDPOINTS.UPDATE(id), data);
   },
 
@@ -24,7 +24,7 @@ export const supplierService = {
   },
 
   async getPerformance() {
-    return apiClient.get<Supplier[]>(SUPPLIER_ENDPOINTS.PERFORMANCE);
+    return apiClient.get(SUPPLIER_ENDPOINTS.PERFORMANCE);
   },
 
   async getProcurement() {

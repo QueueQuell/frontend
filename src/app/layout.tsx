@@ -1,8 +1,6 @@
-"use client";
 import { Inter, Poppins } from "next/font/google";
+import MuiProviders from "../components/providers/MuiProviders";
 import "./globals.css";
-import MuiProviders from "./components/providers/MuiProviders";
-import PageTransition from "./components/ui/PageTransition";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -23,20 +21,19 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <title>QueueQuell - Restaurant Management</title>
+        <meta name="description" content="Restaurant management system" />
         <link rel="icon" href="/queuequell-logo.png" />
       </head>
       <body
         style={{
           margin: 0,
-          fontFamily: "var(--font-inter), var(--font-poppins), Segoe UI, Roboto, system-ui, sans-serif",
+          fontFamily:
+            "var(--font-inter), var(--font-poppins), Segoe UI, Roboto, system-ui, sans-serif",
         }}
         className={`${inter.variable} ${poppins.variable}`}
       >
-        <MuiProviders>
-          <PageTransition>
-            {children}
-          </PageTransition>
-        </MuiProviders>
+        <MuiProviders>{children}</MuiProviders>
       </body>
     </html>
   );

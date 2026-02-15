@@ -1,9 +1,13 @@
+"use client";
+
 import { ApiResponse, ApiError } from "./types";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000/api";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://queuequell-backend.onrender.com/api";
 
 class ApiClient {
   private baseURL: string;
+  private isRefreshing = false;
+  private refreshSubscribers: ((token: string) => void)[] = [];
 
   constructor(baseURL: string) {
     this.baseURL = baseURL;
@@ -11,9 +15,63 @@ class ApiClient {
 
   private getAuthToken(): string | null {
     if (typeof window !== "undefined") {
-      return localStorage.getItem("authToken");
+      return localStorage.getItem("accessToken");
     }
     return null;
+  }
+
+  private subscribeTokenRefresh(cb: (token: string) => void) {
+    this.refreshSubscribers.push(cb);
+  }
+
+  private onTokenRefreshed(token: string) {
+    this.refreshSubscribers.forEach((cb) => cb(token));
+    this.refreshSubscribers = [];
+  }
+
+  private async refreshToken(): Promise<string | null> {
+    if (typeof window === "undefined") return null;
+
+    const refreshToken = localStorage.getItem("refreshToken");
+    if (!refreshToken) {
+      return null;
+    }
+
+    try {
+      const response = await fetch(`${this.baseURL}/auth/refresh`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ refresh_token: refreshToken }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Token refresh failed");
+      }
+
+      const data = await response.json();
+      
+      if (data.data?.access_token) {
+        localStorage.setItem("accessToken", data.data.access_token);
+        if (data.data.refresh_token) {
+          localStorage.setItem("refreshToken", data.data.refresh_token);
+        }
+        return data.data.access_token;
+      }
+
+      return null;
+    } catch (error) {
+      // Clear tokens on refresh failure
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("tokenType");
+      
+      // Redirect to login
+      if (typeof window !== "undefined" && window.location.pathname !== "/login") {
+        window.location.href = "/login";
+      }
+      
+      return null;
+    }
   }
 
   private async request<T>(
@@ -34,12 +92,37 @@ class ApiClient {
         headers,
       });
 
+      // Handle 401 Unauthorized - try to refresh token
+      if (response.status === 401 && typeof window !== "undefined") {
+        if (!this.isRefreshing) {
+          this.isRefreshing = true;
+          const newToken = await this.refreshToken();
+          this.isRefreshing = false;
+
+          if (newToken) {
+            this.onTokenRefreshed(newToken);
+            
+            // Retry original request with new token
+            headers.set("Authorization", `Bearer ${newToken}`);
+            return this.request<T>(endpoint, { ...options, headers });
+          }
+        } else {
+          // Wait for token refresh to complete
+          return new Promise((resolve) => {
+            this.subscribeTokenRefresh((newToken) => {
+              headers.set("Authorization", `Bearer ${newToken}`);
+              resolve(this.request<T>(endpoint, { ...options, headers }));
+            });
+          });
+        }
+      }
+
       const data = await response.json();
 
       if (!response.ok) {
         throw {
           success: false,
-          message: data.message || "An error occurred",
+          message: data.message || data.detail || "An error occurred",
           errors: data.errors,
         } as ApiError;
       }
@@ -67,21 +150,21 @@ class ApiClient {
   async post<T>(endpoint: string, data?: any): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       method: "POST",
-      body: JSON.stringify(data),
+      body: data ? JSON.stringify(data) : undefined,
     });
   }
 
   async put<T>(endpoint: string, data?: any): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       method: "PUT",
-      body: JSON.stringify(data),
+      body: data ? JSON.stringify(data) : undefined,
     });
   }
 
   async patch<T>(endpoint: string, data?: any): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       method: "PATCH",
-      body: JSON.stringify(data),
+      body: data ? JSON.stringify(data) : undefined,
     });
   }
 
