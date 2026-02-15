@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Drawer,
   Box,
@@ -27,6 +27,8 @@ import {
   Settings as SettingsIcon,
   Logout as LogoutIcon,
 } from "@mui/icons-material";
+import { UserDetails } from "../../lib/api/types";
+import { authService } from "../../lib/api/services/auth.service";
 
 interface UserMenuDrawerProps {
   open: boolean;
@@ -43,12 +45,30 @@ export default function UserMenuDrawer({ open, onClose }: UserMenuDrawerProps) {
 
   const drawerWidth = 320;
 
-  const handleLogout = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("tokenType");
-    onClose();
-    router.push("/login");
+  const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
+
+  useEffect(() => {
+    const storedUserDetails = localStorage.getItem("userDetails");
+    if (storedUserDetails) {
+      try {
+        setUserDetails(JSON.parse(storedUserDetails));
+      } catch (error) {
+        console.error("Error parsing userDetails from localStorage:", error);
+      }
+    }
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      // Call the logout API
+      await authService.logout();
+    } catch (error) {
+      console.error("Logout error:", error);
+    } finally {
+      setUserDetails(null);
+      onClose();
+      router.push("/login");
+    }
   };
 
   const menuItems = [
@@ -127,16 +147,16 @@ export default function UserMenuDrawer({ open, onClose }: UserMenuDrawerProps) {
           }}
           src="/api/placeholder/80/80" // Placeholder; replace with real user avatar if available
         >
-          JF
+          {userDetails?.initial || "U"}
         </Avatar>
         <Typography
           variant="h6"
           sx={{ fontWeight: 600, mb: 0.5, color: "text.primary" }}
         >
-          Jaydon Frankie
+          {userDetails ? `${userDetails.firstname} ${userDetails.lastname}` : "Loading..."}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          demo@minimals.cc
+          {userDetails?.email || "Loading..."}
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
           Administrator

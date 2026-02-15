@@ -10,11 +10,29 @@ export interface LoginRequest {
   password: string;
 }
 
-export interface LoginResponse {
+export interface Auth {
   access_token: string;
   refresh_token: string;
   token_type?: string;
-  user: User;
+}
+
+export interface UserDetails {
+  initial: string;
+  firstname: string;
+  lastname: string;
+  email: string;
+  phone: string;
+  address: string;
+}
+
+export interface Config {
+  subscriptiondetail: string;
+}
+
+export interface LoginResponse {
+  auth: Auth;
+  userDetails: UserDetails;
+  config: Config;
 }
 
 export interface RefreshRequest {

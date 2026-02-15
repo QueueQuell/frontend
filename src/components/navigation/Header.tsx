@@ -3,13 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Box,
-  IconButton,
-} from "@mui/material";
+import { AppBar, Toolbar, Typography, Box, IconButton } from "@mui/material";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import UserMenuDrawer from "./UserMenuDrawer";
 
@@ -41,27 +35,16 @@ export default function Header() {
           color: "text.primary",
         }}
       >
-        <Toolbar sx={{ justifyContent: "space-between", px: 3.5 }}>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <Typography
-              variant="h5"
-              component={Link}
-              href="/home"
-              sx={{
-                fontWeight: 700,
-                textDecoration: "none",
-                color: "text.primary",
-                "&:hover": { textDecoration: "none" },
-              }}
-            >
-              QueueQuell
-            </Typography>
-          </Box>
-          <IconButton
-            color="inherit"
-            onClick={handleDrawerOpen}
-          >
-            <AccountCircle sx={{ fontSize: 32 }} />
+        <Toolbar
+          sx={{
+            justifyContent: "space-between",
+            px: 3.5,
+            justifyItems: "right",
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}></Box>
+          <IconButton color="inherit" onClick={handleDrawerOpen}>
+            <AccountCircle sx={{ fontSize: 32, color: "text.secondary" }} />
           </IconButton>
         </Toolbar>
       </AppBar>

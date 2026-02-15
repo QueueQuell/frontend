@@ -12,16 +12,26 @@ export const authService = {
         credentials
       );
       
-      if (response?.success && response.data?.access_token) {
+      if (response?.success && response.data?.auth?.access_token) {
         // Store tokens in localStorage
-        localStorage.setItem("accessToken", response.data.access_token);
-        
-        if (response.data.refresh_token) {
-          localStorage.setItem("refreshToken", response.data.refresh_token);
+        localStorage.setItem("accessToken", response.data.auth.access_token);
+
+        if (response.data.auth.refresh_token) {
+          localStorage.setItem("refreshToken", response.data.auth.refresh_token);
         }
-        
-        if (response.data.token_type) {
-          localStorage.setItem("tokenType", response.data.token_type);
+
+        if (response.data.auth.token_type) {
+          localStorage.setItem("tokenType", response.data.auth.token_type);
+        }
+
+        // Store user details if needed
+        if (response.data.userDetails) {
+          localStorage.setItem("userDetails", JSON.stringify(response.data.userDetails));
+        }
+
+        // Store config if needed
+        if (response.data.config) {
+          localStorage.setItem("config", JSON.stringify(response.data.config));
         }
       }
       
@@ -34,8 +44,13 @@ export const authService = {
 
   async logout() {
     try {
-      // Attempt to notify backend
-      await apiClient.post(AUTH_ENDPOINTS.LOGOUT);
+      // Get refresh token from localStorage
+      const refreshToken = localStorage.getItem("refreshToken");
+      
+      // Attempt to notify backend with refresh token
+      await apiClient.post(AUTH_ENDPOINTS.LOGOUT, {
+        refreshToken: refreshToken,
+      });
     } catch (error) {
       // Continue with logout even if API call fails
       console.warn("Logout API call failed:", error);
@@ -44,6 +59,8 @@ export const authService = {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("tokenType");
+      localStorage.removeItem("userDetails");
+      localStorage.removeItem("config");
     }
   },
 
@@ -69,11 +86,11 @@ export const authService = {
         { refresh_token: refreshToken }
       );
 
-      if (response?.success && response.data?.access_token) {
-        localStorage.setItem("accessToken", response.data.access_token);
-        
-        if (response.data.refresh_token) {
-          localStorage.setItem("refreshToken", response.data.refresh_token);
+      if (response?.success && response.data?.auth?.access_token) {
+        localStorage.setItem("accessToken", response.data.auth.access_token);
+
+        if (response.data.auth.refresh_token) {
+          localStorage.setItem("refreshToken", response.data.auth.refresh_token);
         }
       }
 
