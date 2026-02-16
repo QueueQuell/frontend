@@ -26,7 +26,7 @@ export default function VideoPlayer({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showFullscreenDialog, setShowFullscreenDialog] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const controlsTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const controlsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handlePlayPause = () => {
     if (videoRef.current) {
