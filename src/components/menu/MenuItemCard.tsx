@@ -38,16 +38,42 @@ export default function MenuItemCard({ item, onViewDetails }: MenuItemCardProps)
   const [selectedAddons, setSelectedAddons] = useState<Addon[]>([]);
   const [instructions, setInstructions] = useState('');
 
+  const cartItems = useCartStore((state) => state.items);
   const addItem = useCartStore((state) => state.addItem);
+  const updateQuantity = useCartStore((state) => state.updateQuantity);
+  const removeItem = useCartStore((state) => state.removeItem);
+
+
+  // Check if this item is in the cart
+  const cartItem = cartItems.find((ci) => ci.id === item.id);
+  const itemQuantity = cartItem ? cartItem.quantity : 0;
+  const isInCart = itemQuantity > 0;
 
   const handleAddToCart = () => {
     if (item.addons && item.addons.length > 0) {
       setShowAddons(true);
     } else {
-      addItem(item, quantity);
-      setQuantity(1);
+      addItem(item, 1);
     }
   };
+
+  const handleIncreaseQuantity = () => {
+    if (item.addons && item.addons.length > 0) {
+      setShowAddons(true);
+    } else {
+      updateQuantity(item.id, itemQuantity + 1);
+    }
+  };
+
+  const handleDecreaseQuantity = () => {
+    if (itemQuantity > 1) {
+      updateQuantity(item.id, itemQuantity - 1);
+    } else {
+      removeItem(item.id);
+    }
+  };
+
+
 
   const handleConfirmAddToCart = () => {
     addItem(item, quantity, selectedAddons, instructions);
@@ -170,12 +196,13 @@ export default function MenuItemCard({ item, onViewDetails }: MenuItemCardProps)
               sx={{
                 fontWeight: 700,
                 fontSize: '1.2rem',
-                color: '#FF6B35',
+                color: '#111111',
                 mb: 1,
               }}
             >
               ₹{item.price}
             </Typography>
+
 
             {/* Description */}
             <Typography
@@ -228,34 +255,102 @@ export default function MenuItemCard({ item, onViewDetails }: MenuItemCardProps)
               }}
             />
             
-            {/* Add Button - Below image */}
-            <Button
-              variant="contained"
-              size="small"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleAddToCart();
-              }}
-              sx={{
-                position: 'absolute',
-                bottom: 8,
-                left: 8,
-                right: 8,
-                borderRadius: .5,
-                textTransform: 'none',
-                px: 2,
-                py: 0.5,
-                fontWeight: 600,
-                boxShadow: '0 2px 4px rgba(0,0,0,0.15)',
-                backgroundColor: '#FF6B35',
-                '&:hover': {
-                  backgroundColor: '#E55A2B',
-                },
-              }}
-            >
-              <Add fontSize="small" sx={{ mr: 0.5 }} />
-              Add
-            </Button>
+            {/* Add Button or Quantity Controls - Below image */}
+            {isInCart ? (
+              <Box
+                sx={{
+                  position: 'absolute',
+                  bottom: 8,
+                  left: 8,
+                  right: 8,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  backgroundColor: '#8B0000',
+                  borderRadius: 0.5,
+                  py: 0.25,
+                  px: 1,
+                }}
+              >
+
+                <IconButton
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDecreaseQuantity();
+                  }}
+                  sx={{
+                    color: '#fff',
+                    p: 0.5,
+                    '&:hover': {
+                      backgroundColor: 'rgba(255,255,255,0.2)',
+                    },
+                  }}
+                >
+                  <Remove fontSize="small" />
+                </IconButton>
+                <Typography
+                  sx={{
+                    color: '#fff',
+                    fontWeight: 600,
+                    fontSize: '0.9rem',
+                  }}
+                >
+                  {itemQuantity}
+                </Typography>
+                <IconButton
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleIncreaseQuantity();
+                  }}
+                  sx={{
+                    color: '#fff',
+                    p: 0.5,
+                    '&:hover': {
+                      backgroundColor: 'rgba(255,255,255,0.2)',
+                    },
+                  }}
+                >
+                  <Add fontSize="small" />
+                </IconButton>
+              </Box>
+            ) : (
+              <Button
+                variant="outlined"
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleAddToCart();
+                }}
+                sx={{
+                  position: 'absolute',
+                  bottom: 8,
+                  left: 8,
+                  right: 8,
+                  borderRadius: 0.5,
+                  textTransform: 'none',
+                  px: 2,
+                  py: 0.5,
+                  fontWeight: 600,
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                  backgroundColor: '#FFFFFF',
+                  border: '2px solid #8B0000',
+                  color: '#111111',
+                  '&:hover': {
+                    backgroundColor: '#FFF5F5',
+                    borderColor: '#8B0000',
+                    color: '#111111',
+                  },
+                }}
+              >
+                <Add fontSize="small" sx={{ mr: 0.5, color: '#8B0000' }} />
+                Add
+              </Button>
+
+
+            )}
+
           </Box>
         </Card>
       </motion.div>
@@ -275,7 +370,7 @@ export default function MenuItemCard({ item, onViewDetails }: MenuItemCardProps)
         }}
       >
         <DialogTitle sx={{ pb: 1, borderBottom: '1px solid #E5E7EB' }}>
-          <Typography variant="h6" sx={{ fontWeight: 600, color: '#111111' }}>
+          <Typography variant="inherit" sx={{ fontWeight: 600, color: '#111111' }}>
             Customize {item.name}
           </Typography>
         </DialogTitle>
@@ -380,19 +475,25 @@ export default function MenuItemCard({ item, onViewDetails }: MenuItemCardProps)
             Cancel
           </Button>
           <Button
-            variant="contained"
+            variant="outlined"
             onClick={handleConfirmAddToCart}
             sx={{ 
               px: 3,
               borderRadius: 1,
-              backgroundColor: '#FF6B35',
+              backgroundColor: '#FFFFFF',
+              border: '2px solid #8B0000',
+              color: '#111111',
+              fontWeight: 600,
               '&:hover': {
-                backgroundColor: '#E55A2B',
+                backgroundColor: '#FFF5F5',
+                borderColor: '#8B0000',
+                color: '#111111',
               },
             }}
           >
             Add to Cart - ₹{getTotalPrice().toFixed(2)}
           </Button>
+
         </DialogActions>
       </Dialog>
 

@@ -59,6 +59,7 @@ export default function PaymentPage({ cart, totalAmount, onPaymentSuccess, onBac
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [tableNumber, setTableNumber] = useState('');
+  const [validationError, setValidationError] = useState('');
 
   const tax = totalAmount * 0.1;
   const finalTotal = totalAmount + tax;
@@ -67,12 +68,18 @@ export default function PaymentPage({ cart, totalAmount, onPaymentSuccess, onBac
   const upiId = 'queuequell@upi';
   const upiAmount = finalTotal.toFixed(2);
 
-  const handlePayment = async () => {
+  const handleContinueToPayment = () => {
+    // Validate input fields before proceeding to payment
     if (!customerName.trim() || !customerPhone.trim()) {
-      alert('Please fill in your name and phone number');
+      setValidationError('Please fill in your name and phone number');
       return;
     }
+    
+    setValidationError('');
+    setActiveStep(1);
+  };
 
+  const handlePayment = async () => {
     setIsProcessing(true);
 
     // Simulate payment processing
@@ -151,7 +158,7 @@ export default function PaymentPage({ cart, totalAmount, onPaymentSuccess, onBac
             <Divider sx={{ my: 2 }} />
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
               <Typography variant="h6" sx={{ fontWeight: 600, color: '#111111' }}>Total</Typography>
-              <Typography variant="h6" sx={{ color: '#FF6B35', fontWeight: 700 }}>
+              <Typography variant="h6" sx={{ color: '#111111', fontWeight: 700 }}>
                 ₹{finalTotal.toFixed(2)}
               </Typography>
             </Box>
@@ -160,6 +167,14 @@ export default function PaymentPage({ cart, totalAmount, onPaymentSuccess, onBac
             <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: '#111111' }}>
               Customer Details
             </Typography>
+            
+            {/* Validation Error */}
+            {validationError && (
+              <Alert severity="error" sx={{ mb: 2, borderRadius: 1 }}>
+                {validationError}
+              </Alert>
+            )}
+            
             <Grid container spacing={2}>
               <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
@@ -168,12 +183,13 @@ export default function PaymentPage({ cart, totalAmount, onPaymentSuccess, onBac
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
                   required
+                  error={!!validationError && !customerName.trim()}
                   sx={{
                     '& .MuiOutlinedInput-root': {
                       borderRadius: 1,
                       '& fieldset': { borderColor: '#E5E7EB' },
                       '&:hover fieldset': { borderColor: '#D1D5DB' },
-                      '&.Mui-focused fieldset': { borderColor: '#FF6B35' },
+                      '&.Mui-focused fieldset': { borderColor: '#8B0000' },
                     },
                     '& .MuiInputLabel-root': { color: '#666666' },
                   }}
@@ -186,12 +202,13 @@ export default function PaymentPage({ cart, totalAmount, onPaymentSuccess, onBac
                   value={customerPhone}
                   onChange={(e) => setCustomerPhone(e.target.value)}
                   required
+                  error={!!validationError && !customerPhone.trim()}
                   sx={{
                     '& .MuiOutlinedInput-root': {
                       borderRadius: 1,
                       '& fieldset': { borderColor: '#E5E7EB' },
                       '&:hover fieldset': { borderColor: '#D1D5DB' },
-                      '&.Mui-focused fieldset': { borderColor: '#FF6B35' },
+                      '&.Mui-focused fieldset': { borderColor: '#8B0000' },
                     },
                     '& .MuiInputLabel-root': { color: '#666666' },
                   }}
@@ -208,7 +225,7 @@ export default function PaymentPage({ cart, totalAmount, onPaymentSuccess, onBac
                       borderRadius: 1,
                       '& fieldset': { borderColor: '#E5E7EB' },
                       '&:hover fieldset': { borderColor: '#D1D5DB' },
-                      '&.Mui-focused fieldset': { borderColor: '#FF6B35' },
+                      '&.Mui-focused fieldset': { borderColor: '#8B0000' },
                     },
                     '& .MuiInputLabel-root': { color: '#666666' },
                   }}
@@ -218,13 +235,27 @@ export default function PaymentPage({ cart, totalAmount, onPaymentSuccess, onBac
 
             <Button
               fullWidth
-              variant="contained"
+              variant="outlined"
               size="large"
-              onClick={() => setActiveStep(1)}
-              sx={{ mt: 3, py: 1.5, borderRadius: 1, backgroundColor: '#FF6B35', '&:hover': { backgroundColor: '#E55A2B' } }}
+              onClick={handleContinueToPayment}
+              sx={{ 
+                mt: 3, 
+                py: 1.5, 
+                borderRadius: 1, 
+                backgroundColor: '#FFFFFF',
+                border: '2px solid #8B0000',
+                color: '#111111',
+                fontWeight: 600,
+                '&:hover': { 
+                  backgroundColor: '#FFF5F5',
+                  borderColor: '#8B0000',
+                  color: '#111111',
+                } 
+              }}
             >
               Continue to Payment
             </Button>
+
           </Paper>
         </motion.div>
       )}
@@ -251,7 +282,7 @@ export default function PaymentPage({ cart, totalAmount, onPaymentSuccess, onBac
                     p: 2,
                     mb: 2,
                     border: '2px solid',
-                    borderColor: paymentMethod === 'cash' ? '#FF6B35' : '#E5E7EB',
+                    borderColor: paymentMethod === 'cash' ? '#8B0000' : '#E5E7EB',
                     borderRadius: 1,
                     cursor: 'pointer',
                     transition: 'all 0.2s',
@@ -260,12 +291,12 @@ export default function PaymentPage({ cart, totalAmount, onPaymentSuccess, onBac
                 >
                   <FormControlLabel
                     value="cash"
-                    control={<Radio sx={{ color: '#666666', '&.Mui-checked': { color: '#FF6B35' } }} />}
+                    control={<Radio sx={{ color: '#666666', '&.Mui-checked': { color: '#8B0000' } }} />}
                     label={
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <AccountBalance sx={{ color: '#666666' }} />
                         <Typography fontWeight={500} sx={{ color: '#111111' }}>Cash on Counter</Typography>
-                        <Chip label="Popular" size="small" sx={{ backgroundColor: '#FF6B35', color: '#fff' }} />
+                        <Chip label="Popular" size="small" sx={{ backgroundColor: '#8B0000', color: '#fff' }} />
                       </Box>
                     }
                     sx={{ width: '100%' }}
@@ -302,7 +333,7 @@ export default function PaymentPage({ cart, totalAmount, onPaymentSuccess, onBac
                   <Typography variant="body2" sx={{ color: '#9CA3AF', ml: 6, mt: -1 }}>
                     Scan QR code to pay via any UPI app
                   </Typography>
-                  <Typography variant="caption" sx={{ display: 'block', ml: 6, mt: 1, color: '#FF6B35', fontWeight: 600 }}>
+                  <Typography variant="caption" sx={{ display: 'block', ml: 6, mt: 1, color: '#8B0000', fontWeight: 600 }}>
                     🚧 Coming Soon
                   </Typography>
                 </Paper>
@@ -333,7 +364,7 @@ export default function PaymentPage({ cart, totalAmount, onPaymentSuccess, onBac
                   <Typography variant="body2" sx={{ color: '#9CA3AF', ml: 6, mt: -1 }}>
                     Pay with debit/credit card
                   </Typography>
-                  <Typography variant="caption" sx={{ display: 'block', ml: 6, mt: 1, color: '#FF6B35', fontWeight: 600 }}>
+                  <Typography variant="caption" sx={{ display: 'block', ml: 6, mt: 1, color: '#8B0000', fontWeight: 600 }}>
                     🚧 Coming Soon
                   </Typography>
                 </Paper>
@@ -383,7 +414,7 @@ export default function PaymentPage({ cart, totalAmount, onPaymentSuccess, onBac
                 <Typography variant="body2" sx={{ color: '#666666', mb: 1 }}>
                   UPI ID: <Typography variant='inherit' sx={{ color: '#111111' }}>{upiId}</Typography>
                 </Typography>
-                <Typography variant="h6" sx={{ color: '#FF6B35', fontWeight: 600 }}>
+                <Typography variant="h6" sx={{ color: '#111111', fontWeight: 600 }}>
                   Amount: ₹{upiAmount}
                 </Typography>
 
@@ -408,28 +439,41 @@ export default function PaymentPage({ cart, totalAmount, onPaymentSuccess, onBac
               <Typography variant="body1" fontWeight={500} sx={{ color: '#111111' }}>
                 Total Amount to Pay
               </Typography>
-              <Typography variant="h5" sx={{ color: '#FF6B35', fontWeight: 700 }}>
+              <Typography variant="h5" sx={{ color: '#111111', fontWeight: 700 }}>
                 ₹{finalTotal.toFixed(2)}
               </Typography>
             </Box>
 
             <Button
               fullWidth
-              variant="contained"
+              variant="outlined"
               size="large"
               onClick={handlePayment}
               disabled={isProcessing}
-              sx={{ py: 1.5, borderRadius: 1, backgroundColor: '#FF6B35', '&:hover': { backgroundColor: '#E55A2B' } }}
+              sx={{ 
+                py: 1.5, 
+                borderRadius: 1, 
+                backgroundColor: '#FFFFFF',
+                border: '2px solid #8B0000',
+                color: '#111111',
+                fontWeight: 600,
+                '&:hover': { 
+                  backgroundColor: '#FFF5F5',
+                  borderColor: '#8B0000',
+                  color: '#111111',
+                } 
+              }}
             >
               {isProcessing ? (
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <CircularProgress size={24} color="inherit" />
-                  Processing...
+                  <CircularProgress size={24} sx={{ color: '#8B0000' }} />
+                  <Typography sx={{ color: '#111111' }}>Processing...</Typography>
                 </Box>
               ) : (
                 `Pay ₹${finalTotal.toFixed(2)}`
               )}
             </Button>
+
           </Paper>
         </motion.div>
       )}
@@ -484,7 +528,7 @@ export default function PaymentPage({ cart, totalAmount, onPaymentSuccess, onBac
                 <Typography variant="body2" sx={{ color: '#666666' }}>
                   Order Number
                 </Typography>
-                <Typography variant="h4" fontWeight={700} sx={{ color: '#FF6B35' }}>
+                <Typography variant="h4" fontWeight={700} sx={{ color: '#8B0000' }}>
                   QQ{Math.floor(Math.random() * 9000) + 1000}
                 </Typography>
               </CardContent>
@@ -505,12 +549,24 @@ export default function PaymentPage({ cart, totalAmount, onPaymentSuccess, onBac
                 View Receipt
               </Button>
               <Button 
-                variant="contained" 
+                variant="outlined" 
                 onClick={handlePaymentSuccess}
-                sx={{ borderRadius: 1, backgroundColor: '#FF6B35', '&:hover': { backgroundColor: '#E55A2B' } }}
+                sx={{ 
+                  borderRadius: 1, 
+                  backgroundColor: '#FFFFFF',
+                  border: '2px solid #8B0000',
+                  color: '#111111',
+                  fontWeight: 600,
+                  '&:hover': { 
+                    backgroundColor: '#FFF5F5',
+                    borderColor: '#8B0000',
+                    color: '#111111',
+                  } 
+                }}
               >
                 Done
               </Button>
+
             </Box>
           </Paper>
         </motion.div>

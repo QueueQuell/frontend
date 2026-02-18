@@ -59,7 +59,8 @@ export default function CartSidebar({ open, onClose, onCheckout }: CartSidebarPr
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <ShoppingCartCheckout sx={{ color: '#FF6B35' }} />
+          <ShoppingCartCheckout sx={{ color: '#8B0000' }} />
+
           <Typography variant="h6" sx={{ fontWeight: 600, color: '#111111' }}>
             Your Cart
           </Typography>
@@ -140,7 +141,8 @@ export default function CartSidebar({ open, onClose, onCheckout }: CartSidebarPr
               <Typography variant="h6" sx={{ fontWeight: 600, color: '#111111' }}>
                 Total
               </Typography>
-              <Typography variant="h6" sx={{ color: '#FF6B35', fontWeight: 700 }}>
+              <Typography variant="h6" sx={{ color: '#8B0000', fontWeight: 700 }}>
+
                 ₹{finalTotal.toFixed(2)}
               </Typography>
             </Box>
@@ -148,7 +150,7 @@ export default function CartSidebar({ open, onClose, onCheckout }: CartSidebarPr
 
           <Button
             fullWidth
-            variant="contained"
+            variant="outlined"
             size="large"
             onClick={onCheckout}
             sx={{
@@ -156,14 +158,19 @@ export default function CartSidebar({ open, onClose, onCheckout }: CartSidebarPr
               borderRadius: 1,
               fontWeight: 600,
               textTransform: 'none',
-              backgroundColor: '#FF6B35',
+              backgroundColor: '#FFFFFF',
+              border: '2px solid #8B0000',
+              color: '#111111',
               '&:hover': {
-                backgroundColor: '#E55A2B',
+                backgroundColor: '#FFF5F5',
+                borderColor: '#8B0000',
+                color: '#111111',
               },
             }}
           >
             Proceed to Checkout
           </Button>
+
         </Box>
       )}
     </Drawer>
@@ -257,7 +264,8 @@ function CartItemCard({ item, onUpdateQuantity, onRemove }: CartItemCardProps) {
               </IconButton>
             </Box>
 
-            <Typography variant="subtitle2" sx={{ color: '#FF6B35', fontWeight: 600 }}>
+            <Typography variant="subtitle2" sx={{ color: '#8B0000', fontWeight: 600 }}>
+
               ₹{itemTotal.toFixed(2)}
             </Typography>
           </Box>
