@@ -104,10 +104,10 @@ function CategorySidebar({
                   borderRadius: 2,
                   py: 1,
                   '&.Mui-selected': {
-                    backgroundColor: '#FF6B35',
+                    backgroundColor: '#8B0000',
                     color: 'white',
                     '&:hover': {
-                      backgroundColor: '#FF6B35',
+                      backgroundColor: '#6B0000',
                     },
                     '& .MuiListItemIcon-root': {
                       color: 'white',
@@ -118,7 +118,7 @@ function CategorySidebar({
                     },
                   },
                   '&:hover': {
-                    backgroundColor: isSelected ? '#FF6B35' : '#F3F4F6',
+                    backgroundColor: isSelected ? '#8B0000' : '#F3F4F6',
                   },
                 }}
               >
@@ -176,7 +176,6 @@ export default function MenuPage() {
 
   // Filter state
   const [isVegOnly, setIsVegOnly] = useState(false);
-  const [isNonVegOnly, setIsNonVegOnly] = useState(false);
 
   // Filtered items with category sorting
   const filteredItems = useMemo(() => {
@@ -205,22 +204,26 @@ export default function MenuPage() {
     if (isVegOnly) {
       items = items.filter((item) => item.isVeg);
     }
-    if (isNonVegOnly) {
-      items = items.filter((item) => !item.isVeg);
-    }
 
     return items;
-  }, [selectedCategory, searchQuery, isVegOnly, isNonVegOnly]);
-
+  }, [selectedCategory, searchQuery, isVegOnly]);
 
   // Category item counts
   const categoryCounts = useMemo(() => {
-    const counts: Record<string, number> = { all: menuData.items.length };
-    menuData.items.forEach((item) => {
+    const counts: Record<string, number> = { all: 0 };
+    
+    // Filter items by veg if filter is applied
+    const itemsToCount = isVegOnly 
+      ? menuData.items.filter((item) => item.isVeg)
+      : menuData.items;
+    
+    counts.all = itemsToCount.length;
+    
+    itemsToCount.forEach((item) => {
       counts[item.category] = (counts[item.category] || 0) + 1;
     });
     return counts;
-  }, []);
+  }, [isVegOnly]);
 
   // Handlers
   const handleCategorySelect = (categoryId: string) => {
@@ -270,40 +273,27 @@ export default function MenuPage() {
         color: '#111111',
       }}
     >
-      {/* Header with Search, Filter, and Cart */}
-      <Box
-        sx={{
-          position: 'sticky',
-          top: 0,
-          zIndex: 1100,
-          backgroundColor: '#FFFFFF',
-          borderBottom: '1px solid #E5E7EB',
-          boxShadow: '0 1px 2px rgba(0, 0, 0, 0.08)',
-        }}
-      >
+      {/* Header - Simplified on payment page */}
+      {currentView === 'payment' ? (
+        /* Simplified Header - Only Company Name */
         <Box
           sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 2,
-            px: { xs: 2, md: 3 },
-            py: 1.5,
+            position: 'sticky',
+            top: 0,
+            zIndex: 1100,
+            backgroundColor: '#FFFFFF',
+            borderBottom: '1px solid #E5E7EB',
+            boxShadow: '0 1px 2px rgba(0, 0, 0, 0.08)',
           }}
         >
-          {/* Menu Button (Mobile) */}
-          {isMobile && (
-            <IconButton onClick={() => setDrawerOpen(true)}>
-              <MenuIcon />
-            </IconButton>
-          )}
-
-          {/* Logo */}
           <Box
             sx={{
               display: 'flex',
               alignItems: 'center',
+              justifyContent: 'center',
               gap: 1.5,
-              minWidth: 'fit-content',
+              px: { xs: 2, md: 3 },
+              py: 1.5,
             }}
           >
             <Box
@@ -311,7 +301,7 @@ export default function MenuPage() {
                 width: 40,
                 height: 40,
                 borderRadius: 2,
-                backgroundColor: '#FF6B35',
+                backgroundColor: '#8B0000',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -322,120 +312,197 @@ export default function MenuPage() {
             >
               QQ
             </Box>
-            <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-              <Typography
-                variant="h6"
-                sx={{
-                  fontWeight: 700,
-                  fontSize: '1.1rem',
-                  lineHeight: 1.2,
-                  color: '#111111',
-                }}
-              >
-                QueueQuell
-              </Typography>
-              <Typography
-                variant="caption"
-                sx={{
-                  color: '#666666',
-                  display: 'block',
-                  lineHeight: 1,
-                }}
-              >
-                Fresh & Delicious
-              </Typography>
-            </Box>
-          </Box>
-
-          {/* Search Bar */}
-          <Box sx={{ flex: 1, maxWidth: 500 }}>
-            <TextField
-              fullWidth
-              placeholder="Search for dishes..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              size="small"
+            <Typography
+              variant="h6"
               sx={{
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: 3,
-                  backgroundColor: '#F3F4F6',
-                  color: '#111111',
-                  '&:hover': {
-                    backgroundColor: '#F3F4F6',
-                  },
-                  '&.Mui-focused': {
-                    backgroundColor: '#FFFFFF',
-                    boxShadow: '0 0 0 2px #FF6B35',
-                  },
-                  '& .MuiInputBase-input::placeholder': {
-                    color: '#666666',
-                    opacity: 1,
-                  },
-                },
-                '& .MuiOutlinedInput-notchedOutline': {
-                  borderColor: '#E5E7EB',
-                },
-                '&:hover .MuiOutlinedInput-notchedOutline': {
-                  borderColor: '#D1D5DB',
-                },
-                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                  borderColor: '#FF6B35',
-                },
-              }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Search sx={{ color: '#666666', fontSize: 20 }} />
-                  </InputAdornment>
-                ),
-                endAdornment: searchQuery && (
-                  <InputAdornment position="end">
-                    <IconButton size="small" onClick={() => setSearchQuery('')}>
-                      <Close sx={{ fontSize: 18, color: '#666666' }} />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Box>
-
-          {/* Filter & Cart */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <VegNonVegFilter
-              isVegOnly={isVegOnly}
-              isNonVegOnly={isNonVegOnly}
-              onVegChange={setIsVegOnly}
-              onNonVegChange={setIsNonVegOnly}
-            />
-
-            <IconButton
-              onClick={handleCartOpen}
-              sx={{
-                backgroundColor: '#F3F4F6',
-                color: '#333333',
-                '&:hover': {
-                  backgroundColor: '#FF6B35',
-                  color: '#fff',
-                },
+                fontWeight: 700,
+                fontSize: '1.1rem',
+                lineHeight: 1.2,
+                color: '#111111',
               }}
             >
-              <Badge
-                badgeContent={cartItems.reduce((s, i) => s + i.quantity, 0)}
-                color="error"
-                sx={{
-                  '& .MuiBadge-badge': {
-                    fontSize: '0.65rem',
-                    height: 18,
-                    minWidth: 18,
-                  },
-                }}
-              >
-                <ShoppingCart />
-              </Badge>
-            </IconButton>
+              QueueQuell
+            </Typography>
           </Box>
         </Box>
-      </Box>
+      ) : (
+        /* Full Header with Search, Filter, and Cart */
+        <Box
+          sx={{
+            position: 'sticky',
+            top: 0,
+            zIndex: 1100,
+            backgroundColor: '#FFFFFF',
+            borderBottom: '1px solid #E5E7EB',
+            boxShadow: '0 1px 2px rgba(0, 0, 0, 0.08)',
+          }}
+        >
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 2,
+              px: { xs: 2, md: 3 },
+              py: 1.5,
+            }}
+          >
+            {/* Menu Button (Mobile) */}
+            {isMobile && (
+              <IconButton onClick={() => setDrawerOpen(true)}>
+                <MenuIcon />
+              </IconButton>
+            )}
+
+            {/* Logo */}
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1.5,
+                minWidth: 'fit-content',
+              }}
+            >
+              <Box
+                sx={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: 2,
+                  backgroundColor: '#8B0000',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#fff',
+                  fontWeight: 700,
+                  fontSize: '1.1rem',
+                }}
+              >
+                QQ
+              </Box>
+              <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontWeight: 700,
+                    fontSize: '1.1rem',
+                    lineHeight: 1.2,
+                    color: '#111111',
+                  }}
+                >
+                  QueueQuell
+                </Typography>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: '#666666',
+                    display: 'block',
+                    lineHeight: 1,
+                  }}
+                >
+                  Fresh & Delicious
+                </Typography>
+              </Box>
+            </Box>
+
+            {/* Search Bar */}
+            <Box sx={{ flex: 1, maxWidth: 500 }}>
+              <TextField
+                fullWidth
+                placeholder="Search for dishes..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                size="small"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: 3,
+                    backgroundColor: '#F3F4F6',
+                    color: '#111111',
+                    '&:hover': {
+                      backgroundColor: '#F3F4F6',
+                    },
+                    '&.Mui-focused': {
+                      backgroundColor: '#FFFFFF',
+                      boxShadow: '0 0 0 2px #8B0000',
+                    },
+                    '& .MuiInputBase-input::placeholder': {
+                      color: '#666666',
+                      opacity: 1,
+                    },
+                  },
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: '#E5E7EB',
+                  },
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: '#D1D5DB',
+                  },
+                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: '#8B0000',
+                  },
+                }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Search sx={{ color: '#666666', fontSize: 20 }} />
+                    </InputAdornment>
+                  ),
+                  endAdornment: searchQuery && (
+                    <InputAdornment position="end">
+                      <IconButton size="small" onClick={() => setSearchQuery('')}>
+                        <Close sx={{ fontSize: 18, color: '#666666' }} />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Box>
+
+            {/* Desktop: Filter & Cart side by side */}
+            {!isMobile && (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <VegNonVegFilter
+                  isVegOnly={isVegOnly}
+                  onVegChange={setIsVegOnly}
+                />
+
+                <IconButton
+                  onClick={handleCartOpen}
+                  sx={{
+                    backgroundColor: '#F3F4F6',
+                    color: '#333333',
+                    '&:hover': {
+                      backgroundColor: '#8B0000',
+                      color: '#fff',
+                    },
+                  }}
+                >
+                  <Badge
+                    badgeContent={cartItems.reduce((s, i) => s + i.quantity, 0)}
+                    color="error"
+                    sx={{
+                      '& .MuiBadge-badge': {
+                        fontSize: '0.65rem',
+                        height: 18,
+                        minWidth: 18,
+                      },
+                    }}
+                  >
+                    <ShoppingCart />
+                  </Badge>
+                </IconButton>
+              </Box>
+            )}
+          </Box>
+
+          {/* Mobile: Veg Filter below search */}
+          {isMobile && (
+            <Box sx={{ display: 'flex', alignItems: 'center', mt: 1, px: { xs: 2, md: 3 } }}>
+              <VegNonVegFilter
+                isVegOnly={isVegOnly}
+                onVegChange={setIsVegOnly}
+              />
+            </Box>
+          )}
+        </Box>
+      )}
 
       {/* Mobile Category Drawer */}
       <SwipeableDrawer
@@ -454,8 +521,8 @@ export default function MenuPage() {
 
       {/* Main Content Area */}
       <Box sx={{ display: 'flex', flex: 1 }}>
-        {/* Left Sidebar (Desktop) */}
-        {!isMobile && (
+        {/* Left Sidebar (Desktop) - Hide on payment page */}
+        {!isMobile && currentView !== 'payment' && (
           <CategorySidebar
             categories={menuData.categories}
             selectedCategory={selectedCategory}
@@ -567,7 +634,6 @@ export default function MenuPage() {
           )}
         </Box>
       </Box>
-
 
       {/* Cart Sidebar */}
       <CartSidebar

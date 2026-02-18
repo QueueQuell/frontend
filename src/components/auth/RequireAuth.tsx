@@ -16,7 +16,6 @@ export default function RequireAuth({ children }: { children: React.ReactNode })
 
     const token = localStorage.getItem("accessToken");
     
-    console.log("token mila hai ya nahi")
     if (!token) {
       
       // No token - redirect to login
