@@ -1,5 +1,5 @@
 import { apiClient } from "../client";
-import { QR_ENDPOINTS, ADMIN_QR_ENDPOINTS } from "../endpoints";
+import { QR_ENDPOINTS } from "../endpoints";
 import {
   QRCode,
   GenerateQRRequest,
@@ -36,14 +36,11 @@ export const qrService = {
 
   // Admin QR Generate
   async generateAdminQR(data: AdminQRGenerateRequest) {
-    return apiClient.post<AdminQRGenerateResponse>(
-      ADMIN_QR_ENDPOINTS.GENERATE,
-      data,
-    );
+    return apiClient.post<AdminQRGenerateResponse>(QR_ENDPOINTS.GENERATE, data);
   },
 
   // Admin QR List
   async getAllAdminQR() {
-    return apiClient.get<AdminQRListResponse>(ADMIN_QR_ENDPOINTS.LIST);
+    return apiClient.get<AdminQRListResponse>(QR_ENDPOINTS.LIST);
   },
 };
