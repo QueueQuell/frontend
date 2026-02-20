@@ -581,6 +581,39 @@ export interface AdminQRGenerateResponse {
   orderType: string | null;
 }
 
+// Admin QR List Response Type
+export interface AdminQRListItem {
+  _id: string;
+  qrString: string;
+  qrUrl: string;
+  baseUrl: string;
+  organisationId: string;
+  tableNumber: string | null;
+  orderType: string | null;
+  qrImageUrl: string;
+  isActive: boolean;
+  scannedCount: number;
+  lastScannedAt: string | null;
+  metadata: {
+    generatedBy: string;
+    notes: string | null;
+    location: string | null;
+  };
+  generatedFrom: string | null;
+  version: number;
+  urlHistory: string[];
+  createdBy: string;
+  updatedBy: string | null;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
+// Note: The apiClient wraps the response, so we use AdminQRListItem[] directly
+// The actual response from the API is: { success: true, data: AdminQRListItem[] }
+// After apiClient processing, response.data is AdminQRListItem[]
+export type AdminQRListResponse = AdminQRListItem[];
+
 export interface Table {
   id: string;
   number: string;
