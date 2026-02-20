@@ -1,7 +1,14 @@
-import { Typography, Box, Paper, Grid, Avatar, Button, Chip } from "@mui/material";
-import Link from "next/link";
-import React from "react";
 import Inventory2Icon from "@mui/icons-material/Inventory2";
+import {
+  Avatar,
+  Box,
+  Button,
+  Chip,
+  Grid,
+  Paper,
+  Typography,
+} from "@mui/material";
+import Link from "next/link";
 
 type Props = { params: { id: string } };
 
@@ -34,7 +41,9 @@ export default function InventoryItemPage({ params }: Props) {
           </Grid>
           <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <Typography variant="h6">Current Stock</Typography>
-            <Typography variant="h4" color="primary">50 pcs</Typography>
+            <Typography variant="h4" color="primary">
+              50 pcs
+            </Typography>
           </Grid>
           <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <Typography variant="h6">Unit Cost</Typography>
@@ -60,9 +69,7 @@ export default function InventoryItemPage({ params }: Props) {
       </Paper>
       <Box sx={{ mt: 2 }}>
         <Link href="/inventory">
-          <Button variant="outlined">
-            ← Back to Inventory
-          </Button>
+          <Button variant="outlined">← Back to Inventory</Button>
         </Link>
       </Box>
     </Box>
@@ -73,9 +80,5 @@ export async function generateStaticParams() {
   // For static export, we need to provide static params for dynamic routes.
   // Since this is a demo, we'll generate a few example IDs.
   // In a real app, fetch from your data source.
-  return [
-    { id: '1' },
-    { id: '2' },
-    { id: '3' },
-  ];
+  return [{ id: "1" }, { id: "2" }, { id: "3" }];
 }

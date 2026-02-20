@@ -75,6 +75,34 @@ export interface OrgOut {
   timezone: string;
 }
 
+// Organisation Types based on API response
+export interface Organisation {
+  _id: string;
+  parentOrgId: string | null;
+  organisationName: string;
+  displayName: string;
+  address: {
+    line1: string;
+    city: string;
+    state: string;
+    country: string;
+  };
+  primaryPhone: string;
+  email: string;
+  type: "company" | "branch";
+  status: "active" | "inactive";
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface OrganisationListResponse {
+  data: Organisation[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
 export interface StoreCreate {
   name: string;
   address?: string | null;
@@ -221,6 +249,7 @@ export interface ApiResponse<T = any> {
   error?: string;
   message?: string;
   success?: boolean;
+  errors?: { field: string; message: string }[];
 }
 
 /**

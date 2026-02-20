@@ -85,4 +85,15 @@ export const USER_ENDPOINTS = {
   UPDATE_PROFILE: "/users/profile",
   ADDRESS: "/users/address",
   UPDATE_ADDRESS: "/users/address",
+  REGISTER: "/auth/register",
+  ADMIN_LIST: "/admin/users",
+};
+
+// Organisation Endpoints
+export const ORGANISATION_ENDPOINTS = {
+  LIST: "/organisations",
+  GET: (id: string) => `/organisations/${id}`,
+  CREATE: "/organisations",
+  UPDATE: (id: string) => `/organisations/${id}`,
+  DELETE: (id: string) => `/organisations/${id}`,
 };

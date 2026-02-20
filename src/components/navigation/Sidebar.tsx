@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { 
-  Box, 
-  List, 
-  Drawer, 
-  useMediaQuery, 
-  useTheme, 
-  IconButton, 
+import {
+  Box,
+  List,
+  Drawer,
+  useMediaQuery,
+  useTheme,
+  IconButton,
   Tooltip,
   Popover,
   MenuItem,
@@ -22,19 +22,43 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import Link from "next/link";
 import SidebarSection from "../SidebarSection";
-import { SectionKey, DEFAULT_STATE, SIDEBAR_ITEMS } from "./SidebarConfig";
+import {
+  SectionKey,
+  DEFAULT_STATE,
+  SIDEBAR_ITEMS,
+  hasAdminAccess,
+} from "./SidebarConfig";
 
-const PHASE_1_ENABLED = process.env.NEXT_PUBLIC_PHASE_1_ENABLED === 'true';
+const PHASE_1_ENABLED = process.env.NEXT_PUBLIC_PHASE_1_ENABLED === "true";
 const STORAGE_KEY = "sidebar-state";
 
 // Consolidated static menu items
 const STATIC_ITEMS = [
-  { title: "Analytics", icon: <AnalyticsIcon />, href: "/analytics", phase1Only: true },
-  { title: "Notifications", icon: <NotificationsIcon />, href: "/notifications", phase1Only: true },
-  { title: "Settings", icon: <SettingsIcon />, href: "/settings", phase1Only: true },
+  {
+    title: "Analytics",
+    icon: <AnalyticsIcon />,
+    href: "/analytics",
+    phase1Only: true,
+  },
+  {
+    title: "Notifications",
+    icon: <NotificationsIcon />,
+    href: "/notifications",
+    phase1Only: true,
+  },
+  {
+    title: "Settings",
+    icon: <SettingsIcon />,
+    href: "/settings",
+    phase1Only: true,
+  },
 ];
 
-const HELP_ITEM = { title: "Help & Support", icon: <HelpIcon />, href: "/help" };
+const HELP_ITEM = {
+  title: "Help & Support",
+  icon: <HelpIcon />,
+  href: "/help",
+};
 
 // Shared dimensions
 const DRAWER_WIDTH = 280;
@@ -42,9 +66,9 @@ const COLLAPSED_WIDTH = 80;
 const EXPANDED_WIDTH = 260;
 
 const MOBILE_DRAWER_STYLES = {
-  display: { xs: 'block', md: 'none' },
-  '& .MuiDrawer-paper': {
-    boxSizing: 'border-box',
+  display: { xs: "block", md: "none" },
+  "& .MuiDrawer-paper": {
+    boxSizing: "border-box",
     width: DRAWER_WIDTH,
     bgcolor: "background.paper",
     borderRight: 1,
@@ -81,16 +105,16 @@ interface SidebarProps {
   onToggleCollapsed?: () => void;
 }
 
-export default function Sidebar({ 
-  mobileOpen = false, 
-  onMobileClose, 
-  collapsed = false, 
-  onToggleCollapsed 
+export default function Sidebar({
+  mobileOpen = false,
+  onMobileClose,
+  collapsed = false,
+  onToggleCollapsed,
 }: SidebarProps) {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [open, setOpen] = useState<Record<SectionKey, boolean>>(DEFAULT_STATE);
-  
+
   // Popover state - using anchor element for hover
   const [popoverAnchor, setPopoverAnchor] = useState<HTMLElement | null>(null);
   const [popoverContent, setPopoverContent] = useState<{
@@ -98,9 +122,25 @@ export default function Sidebar({
     href: string;
     items: { label: string; href: string }[];
   } | null>(null);
-  
+
+  // Get user role from localStorage
+  const [userRole, setUserRole] = useState<string | undefined>(undefined);
+
   // Timeout for closing popover with delay
   const closeTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+
+  // Load user role from localStorage on mount
+  useEffect(() => {
+    try {
+      const storedUserDetails = localStorage.getItem("userDetails");
+      if (storedUserDetails) {
+        const userDetails = JSON.parse(storedUserDetails);
+        setUserRole(userDetails.role);
+      }
+    } catch (error) {
+      console.warn("Failed to load user details:", error);
+    }
+  }, []);
 
   // Load state from localStorage on mount
   useEffect(() => {
@@ -129,33 +169,39 @@ export default function Sidebar({
   }, [open]);
 
   // Toggle section (only when expanded) - Accordion behavior
-  const toggle = useCallback((key: SectionKey) => {
-    if (!collapsed) {
-      setOpen((prevState) => {
-        const newState = { ...DEFAULT_STATE }; // Close all sections
-        newState[key] = !prevState[key]; // Toggle the clicked one
-        return newState;
-      });
-    }
-  }, [collapsed]);
+  const toggle = useCallback(
+    (key: SectionKey) => {
+      if (!collapsed) {
+        setOpen((prevState) => {
+          const newState = { ...DEFAULT_STATE }; // Close all sections
+          newState[key] = !prevState[key]; // Toggle the clicked one
+          return newState;
+        });
+      }
+    },
+    [collapsed],
+  );
 
   // Handle popover open on hover
-  const handlePopoverOpen = useCallback((
-    event: React.MouseEvent<HTMLElement>,
-    title: string,
-    href: string,
-    items: { label: string; href: string }[]
-  ) => {
-    if (collapsed && items.length > 0) {
-      // Clear any pending close timeout
-      if (closeTimeoutRef.current) {
-        clearTimeout(closeTimeoutRef.current);
-        closeTimeoutRef.current = null;
+  const handlePopoverOpen = useCallback(
+    (
+      event: React.MouseEvent<HTMLElement>,
+      title: string,
+      href: string,
+      items: { label: string; href: string }[],
+    ) => {
+      if (collapsed && items.length > 0) {
+        // Clear any pending close timeout
+        if (closeTimeoutRef.current) {
+          clearTimeout(closeTimeoutRef.current);
+          closeTimeoutRef.current = null;
+        }
+        setPopoverAnchor(event.currentTarget);
+        setPopoverContent({ title, href, items });
       }
-      setPopoverAnchor(event.currentTarget);
-      setPopoverContent({ title, href, items });
-    }
-  }, [collapsed]);
+    },
+    [collapsed],
+  );
 
   // Handle popover close with delay
   const handlePopoverClose = useCallback(() => {
@@ -163,7 +209,7 @@ export default function Sidebar({
     if (closeTimeoutRef.current) {
       clearTimeout(closeTimeoutRef.current);
     }
-    
+
     // Set a delay before closing to allow mouse movement to popover
     closeTimeoutRef.current = setTimeout(() => {
       setPopoverAnchor(null);
@@ -188,220 +234,247 @@ export default function Sidebar({
     };
   }, []);
 
+  // Filter sidebar items based on user role (admin items only for admins)
+  const filteredSidebarItems = useMemo(() => {
+    return SIDEBAR_ITEMS.filter((item) => {
+      if (item.adminOnly) {
+        return hasAdminAccess(userRole);
+      }
+      return true;
+    });
+  }, [userRole]);
+
   // Memoized static section component
-  const StaticSection = useMemo(() => 
-    ({ title, icon, href }: { title: string; icon: React.ReactNode; href: string }) => (
-      <SidebarSection
-        title={title}
-        icon={icon}
-        href={href}
-        subItems={[]}
-        open={false}
-        onToggle={() => {}}
-        collapsed={collapsed}
-      />
-    ), [collapsed]
+  const StaticSection = useMemo(
+    () =>
+      ({
+        title,
+        icon,
+        href,
+      }: {
+        title: string;
+        icon: React.ReactNode;
+        href: string;
+      }) => (
+        <SidebarSection
+          title={title}
+          icon={icon}
+          href={href}
+          subItems={[]}
+          open={false}
+          onToggle={() => {}}
+          collapsed={collapsed}
+        />
+      ),
+    [collapsed],
   );
 
-  const sidebarContent = useMemo(() => (
-    <>
-      {/* Logo - clickable */}
-      <Box 
-        component={Link}
-        href="/home"
-        sx={{ 
-          display: "flex", 
-          justifyContent: "center", 
-          mb: 3,
-          cursor: "pointer",
-          transition: "opacity 0.2s",
-          "&:hover": { opacity: 0.8 }
-        }}
-      >
+  const sidebarContent = useMemo(
+    () => (
+      <>
+        {/* Logo - clickable */}
         <Box
-          component="img"
-          src="/queuequell-logo.png"
-          alt="QueueQuell Logo"
-          sx={{ 
-            width: collapsed ? 40 : 50, 
-            height: "auto",
-            transition: "width 0.3s ease"
+          component={Link}
+          href="/home"
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            mb: 3,
+            cursor: "pointer",
+            transition: "opacity 0.2s",
+            "&:hover": { opacity: 0.8 },
           }}
-        />
-      </Box>
-
-      <List 
-        sx={{ 
-          display: "flex", 
-          flexDirection: "column", 
-          gap: 0.25, 
-          flexGrow: 1 
-        }}
-        role="navigation"
-        aria-label="Main navigation"
-      >
-        {/* Dynamic sidebar items with expansion or popover */}
-        {SIDEBAR_ITEMS.map((item) => (
-          <SidebarSection
-            key={item.key}
-            title={item.title}
-            icon={item.icon}
-            href={item.href}
-            subItems={item.subItems}
-            open={!collapsed && open[item.key]}
-            onToggle={() => toggle(item.key)}
-            collapsed={collapsed}
-            onPopoverOpen={(event) => handlePopoverOpen(event, item.title, item.href, item.subItems)}
-            onPopoverClose={handlePopoverClose}
+        >
+          <Box
+            component="img"
+            src="/queuequell-logo.png"
+            alt="QueueQuell Logo"
+            sx={{
+              width: collapsed ? 40 : 50,
+              height: "auto",
+              transition: "width 0.3s ease",
+            }}
           />
-        ))}
+        </Box>
 
-        {/* Static items */}
-        {STATIC_ITEMS.map((item) => 
-          (!item.phase1Only || PHASE_1_ENABLED) && (
-            <StaticSection key={item.title} {...item} />
-          )
-        )}
-      </List>
+        <List
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 0.25,
+            flexGrow: 1,
+          }}
+          role="navigation"
+          aria-label="Main navigation"
+        >
+          {/* Dynamic sidebar items with expansion or popover */}
+          {filteredSidebarItems.map((item) => (
+            <SidebarSection
+              key={item.key}
+              title={item.title}
+              icon={item.icon}
+              href={item.href}
+              subItems={item.subItems}
+              open={!collapsed && open[item.key]}
+              onToggle={() => toggle(item.key)}
+              collapsed={collapsed}
+              onPopoverOpen={(event) =>
+                handlePopoverOpen(event, item.title, item.href, item.subItems)
+              }
+              onPopoverClose={handlePopoverClose}
+            />
+          ))}
 
-      {/* Help & Support at bottom */}
-      <Box sx={{ mt: "auto", pt: 2 }}>
-        <StaticSection {...HELP_ITEM} />
+          {/* Static items */}
+          {STATIC_ITEMS.map(
+            (item) =>
+              (!item.phase1Only || PHASE_1_ENABLED) && (
+                <StaticSection key={item.title} {...item} />
+              ),
+          )}
+        </List>
 
-        {/* Collapse Toggle Button - Desktop only */}
-        {!isMobile && onToggleCollapsed && (
-          <Tooltip 
-            title={collapsed ? "Expand sidebar" : "Collapse sidebar"} 
-            placement="right"
-          >
-            <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-              <IconButton
-                onClick={onToggleCollapsed}
-                aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-                sx={{
-                  color: "#666",
-                  transition: "all 0.2s",
-                  "&:hover": {
-                    color: "#333",
-                    bgcolor: "rgba(0,0,0,0.04)",
-                    transform: "scale(1.1)",
-                  },
-                }}
-              >
-                {collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-              </IconButton>
-            </Box>
-          </Tooltip>
-        )}
-      </Box>
+        {/* Help & Support at bottom */}
+        <Box sx={{ mt: "auto", pt: 2 }}>
+          <StaticSection {...HELP_ITEM} />
 
-      {/* Popover Menu for Collapsed State - Hover Based */}
-      <Popover
-        open={Boolean(popoverAnchor)}
-        anchorEl={popoverAnchor}
-        onClose={() => {
-          setPopoverAnchor(null);
-          setPopoverContent(null);
-        }}
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
-        }}
-        disableRestoreFocus
-        sx={{
-          pointerEvents: 'none',
-          ml: 1,
-          '& .MuiPopover-paper': {
-            pointerEvents: 'auto',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
-            borderRadius: .5,
-            minWidth: 200,
-          },
-        }}
-        PaperProps={{
-          onMouseEnter: handlePopoverEnter,
-          onMouseLeave: handlePopoverClose,
-        }}
-      >
-        {popoverContent && (
-          <Box sx={{ py: 0.5 }}>
-            {/* Popover Title - Clickable */}
-            <MenuItem
-              component={Link}
-              href={popoverContent.href}
-              onClick={handlePopoverClose}
-              sx={{
-                px: 2,
-                py: 1.5,
-                borderRadius: .5,
-                mx: 0.5,
-                mb: 0.5,
-                '&:hover': {
-                  bgcolor: 'action.hover',
-                },
-              }}
+          {/* Collapse Toggle Button - Desktop only */}
+          {!isMobile && onToggleCollapsed && (
+            <Tooltip
+              title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+              placement="right"
             >
-              <ListItemText 
-                primary={popoverContent.title}
-                primaryTypographyProps={{
-                  fontSize: '0.875rem',
-                  fontWeight: 600,
-                  color: 'text.primary',
-                }}
-              />
-            </MenuItem>
+              <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+                <IconButton
+                  onClick={onToggleCollapsed}
+                  aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+                  sx={{
+                    color: "#666",
+                    transition: "all 0.2s",
+                    "&:hover": {
+                      color: "#333",
+                      bgcolor: "rgba(0,0,0,0.04)",
+                      transform: "scale(1.1)",
+                    },
+                  }}
+                >
+                  {collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+                </IconButton>
+              </Box>
+            </Tooltip>
+          )}
+        </Box>
 
-            {/* Divider between title and sub-items */}
-            <Divider sx={{ my: 0.5 }} />
-
-            {/* Popover Menu Items */}
-            {popoverContent.items.map((subItem) => (
+        {/* Popover Menu for Collapsed State - Hover Based */}
+        <Popover
+          open={Boolean(popoverAnchor)}
+          anchorEl={popoverAnchor}
+          onClose={() => {
+            setPopoverAnchor(null);
+            setPopoverContent(null);
+          }}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "left",
+          }}
+          disableRestoreFocus
+          sx={{
+            pointerEvents: "none",
+            ml: 1,
+            "& .MuiPopover-paper": {
+              pointerEvents: "auto",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
+              borderRadius: 0.5,
+              minWidth: 200,
+            },
+          }}
+          PaperProps={{
+            onMouseEnter: handlePopoverEnter,
+            onMouseLeave: handlePopoverClose,
+          }}
+        >
+          {popoverContent && (
+            <Box sx={{ py: 0.5 }}>
+              {/* Popover Title - Clickable */}
               <MenuItem
-                key={subItem.href}
                 component={Link}
-                href={subItem.href}
+                href={popoverContent.href}
                 onClick={handlePopoverClose}
                 sx={{
-                  borderRadius: .5,
-                  mx: 0.5,
                   px: 2,
                   py: 1.5,
-                  '&:hover': {
-                    bgcolor: 'action.hover',
+                  borderRadius: 0.5,
+                  mx: 0.5,
+                  mb: 0.5,
+                  "&:hover": {
+                    bgcolor: "action.hover",
                   },
                 }}
               >
-                <ListItemText 
-                  primary={subItem.label}
+                <ListItemText
+                  primary={popoverContent.title}
                   primaryTypographyProps={{
-                    fontSize: '0.875rem',
-                    fontWeight: 500,
-                    color: 'text.secondary',
+                    fontSize: "0.875rem",
+                    fontWeight: 600,
+                    color: "text.primary",
                   }}
                 />
               </MenuItem>
-            ))}
-          </Box>
-        )}
-      </Popover>
-    </>
-  ), [
-    collapsed, 
-    open, 
-    toggle, 
-    isMobile, 
-    onToggleCollapsed, 
-    StaticSection, 
-    popoverAnchor, 
-    popoverContent, 
-    handlePopoverOpen, 
-    handlePopoverClose,
-    handlePopoverEnter,
-  ]);
+
+              {/* Divider between title and sub-items */}
+              <Divider sx={{ my: 0.5 }} />
+
+              {/* Popover Menu Items */}
+              {popoverContent.items.map((subItem) => (
+                <MenuItem
+                  key={subItem.href}
+                  component={Link}
+                  href={subItem.href}
+                  onClick={handlePopoverClose}
+                  sx={{
+                    borderRadius: 0.5,
+                    mx: 0.5,
+                    px: 2,
+                    py: 1.5,
+                    "&:hover": {
+                      bgcolor: "action.hover",
+                    },
+                  }}
+                >
+                  <ListItemText
+                    primary={subItem.label}
+                    primaryTypographyProps={{
+                      fontSize: "0.875rem",
+                      fontWeight: 500,
+                      color: "text.secondary",
+                    }}
+                  />
+                </MenuItem>
+              ))}
+            </Box>
+          )}
+        </Popover>
+      </>
+    ),
+    [
+      collapsed,
+      open,
+      toggle,
+      isMobile,
+      onToggleCollapsed,
+      StaticSection,
+      popoverAnchor,
+      popoverContent,
+      handlePopoverOpen,
+      handlePopoverClose,
+      handlePopoverEnter,
+      filteredSidebarItems,
+    ],
+  );
 
   if (isMobile) {
     return (
@@ -409,9 +482,9 @@ export default function Sidebar({
         variant="temporary"
         open={mobileOpen}
         onClose={onMobileClose}
-        ModalProps={{ 
+        ModalProps={{
           keepMounted: true,
-          'aria-labelledby': 'mobile-navigation-drawer'
+          "aria-labelledby": "mobile-navigation-drawer",
         }}
         sx={MOBILE_DRAWER_STYLES}
       >
