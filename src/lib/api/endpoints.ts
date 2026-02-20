@@ -72,17 +72,11 @@ export const PAYMENT_ENDPOINTS = {
 // QR Code Endpoints
 export const QR_ENDPOINTS = {
   GENERATE: "/qr/generate",
-  LIST: "/qr",
+  LIST: "/qr/list",
   GET: (id: string) => `/qr/${id}`,
   DELETE: (id: string) => `/qr/${id}`,
   TABLES: "/qr/tables",
   MENUS: "/qr/menus",
-};
-
-// Admin QR Code Endpoints
-export const ADMIN_QR_ENDPOINTS = {
-  GENERATE: "/admin/qr/generate",
-  LIST: "/admin/qr/list",
 };
 
 // User Endpoints
