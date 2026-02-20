@@ -66,7 +66,10 @@ class ApiClient {
       localStorage.removeItem("tokenType");
       
       // Redirect to login
-      if (typeof window !== "undefined" && window.location.pathname !== "/login") {
+      if (
+        typeof window !== "undefined" &&
+        window.location.pathname !== "/login"
+      ) {
         window.location.href = "/login";
       }
       
@@ -76,7 +79,7 @@ class ApiClient {
 
   private async request<T>(
     endpoint: string,
-    options: RequestInit = {}
+    options: RequestInit = {},
   ): Promise<ApiResponse<T>> {
     const token = this.getAuthToken();
     const headers = new Headers(options.headers);

@@ -21,8 +21,9 @@ export interface UserDetails {
   firstname: string;
   lastname: string;
   email: string;
-  phone: string;
-  address: string;
+  phone?: string;
+  address?: string;
+  role?: string;
 }
 
 export interface Config {
@@ -304,7 +305,7 @@ export interface TaxProfile {
 export interface Surcharge {
   id: string;
   name: string;
-  type: 'percentage' | 'fixed';
+  type: "percentage" | "fixed";
   value: number;
   description?: string;
 }
@@ -343,19 +344,19 @@ export interface Order {
 }
 
 export type OrderStatus =
-  | 'pending'
-  | 'confirmed'
-  | 'preparing'
-  | 'ready'
-  | 'completed'
-  | 'cancelled';
+  | "pending"
+  | "confirmed"
+  | "preparing"
+  | "ready"
+  | "completed"
+  | "cancelled";
 
 export type PaymentStatus =
-  | 'pending'
-  | 'processing'
-  | 'completed'
-  | 'failed'
-  | 'refunded';
+  | "pending"
+  | "processing"
+  | "completed"
+  | "failed"
+  | "refunded";
 
 export interface OrderTimeline {
   order_id: string;
@@ -382,7 +383,7 @@ export interface PaginationParams {
 export interface SearchParams extends PaginationParams {
   q?: string;
   sort?: string;
-  order?: 'asc' | 'desc';
+  order?: "asc" | "desc";
 }
 
 export interface FilterParams {
@@ -415,7 +416,8 @@ export type RequireFields<T, K extends keyof T> = T & Required<Pick<T, K>>;
 /**
  * Make specific properties of T optional
  */
-export type OptionalFields<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+export type OptionalFields<T, K extends keyof T> = Omit<T, K> &
+  Partial<Pick<T, K>>;
 
 // ============================================================================
 // Inventory Types (from old types)
@@ -561,6 +563,22 @@ export interface GenerateQRRequest {
   identifier: string;
   customUrl?: string;
   description?: string;
+}
+
+// Admin QR Generate API Types
+export interface AdminQRGenerateRequest {
+  tableNumber?: string;
+  orderType?: "dine-in" | "takeout" | "delivery";
+  baseUrl?: string;
+}
+
+export interface AdminQRGenerateResponse {
+  qrId: string;
+  qrString: string;
+  qrImageUrl: string;
+  organisationId: string;
+  tableNumber: string | null;
+  orderType: string | null;
 }
 
 export interface Table {

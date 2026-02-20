@@ -79,6 +79,12 @@ export const QR_ENDPOINTS = {
   MENUS: "/qr/menus",
 };
 
+// Admin QR Code Endpoints
+export const ADMIN_QR_ENDPOINTS = {
+  GENERATE: "/admin/qr/generate",
+  LIST: "/admin/qr/list",
+};
+
 // User Endpoints
 export const USER_ENDPOINTS = {
   PROFILE: "/users/profile",

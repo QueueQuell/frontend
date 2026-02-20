@@ -153,13 +153,15 @@ export default function UserMenuDrawer({ open, onClose }: UserMenuDrawerProps) {
           variant="h6"
           sx={{ fontWeight: 600, mb: 0.5, color: "text.primary" }}
         >
-          {userDetails ? `${userDetails.firstname} ${userDetails.lastname}` : "Loading..."}
+          {userDetails
+            ? `${userDetails.firstname} ${userDetails.lastname}`
+            : "Loading..."}
         </Typography>
         <Typography variant="body2" color="text.secondary">
           {userDetails?.email || "Loading..."}
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-          Administrator
+          {userDetails?.role ? userDetails.role.replace(/_/g, " ") : "User"}
         </Typography>
       </Box>
 

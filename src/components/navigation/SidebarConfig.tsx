@@ -129,6 +129,7 @@ const ALL_SIDEBAR_ITEMS: SidebarItem[] = [
     href: "/qr",
     subItems: createSubItems("/qr", [
       ["Generate QR", "/generate"],
+      ["List All QR Codes", "/list"],
       ["Tables", "/tables"],
       ["Menus", "/menus"],
     ]),
