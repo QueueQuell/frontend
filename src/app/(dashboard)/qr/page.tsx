@@ -6,22 +6,39 @@ import { Box, Grid } from "@mui/material";
 import QrCodeIcon from "@mui/icons-material/QrCode";
 import TableRestaurantIcon from "@mui/icons-material/TableRestaurant";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
+import ListIcon from "@mui/icons-material/List";
 
 const qrActions = [
-  { href: "/qr/generate", label: "Generate QR Codes", icon: QrCodeIcon, description: "Create QR codes for tables and menus" },
-  { href: "/qr/tables", label: "Table Management", icon: TableRestaurantIcon, description: "Manage table QR codes" },
-  { href: "/qr/menus", label: "Menu QR Codes", icon: MenuBookIcon, description: "Digital menu QR code management" },
+  {
+    href: "/qr/generate",
+    label: "Generate QR Codes",
+    icon: QrCodeIcon,
+    description: "Create QR codes for tables and menus",
+  },
+  {
+    href: "/qr/list",
+    label: "List All QR Codes",
+    icon: ListIcon,
+    description: "View all generated QR codes",
+  },
+  {
+    href: "/qr/tables",
+    label: "Table Management",
+    icon: TableRestaurantIcon,
+    description: "Manage table QR codes",
+  },
+  {
+    href: "/qr/menus",
+    label: "Menu QR Codes",
+    icon: MenuBookIcon,
+    description: "Digital menu QR code management",
+  },
 ];
 
 export default function QRPage() {
   return (
     <Box sx={{ p: 3 }}>
-      <Breadcrumb
-        items={[
-          { label: "Home", href: "/home" },
-          { label: "QR" },
-        ]}
-      />
+      <Breadcrumb items={[{ label: "Home", href: "/home" }, { label: "QR" }]} />
       <Grid container spacing={3}>
         {qrActions.map((action) => (
           <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={action.href}>

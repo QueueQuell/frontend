@@ -1,6 +1,13 @@
 import { apiClient } from "../client";
-import { QR_ENDPOINTS } from "../endpoints";
-import { QRCode, GenerateQRRequest, Table } from "../types";
+import { QR_ENDPOINTS, ADMIN_QR_ENDPOINTS } from "../endpoints";
+import {
+  QRCode,
+  GenerateQRRequest,
+  Table,
+  AdminQRGenerateRequest,
+  AdminQRGenerateResponse,
+  AdminQRListResponse,
+} from "../types";
 
 export const qrService = {
   async generate(data: GenerateQRRequest) {
@@ -25,5 +32,18 @@ export const qrService = {
 
   async getMenus() {
     return apiClient.get<QRCode[]>(QR_ENDPOINTS.MENUS);
+  },
+
+  // Admin QR Generate
+  async generateAdminQR(data: AdminQRGenerateRequest) {
+    return apiClient.post<AdminQRGenerateResponse>(
+      ADMIN_QR_ENDPOINTS.GENERATE,
+      data,
+    );
+  },
+
+  // Admin QR List
+  async getAllAdminQR() {
+    return apiClient.get<AdminQRListResponse>(ADMIN_QR_ENDPOINTS.LIST);
   },
 };
