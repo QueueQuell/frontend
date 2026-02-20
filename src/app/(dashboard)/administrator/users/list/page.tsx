@@ -40,11 +40,7 @@ export default function UserListPage() {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const response: {
-        success: boolean;
-        data: AdminUserListResponse;
-        message?: string;
-      } = await userService.getAdminUsers({ page, limit });
+      const response = await userService.getAdminUsers({ page, limit });
 
       if (response.success && response.data) {
         setUsers(response.data.data || []);
