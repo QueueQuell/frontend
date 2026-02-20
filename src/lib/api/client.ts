@@ -60,12 +60,10 @@ class ApiClient {
 
       return null;
     } catch (error) {
-      // Clear tokens on refresh failure
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("tokenType");
       
-      // Redirect to login
       if (
         typeof window !== "undefined" &&
         window.location.pathname !== "/login"
@@ -95,7 +93,6 @@ class ApiClient {
         headers,
       });
 
-      // Handle 401 Unauthorized - try to refresh token
       if (response.status === 401 && typeof window !== "undefined") {
         if (!this.isRefreshing) {
           this.isRefreshing = true;
@@ -104,13 +101,10 @@ class ApiClient {
 
           if (newToken) {
             this.onTokenRefreshed(newToken);
-            
-            // Retry original request with new token
             headers.set("Authorization", `Bearer ${newToken}`);
             return this.request<T>(endpoint, { ...options, headers });
           }
         } else {
-          // Wait for token refresh to complete
           return new Promise((resolve) => {
             this.subscribeTokenRefresh((newToken) => {
               headers.set("Authorization", `Bearer ${newToken}`);
@@ -148,6 +142,66 @@ class ApiClient {
 
   async get<T>(endpoint: string): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, { method: "GET" });
+  }
+
+  async getWithMeta<T>(
+    endpoint: string,
+  ): Promise<ApiResponse<T> & { meta?: Record<string, any> }> {
+    const token = this.getAuthToken();
+    const headers = new Headers();
+    headers.set("Content-Type", "application/json");
+
+    if (token && token.trim()) {
+      headers.set("Authorization", `Bearer ${token}`);
+    }
+
+    try {
+      const response = await fetch(`${this.baseURL}${endpoint}`, {
+        method: "GET",
+        headers,
+      });
+
+      if (response.status === 401 && typeof window !== "undefined") {
+        if (!this.isRefreshing) {
+          this.isRefreshing = true;
+          const newToken = await this.refreshToken();
+          this.isRefreshing = false;
+
+          if (newToken) {
+            this.onTokenRefreshed(newToken);
+            headers.set("Authorization", `Bearer ${newToken}`);
+            return this.getWithMeta<T>(endpoint);
+          }
+        }
+      }
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw {
+          success: false,
+          message: data.message || data.detail || "An error occurred",
+          errors: data.errors,
+        } as ApiError;
+      }
+
+      const { data: responseData, total, page, limit, ...rest } = data;
+
+      return {
+        success: true,
+        data: responseData || data,
+        message: data.message,
+        meta: { total, page, limit, ...rest },
+      };
+    } catch (error: any) {
+      if (error.success === false) {
+        throw error;
+      }
+      throw {
+        success: false,
+        message: error.message || "Network error occurred",
+      } as ApiError;
+    }
   }
 
   async post<T>(endpoint: string, data?: any): Promise<ApiResponse<T>> {

@@ -111,34 +111,18 @@ export const userService = {
       ? `${USER_ENDPOINTS.ADMIN_LIST}?${queryString}`
       : USER_ENDPOINTS.ADMIN_LIST;
 
-    // Make direct fetch to preserve total, page, limit from response
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("accessToken")
-        : null;
-
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw {
-        success: false,
-        message: data.message || "Failed to fetch users",
-        errors: data.errors,
-      };
-    }
+    // Use getWithMeta to preserve pagination metadata (total, page, limit)
+    const response = await apiClient.getWithMeta<AdminUser[]>(endpoint);
 
     return {
-      success: true,
-      data: data,
-      message: data.message,
+      success: response.success,
+      data: {
+        data: response.data || [],
+        total: response.meta?.total || response.data?.length || 0,
+        page: response.meta?.page || params?.page || 1,
+        limit: response.meta?.limit || params?.limit || 10,
+      },
+      message: response.message,
     };
   },
 };
