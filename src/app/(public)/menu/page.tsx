@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo } from "react";
 import {
   Box,
   useMediaQuery,
@@ -20,7 +20,7 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-} from '@mui/material';
+} from "@mui/material";
 import {
   RestaurantMenu,
   Restaurant,
@@ -31,25 +31,25 @@ import {
   Receipt,
   Menu as MenuIcon,
   Close,
-} from '@mui/icons-material';
-import { motion, AnimatePresence } from 'framer-motion';
+} from "@mui/icons-material";
+import { motion, AnimatePresence } from "framer-motion";
 
 // Components
-import MenuItemCard from '@/components/menu/MenuItemCard';
-import CartSidebar from '@/components/menu/CartSidebar';
-import OrderTracking from '@/components/menu/OrderTracking';
-import PaymentPage from '@/components/menu/PaymentPage';
-import LoadingSkeleton from '@/components/menu/LoadingSkeleton';
-import VegNonVegFilter from '@/components/menu/VegNonVegFilter';
+import MenuItemCard from "@/components/menu/MenuItemCard";
+import CartSidebar from "@/components/menu/CartSidebar";
+import OrderTracking from "@/components/menu/OrderTracking";
+import PaymentPage from "@/components/menu/PaymentPage";
+import LoadingSkeleton from "@/components/menu/LoadingSkeleton";
+import VegNonVegFilter from "@/components/menu/VegNonVegFilter";
 
 // Data
-import { menuData } from './menuData';
+import { menuData } from "./menuData";
 
 // Store
-import { useCartStore } from '@/lib/store/cartStore';
+import { useCartStore } from "@/lib/store/cartStore";
 
 // Types
-type PageView = 'menu' | 'orders' | 'payment';
+type PageView = "menu" | "orders" | "payment";
 
 // Left Sidebar Component
 function CategorySidebar({
@@ -68,12 +68,12 @@ function CategorySidebar({
       sx={{
         width: 240,
         minWidth: 240,
-        height: 'calc(100vh - 64px)',
-        position: 'sticky',
+        height: "calc(100vh - 64px)",
+        position: "sticky",
         top: 64,
-        backgroundColor: '#FFFFFF',
-        borderRight: '1px solid #E5E7EB',
-        overflowY: 'auto',
+        backgroundColor: "#FFFFFF",
+        borderRight: "1px solid #E5E7EB",
+        overflowY: "auto",
         py: 2,
       }}
     >
@@ -82,10 +82,10 @@ function CategorySidebar({
         sx={{
           px: 2,
           pb: 1,
-          color: '#666666',
+          color: "#666666",
           fontWeight: 600,
-          textTransform: 'uppercase',
-          fontSize: '0.75rem',
+          textTransform: "uppercase",
+          fontSize: "0.75rem",
           letterSpacing: 1,
         }}
       >
@@ -101,31 +101,30 @@ function CategorySidebar({
                 selected={isSelected}
                 onClick={() => onCategorySelect(category.id)}
                 sx={{
-                  borderRadius: 2,
                   py: 1,
-                  '&.Mui-selected': {
-                    backgroundColor: '#8B0000',
-                    color: 'white',
-                    '&:hover': {
-                      backgroundColor: '#6B0000',
+                  "&.Mui-selected": {
+                    backgroundColor: "#8B0000",
+                    color: "white",
+                    "&:hover": {
+                      backgroundColor: "#6B0000",
                     },
-                    '& .MuiListItemIcon-root': {
-                      color: 'white',
+                    "& .MuiListItemIcon-root": {
+                      color: "white",
                     },
-                    '& .MuiListItemText-primary': {
-                      color: 'white',
+                    "& .MuiListItemText-primary": {
+                      color: "white",
                       fontWeight: 600,
                     },
                   },
-                  '&:hover': {
-                    backgroundColor: isSelected ? '#8B0000' : '#F3F4F6',
+                  "&:hover": {
+                    backgroundColor: isSelected ? "#8B0000" : "#F3F4F6",
                   },
                 }}
               >
                 <ListItemIcon
                   sx={{
                     minWidth: 36,
-                    color: isSelected ? 'white' : '#333333',
+                    color: isSelected ? "white" : "#333333",
                   }}
                 >
                   <IconComponent sx={{ fontSize: 20 }} />
@@ -133,7 +132,7 @@ function CategorySidebar({
                 <ListItemText
                   primary={category.name}
                   primaryTypographyProps={{
-                    fontSize: '0.9rem',
+                    fontSize: "0.9rem",
                     fontWeight: isSelected ? 600 : 400,
                   }}
                 />
@@ -142,9 +141,11 @@ function CategorySidebar({
                   size="small"
                   sx={{
                     height: 20,
-                    fontSize: '0.7rem',
-                    backgroundColor: isSelected ? 'rgba(255,255,255,0.2)' : '#F3F4F6',
-                    color: isSelected ? 'white' : '#333333',
+                    fontSize: "0.7rem",
+                    backgroundColor: isSelected
+                      ? "rgba(255,255,255,0.2)"
+                      : "#F3F4F6",
+                    color: isSelected ? "white" : "#333333",
                   }}
                 />
               </ListItemButton>
@@ -158,7 +159,7 @@ function CategorySidebar({
 
 export default function MenuPage() {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   // Cart store
   const cartItems = useCartStore((state) => state.items);
@@ -167,10 +168,10 @@ export default function MenuPage() {
   const setCartOpen = useCartStore((state) => state.setCartOpen);
 
   // Local state
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [currentView, setCurrentView] = useState<PageView>('menu');
+  const [currentView, setCurrentView] = useState<PageView>("menu");
   const [bottomNavValue, setBottomNavValue] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -179,12 +180,13 @@ export default function MenuPage() {
 
   // Filtered items with category sorting
   const filteredItems = useMemo(() => {
-    let items = selectedCategory === 'all' 
-      ? [...menuData.items]
-      : menuData.items.filter((item) => item.category === selectedCategory);
+    let items =
+      selectedCategory === "all"
+        ? [...menuData.items]
+        : menuData.items.filter((item) => item.category === selectedCategory);
 
-    if (selectedCategory === 'all') {
-      const categoryOrder = menuData.categories.map(c => c.id);
+    if (selectedCategory === "all") {
+      const categoryOrder = menuData.categories.map((c) => c.id);
       items.sort((a, b) => {
         const aIndex = categoryOrder.indexOf(a.category);
         const bIndex = categoryOrder.indexOf(b.category);
@@ -197,7 +199,7 @@ export default function MenuPage() {
       items = items.filter(
         (item) =>
           item.name.toLowerCase().includes(query) ||
-          item.description.toLowerCase().includes(query)
+          item.description.toLowerCase().includes(query),
       );
     }
 
@@ -211,14 +213,14 @@ export default function MenuPage() {
   // Category item counts
   const categoryCounts = useMemo(() => {
     const counts: Record<string, number> = { all: 0 };
-    
+
     // Filter items by veg if filter is applied
-    const itemsToCount = isVegOnly 
+    const itemsToCount = isVegOnly
       ? menuData.items.filter((item) => item.isVeg)
       : menuData.items;
-    
+
     counts.all = itemsToCount.length;
-    
+
     itemsToCount.forEach((item) => {
       counts[item.category] = (counts[item.category] || 0) + 1;
     });
@@ -243,54 +245,54 @@ export default function MenuPage() {
 
   const handleCheckout = () => {
     setCartOpen(false);
-    setCurrentView('payment');
+    setCurrentView("payment");
   };
 
   const handlePaymentSuccess = () => {
     useCartStore.getState().clearCart();
-    setCurrentView('menu');
+    setCurrentView("menu");
     setBottomNavValue(0);
   };
 
   const handleBackToMenu = () => {
-    setCurrentView('menu');
+    setCurrentView("menu");
   };
 
   const handleBottomNavChange = (_: React.SyntheticEvent, newValue: number) => {
     setBottomNavValue(newValue);
-    if (newValue === 0) setCurrentView('menu');
+    if (newValue === 0) setCurrentView("menu");
     if (newValue === 2) handleCartOpen();
-    if (newValue === 1) setCurrentView('orders');
+    if (newValue === 1) setCurrentView("orders");
   };
 
   return (
     <Box
       sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        minHeight: '100vh',
-        backgroundColor: '#FFFFFF',
-        color: '#111111',
+        display: "flex",
+        flexDirection: "column",
+        minHeight: "100vh",
+        backgroundColor: "#FFFFFF",
+        color: "#111111",
       }}
     >
       {/* Header - Simplified on payment page */}
-      {currentView === 'payment' ? (
+      {currentView === "payment" ? (
         /* Simplified Header - Only Company Name */
         <Box
           sx={{
-            position: 'sticky',
+            position: "sticky",
             top: 0,
             zIndex: 1100,
-            backgroundColor: '#FFFFFF',
-            borderBottom: '1px solid #E5E7EB',
-            boxShadow: '0 1px 2px rgba(0, 0, 0, 0.08)',
+            backgroundColor: "#FFFFFF",
+            borderBottom: "1px solid #E5E7EB",
+            boxShadow: "0 1px 2px rgba(0, 0, 0, 0.08)",
           }}
         >
           <Box
             sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
               gap: 1.5,
               px: { xs: 2, md: 3 },
               py: 1.5,
@@ -301,13 +303,13 @@ export default function MenuPage() {
                 width: 40,
                 height: 40,
                 borderRadius: 2,
-                backgroundColor: '#8B0000',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#fff',
+                backgroundColor: "#8B0000",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#fff",
                 fontWeight: 700,
-                fontSize: '1.1rem',
+                fontSize: "1.1rem",
               }}
             >
               QQ
@@ -316,9 +318,9 @@ export default function MenuPage() {
               variant="h6"
               sx={{
                 fontWeight: 700,
-                fontSize: '1.1rem',
+                fontSize: "1.1rem",
                 lineHeight: 1.2,
-                color: '#111111',
+                color: "#111111",
               }}
             >
               QueueQuell
@@ -329,18 +331,18 @@ export default function MenuPage() {
         /* Full Header with Search, Filter, and Cart */
         <Box
           sx={{
-            position: 'sticky',
+            position: "sticky",
             top: 0,
             zIndex: 1100,
-            backgroundColor: '#FFFFFF',
-            borderBottom: '1px solid #E5E7EB',
-            boxShadow: '0 1px 2px rgba(0, 0, 0, 0.08)',
+            backgroundColor: "#FFFFFF",
+            borderBottom: "1px solid #E5E7EB",
+            boxShadow: "0 1px 2px rgba(0, 0, 0, 0.08)",
           }}
         >
           <Box
             sx={{
-              display: 'flex',
-              alignItems: 'center',
+              display: "flex",
+              alignItems: "center",
               gap: 2,
               px: { xs: 2, md: 3 },
               py: 1.5,
@@ -356,10 +358,10 @@ export default function MenuPage() {
             {/* Logo */}
             <Box
               sx={{
-                display: 'flex',
-                alignItems: 'center',
+                display: "flex",
+                alignItems: "center",
                 gap: 1.5,
-                minWidth: 'fit-content',
+                minWidth: "fit-content",
               }}
             >
               <Box
@@ -367,25 +369,25 @@ export default function MenuPage() {
                   width: 40,
                   height: 40,
                   borderRadius: 2,
-                  backgroundColor: '#8B0000',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#fff',
+                  backgroundColor: "#8B0000",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#fff",
                   fontWeight: 700,
-                  fontSize: '1.1rem',
+                  fontSize: "1.1rem",
                 }}
               >
                 QQ
               </Box>
-              <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+              <Box sx={{ display: { xs: "none", sm: "block" } }}>
                 <Typography
                   variant="h6"
                   sx={{
                     fontWeight: 700,
-                    fontSize: '1.1rem',
+                    fontSize: "1.1rem",
                     lineHeight: 1.2,
-                    color: '#111111',
+                    color: "#111111",
                   }}
                 >
                   QueueQuell
@@ -393,8 +395,8 @@ export default function MenuPage() {
                 <Typography
                   variant="caption"
                   sx={{
-                    color: '#666666',
-                    display: 'block',
+                    color: "#666666",
+                    display: "block",
                     lineHeight: 1,
                   }}
                 >
@@ -412,42 +414,45 @@ export default function MenuPage() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 size="small"
                 sx={{
-                  '& .MuiOutlinedInput-root': {
+                  "& .MuiOutlinedInput-root": {
                     borderRadius: 3,
-                    backgroundColor: '#F3F4F6',
-                    color: '#111111',
-                    '&:hover': {
-                      backgroundColor: '#F3F4F6',
+                    backgroundColor: "#F3F4F6",
+                    color: "#111111",
+                    "&:hover": {
+                      backgroundColor: "#F3F4F6",
                     },
-                    '&.Mui-focused': {
-                      backgroundColor: '#FFFFFF',
-                      boxShadow: '0 0 0 2px #8B0000',
+                    "&.Mui-focused": {
+                      backgroundColor: "#FFFFFF",
+                      boxShadow: "0 0 0 2px #8B0000",
                     },
-                    '& .MuiInputBase-input::placeholder': {
-                      color: '#666666',
+                    "& .MuiInputBase-input::placeholder": {
+                      color: "#666666",
                       opacity: 1,
                     },
                   },
-                  '& .MuiOutlinedInput-notchedOutline': {
-                    borderColor: '#E5E7EB',
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#E5E7EB",
                   },
-                  '&:hover .MuiOutlinedInput-notchedOutline': {
-                    borderColor: '#D1D5DB',
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#D1D5DB",
                   },
-                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                    borderColor: '#8B0000',
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#8B0000",
                   },
                 }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Search sx={{ color: '#666666', fontSize: 20 }} />
+                      <Search sx={{ color: "#666666", fontSize: 20 }} />
                     </InputAdornment>
                   ),
                   endAdornment: searchQuery && (
                     <InputAdornment position="end">
-                      <IconButton size="small" onClick={() => setSearchQuery('')}>
-                        <Close sx={{ fontSize: 18, color: '#666666' }} />
+                      <IconButton
+                        size="small"
+                        onClick={() => setSearchQuery("")}
+                      >
+                        <Close sx={{ fontSize: 18, color: "#666666" }} />
                       </IconButton>
                     </InputAdornment>
                   ),
@@ -457,7 +462,7 @@ export default function MenuPage() {
 
             {/* Desktop: Filter & Cart side by side */}
             {!isMobile && (
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <VegNonVegFilter
                   isVegOnly={isVegOnly}
                   onVegChange={setIsVegOnly}
@@ -466,11 +471,11 @@ export default function MenuPage() {
                 <IconButton
                   onClick={handleCartOpen}
                   sx={{
-                    backgroundColor: '#F3F4F6',
-                    color: '#333333',
-                    '&:hover': {
-                      backgroundColor: '#8B0000',
-                      color: '#fff',
+                    backgroundColor: "#F3F4F6",
+                    color: "#333333",
+                    "&:hover": {
+                      backgroundColor: "#8B0000",
+                      color: "#fff",
                     },
                   }}
                 >
@@ -478,8 +483,8 @@ export default function MenuPage() {
                     badgeContent={cartItems.reduce((s, i) => s + i.quantity, 0)}
                     color="error"
                     sx={{
-                      '& .MuiBadge-badge': {
-                        fontSize: '0.65rem',
+                      "& .MuiBadge-badge": {
+                        fontSize: "0.65rem",
                         height: 18,
                         minWidth: 18,
                       },
@@ -494,7 +499,14 @@ export default function MenuPage() {
 
           {/* Mobile: Veg Filter below search */}
           {isMobile && (
-            <Box sx={{ display: 'flex', alignItems: 'center', mt: 1, px: { xs: 2, md: 3 } }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                mt: 1,
+                px: { xs: 2, md: 3 },
+              }}
+            >
               <VegNonVegFilter
                 isVegOnly={isVegOnly}
                 onVegChange={setIsVegOnly}
@@ -520,9 +532,9 @@ export default function MenuPage() {
       </SwipeableDrawer>
 
       {/* Main Content Area */}
-      <Box sx={{ display: 'flex', flex: 1 }}>
+      <Box sx={{ display: "flex", flex: 1 }}>
         {/* Left Sidebar (Desktop) - Hide on payment page */}
-        {!isMobile && currentView !== 'payment' && (
+        {!isMobile && currentView !== "payment" && (
           <CategorySidebar
             categories={menuData.categories}
             selectedCategory={selectedCategory}
@@ -532,15 +544,15 @@ export default function MenuPage() {
         )}
 
         {/* Content */}
-        <Box sx={{ flex: 1, overflowY: 'auto', pb: isMobile ? 8 : 0 }}>
-          {currentView === 'menu' && (
+        <Box sx={{ flex: 1, overflowY: "auto", pb: isMobile ? 8 : 0 }}>
+          {currentView === "menu" && (
             <Box sx={{ p: { xs: 2, md: 3 } }}>
               {/* Results Count */}
               <Box
                 sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
                   mb: 3,
                 }}
               >
@@ -548,18 +560,19 @@ export default function MenuPage() {
                   variant="h6"
                   sx={{
                     fontWeight: 600,
-                    color: '#111111',
+                    color: "#111111",
                   }}
                 >
-                  {selectedCategory === 'all'
-                    ? 'All Items'
-                    : menuData.categories.find((c) => c.id === selectedCategory)?.name}
+                  {selectedCategory === "all"
+                    ? "All Items"
+                    : menuData.categories.find((c) => c.id === selectedCategory)
+                        ?.name}
                   <Typography
                     component="span"
                     variant="body2"
                     sx={{
                       ml: 1,
-                      color: '#666666',
+                      color: "#666666",
                       fontWeight: 400,
                     }}
                   >
@@ -574,13 +587,13 @@ export default function MenuPage() {
               ) : filteredItems.length === 0 ? (
                 <Box
                   sx={{
-                    textAlign: 'center',
+                    textAlign: "center",
                     py: 8,
-                    color: '#666666',
+                    color: "#666666",
                   }}
                 >
                   <Search sx={{ fontSize: 48, mb: 2, opacity: 0.5 }} />
-                  <Typography variant="h6" sx={{ mb: 1, color: '#333333' }}>
+                  <Typography variant="h6" sx={{ mb: 1, color: "#333333" }}>
                     No items found
                   </Typography>
                   <Typography variant="body2">
@@ -590,11 +603,11 @@ export default function MenuPage() {
               ) : (
                 <Box
                   sx={{
-                    display: 'grid',
+                    display: "grid",
                     gridTemplateColumns: {
-                      xs: '1fr',
-                      sm: '1fr',
-                      md: 'repeat(2, 1fr)',
+                      xs: "1fr",
+                      sm: "1fr",
+                      md: "repeat(2, 1fr)",
                     },
                     gap: 3,
                   }}
@@ -616,9 +629,9 @@ export default function MenuPage() {
             </Box>
           )}
 
-          {currentView === 'orders' && <OrderTracking />}
+          {currentView === "orders" && <OrderTracking />}
 
-          {currentView === 'payment' && (
+          {currentView === "payment" && (
             <PaymentPage
               cart={cartItems.map((item) => ({
                 id: item.id,
@@ -646,7 +659,7 @@ export default function MenuPage() {
       {isMobile && (
         <Paper
           sx={{
-            position: 'fixed',
+            position: "fixed",
             bottom: 0,
             left: 0,
             right: 0,

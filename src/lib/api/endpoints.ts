@@ -97,3 +97,12 @@ export const ORGANISATION_ENDPOINTS = {
   UPDATE: (id: string) => `/organisations/${id}`,
   DELETE: (id: string) => `/organisations/${id}`,
 };
+
+// Category Endpoints
+export const CATEGORY_ENDPOINTS = {
+  LIST: "/categories",
+  GET: (id: string) => `/categories/${id}`,
+  CREATE: "/categories",
+  UPDATE: (id: string) => `/categories/${id}`,
+  DELETE: (id: string) => `/categories/${id}`,
+};

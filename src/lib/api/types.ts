@@ -686,16 +686,33 @@ export interface UpdateAddressRequest {
 }
 
 // ============================================================================
-// Section Types (from JSON schema)
+// Category Types (from JSON schema)
 // ============================================================================
-
-export interface Section {
+export interface Category {
   _id: string;
   name: string;
   description?: string;
   active: boolean;
   theme?: string;
   displayOrder: number;
+  restaurantId?: string;
+  createdBy?: string;
+  updatedBy?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface CreateCategoryRequest {
+  name: string;
+  description?: string;
+  displayOrder?: number;
+}
+
+export interface UpdateCategoryRequest {
+  name?: string;
+  description?: string;
+  displayOrder?: number;
+  active?: boolean;
 }
 
 // ============================================================================
