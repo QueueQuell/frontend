@@ -67,10 +67,10 @@ const ALL_SIDEBAR_ITEMS: SidebarItem[] = [
     key: "items",
     title: "Menu",
     icon: <RestaurantMenuIcon />,
-    href: "/items",
-    subItems: createSubItems("/items", [
-      ["Catalog", "/catalog"],
-      ["Create Item", "/catalog/create"],
+    href: "/catalog",
+    subItems: createSubItems("/catalog", [
+      ["Items", "/items"],
+      ["Create Item", "/items/create"],
       ["Categories", "/categories"],
       ["Create Category", "/categories/create"],
     ]),

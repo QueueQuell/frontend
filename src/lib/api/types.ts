@@ -522,16 +522,75 @@ export interface LoyaltyProgram {
 }
 
 // ============================================================================
-// Menu Item Types (from old types)
+// Menu Item Types (matching API structure)
 // ============================================================================
+
+export interface VariantOption {
+  name: string;
+  price: number;
+  calories?: number;
+}
+
+export interface VariantGroup {
+  name: string;
+  isRequired: boolean;
+  selectionType: "single" | "multiple";
+  options: VariantOption[];
+}
+
+export interface AddonOption {
+  name: string;
+  price: number;
+}
+
+export interface AddonGroup {
+  name: string;
+  selectionType: "single" | "multiple";
+  options: AddonOption[];
+}
+
+export interface NutritionalInfo {
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  sugar: number;
+}
+
+export interface Availability {
+  days: string[];
+  startTime: string;
+  endTime: string;
+}
+
+export interface MenuItemComponent {
+  itemId: string;
+  quantity: number;
+  isOptional: boolean;
+}
 
 export interface CreateMenuItemRequest {
   name: string;
-  section: string;
-  price: number;
   description?: string;
-  image?: string;
-  available: boolean;
+  imageUrl?: string;
+  categoryId: string;
+  nonVeg: boolean;
+  type?: string;
+  cuisine?: string;
+  spicinessLevel?: string;
+  pricingModel?: string;
+  basePrice: number;
+  active?: boolean;
+  status?: string;
+  isRecommended?: boolean;
+  isPopular?: boolean;
+  displayOrder?: number;
+  dietaryTags?: string[];
+  variantGroups?: VariantGroup[];
+  addonGroups?: AddonGroup[];
+  components?: MenuItemComponent[];
+  nutritionalInfo?: NutritionalInfo;
+  availability?: Availability;
 }
 
 // ============================================================================

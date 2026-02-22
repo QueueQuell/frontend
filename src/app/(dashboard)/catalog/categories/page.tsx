@@ -190,7 +190,7 @@ export default function CategoriesPage() {
       <Breadcrumb
         items={[
           { label: "Home", href: "/home" },
-          { label: "Items", href: "/items" },
+          { label: "Menu", href: "/catalog" },
           { label: "Categories" },
         ]}
       />
@@ -210,7 +210,7 @@ export default function CategoriesPage() {
           variant="contained"
           startIcon={<AddIcon />}
           component={Link}
-          href="/items/categories/create"
+          href="/catalog/categories/create"
         >
           Create Category
         </Button>
@@ -359,7 +359,7 @@ export default function CategoriesPage() {
         </DialogActions>
       </Dialog>
 
-      <PageFooter backHref="/items" backText="Back to Items" />
+      <PageFooter backHref="/catalog" backText="Back to Items" />
     </Box>
   );
 }

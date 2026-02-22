@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   Box,
   useMediaQuery,
@@ -43,13 +44,52 @@ import LoadingSkeleton from "@/components/menu/LoadingSkeleton";
 import VegNonVegFilter from "@/components/menu/VegNonVegFilter";
 
 // Data
-import { menuData } from "./menuData";
+import { menuData as mockMenuData } from "./menuData";
 
 // Store
-import { useCartStore } from "@/lib/store/cartStore";
+import { useCartStore, MenuItemType } from "@/lib/store/cartStore";
+
+// API
+import {
+  customerService,
+  ApiMenuItem,
+} from "@/lib/api/services/customer.service";
 
 // Types
 type PageView = "menu" | "orders" | "payment";
+
+// Category type for dynamic categories
+type CategoryType = {
+  id: string;
+  name: string;
+  icon: React.ElementType;
+};
+
+// Menu data type
+type MenuDataType = {
+  categories: CategoryType[];
+  items: MenuItemType[];
+};
+
+// Helper function to map API menu item to MenuItemType
+function mapApiMenuItemToMenuItemType(apiItem: ApiMenuItem): MenuItemType {
+  return {
+    id: apiItem._id || apiItem.id,
+    name: apiItem.name,
+    category:
+      apiItem.category?.toLowerCase().replace(/\s+/g, "-") ||
+      apiItem.categoryId?.toLowerCase() ||
+      "uncategorized",
+    price: apiItem.basePrice,
+    weight: "",
+    isVeg: !apiItem.nonVeg,
+    image: apiItem.imageUrl || "",
+    images: apiItem.imageUrl ? [apiItem.imageUrl] : [],
+    description: apiItem.description || "",
+    isPremium: apiItem.isRecommended || false,
+    isAvailable: apiItem.active !== false,
+  };
+}
 
 // Left Sidebar Component
 function CategorySidebar({
@@ -58,7 +98,7 @@ function CategorySidebar({
   onCategorySelect,
   categoryCounts,
 }: {
-  categories: typeof menuData.categories;
+  categories: CategoryType[];
   selectedCategory: string;
   onCategorySelect: (id: string) => void;
   categoryCounts: Record<string, number>;
@@ -160,12 +200,16 @@ function CategorySidebar({
 export default function MenuPage() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const searchParams = useSearchParams();
 
   // Cart store
   const cartItems = useCartStore((state) => state.items);
   const cartTotal = useCartStore((state) => state.getTotalPrice());
   const cartOpen = useCartStore((state) => state.isOpen);
   const setCartOpen = useCartStore((state) => state.setCartOpen);
+
+  // Menu data state
+  const [menuData, setMenuData] = useState<MenuDataType>(mockMenuData);
 
   // Local state
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -177,6 +221,66 @@ export default function MenuPage() {
 
   // Filter state
   const [isVegOnly, setIsVegOnly] = useState(false);
+
+  // Fetch menu data based on QR code
+  useEffect(() => {
+    const fetchMenuData = async () => {
+      const qrCode = searchParams.get("qr");
+
+      if (qrCode) {
+        setIsLoading(true);
+        try {
+          const response = await customerService.getMenuByQr(qrCode);
+          if (response.success && response.data) {
+            // response.data is MenuApiResponse which has { success, data: { organisation, context, menuItems } }
+            const menuItems = (response.data as any)?.menuItems || [];
+
+            // Map API items to MenuItemType
+            const mappedItems = menuItems.map((item: any) =>
+              mapApiMenuItemToMenuItemType(item),
+            );
+
+            // Extract unique categories from API response
+            const categoryMap = new Map<string, string>();
+            mappedItems.forEach((item: MenuItemType) => {
+              if (item.category && !categoryMap.has(item.category)) {
+                categoryMap.set(item.category, item.category);
+              }
+            });
+
+            // Build categories array with icons
+            const categories: CategoryType[] = [
+              { id: "all", name: "All", icon: RestaurantMenu },
+              ...Array.from(categoryMap.entries()).map(([id, name]) => ({
+                id,
+                name:
+                  name.charAt(0).toUpperCase() +
+                  name.slice(1).replace(/-/g, " "),
+                icon: RestaurantMenu,
+              })),
+            ];
+            console.log(JSON.stringify(mappedItems));
+
+            setMenuData({
+              categories,
+              items: mappedItems,
+            });
+          }
+        } catch (error) {
+          console.error("Failed to fetch menu from API:", error);
+          // Fallback to mock data on error
+          setMenuData(mockMenuData);
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        // No QR code, use mock data
+        setMenuData(mockMenuData);
+      }
+    };
+
+    fetchMenuData();
+  }, [searchParams]);
 
   // Filtered items with category sorting
   const filteredItems = useMemo(() => {
