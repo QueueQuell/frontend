@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   Box,
@@ -198,6 +198,15 @@ function CategorySidebar({
 }
 
 export default function MenuPage() {
+  return (
+    // You could have a loading skeleton as the `fallback` too
+    <Suspense>
+      <MenuComponent />
+    </Suspense>
+  );
+}
+
+function MenuComponent() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const searchParams = useSearchParams();
