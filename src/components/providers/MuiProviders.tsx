@@ -32,19 +32,20 @@ const lightTheme = createTheme({
     },
   },
   typography: {
-    fontFamily: '"Inter", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial',
+    fontFamily:
+      '"Inter", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial',
     fontSize: 12,
-    h1: { fontSize: '2.5rem', fontWeight: 500 },
-    h2: { fontSize: '1.75rem', fontWeight: 500 },
-    h3: { fontSize: '1.5rem', fontWeight: 500 },
-    h4: { fontSize: '1.25rem', fontWeight: 400 },
-    h5: { fontSize: '1.125rem', fontWeight: 400 },
-    h6: { fontSize: '1rem', fontWeight: 400 },
-    body1: { fontSize: '0.875rem' },
-    body2: { fontSize: '0.725rem' },
+    h1: { fontSize: "2.5rem", fontWeight: 500 },
+    h2: { fontSize: "1.75rem", fontWeight: 500 },
+    h3: { fontSize: "1.5rem", fontWeight: 500 },
+    h4: { fontSize: "1.25rem", fontWeight: 400 },
+    h5: { fontSize: "1.125rem", fontWeight: 400 },
+    h6: { fontSize: "1rem", fontWeight: 400 },
+    body1: { fontSize: "0.875rem" },
+    body2: { fontSize: "0.725rem" },
   },
   shape: {
-    borderRadius: 20,
+    borderRadius: 10,
   },
   components: {
     MuiCssBaseline: {
@@ -68,7 +69,7 @@ const lightTheme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: 12,
+          borderRadius: 6,
           textTransform: "none",
           fontWeight: 500,
           transition: "all 0.2s ease",
@@ -88,7 +89,7 @@ const lightTheme = createTheme({
     MuiCard: {
       styleOverrides: {
         root: {
-          borderRadius: 20,
+          borderRadius: 10,
           backgroundColor: "#ffffff",
           border: "none",
           boxShadow: "0 4px 20px rgba(0, 0, 0, 0.08)",
@@ -104,7 +105,7 @@ const lightTheme = createTheme({
       styleOverrides: {
         root: {
           "& .MuiOutlinedInput-root": {
-            borderRadius: 12,
+            borderRadius: 6,
             backgroundColor: "#ffffff",
             "& fieldset": {
               borderColor: "#e2e8f0",
@@ -119,10 +120,31 @@ const lightTheme = createTheme({
         },
       },
     },
+    MuiDialog: {
+      styleOverrides: {
+        paper: {
+          borderRadius: 6,
+        },
+      },
+    },
+    MuiTableContainer: {
+      styleOverrides: {
+        root: {
+          borderRadius: 6,
+        },
+      },
+    },
     MuiSvgIcon: {
       styleOverrides: {
         root: {
-          fontSize: '1.2rem',
+          fontSize: "1.2rem",
+        },
+      },
+    },
+    MuiListItemButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: 8,
         },
       },
     },
@@ -148,19 +170,20 @@ const darkTheme = createTheme({
     },
   },
   typography: {
-    fontFamily: '"Inter", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial',
+    fontFamily:
+      '"Inter", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial',
     fontSize: 12,
-    h1: { fontSize: '2.5rem', fontWeight: 600 },
-    h2: { fontSize: '2rem', fontWeight: 600 },
-    h3: { fontSize: '1.75rem', fontWeight: 600 },
-    h4: { fontSize: '1.5rem', fontWeight: 500 },
-    h5: { fontSize: '1.25rem', fontWeight: 500 },
-    h6: { fontSize: '1.125rem', fontWeight: 500 },
-    body1: { fontSize: '1rem' },
-    body2: { fontSize: '0.875rem' },
+    h1: { fontSize: "2.5rem", fontWeight: 600 },
+    h2: { fontSize: "2rem", fontWeight: 600 },
+    h3: { fontSize: "1.75rem", fontWeight: 600 },
+    h4: { fontSize: "1.5rem", fontWeight: 500 },
+    h5: { fontSize: "1.25rem", fontWeight: 500 },
+    h6: { fontSize: "1.125rem", fontWeight: 500 },
+    body1: { fontSize: "1rem" },
+    body2: { fontSize: "0.875rem" },
   },
   shape: {
-    borderRadius: 16,
+    borderRadius: 8,
   },
   components: {
     MuiCssBaseline: {
@@ -185,7 +208,7 @@ const darkTheme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: 12,
+          borderRadius: 6,
           textTransform: "none",
           fontWeight: 600,
           transition: "all 0.3s ease",
@@ -205,7 +228,7 @@ const darkTheme = createTheme({
     MuiCard: {
       styleOverrides: {
         root: {
-          borderRadius: 16,
+          borderRadius: 8,
           backdropFilter: "blur(10px)",
           backgroundColor: "rgba(255, 255, 255, 0.05)",
           border: "1px solid rgba(255, 255, 255, 0.1)",
@@ -222,7 +245,7 @@ const darkTheme = createTheme({
       styleOverrides: {
         root: {
           "& .MuiOutlinedInput-root": {
-            borderRadius: 12,
+            borderRadius: 6,
             backdropFilter: "blur(10px)",
             backgroundColor: "rgba(255, 255, 255, 0.05)",
             "& fieldset": {
@@ -238,17 +261,42 @@ const darkTheme = createTheme({
         },
       },
     },
+    MuiDialog: {
+      styleOverrides: {
+        paper: {
+          borderRadius: 8,
+        },
+      },
+    },
+    MuiTableContainer: {
+      styleOverrides: {
+        root: {
+          borderRadius: 8,
+        },
+      },
+    },
     MuiSvgIcon: {
       styleOverrides: {
         root: {
-          fontSize: '1.2rem',
+          fontSize: "1.2rem",
+        },
+      },
+    },
+    MuiListItemButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: 8,
         },
       },
     },
   },
 });
 
-export default function MuiProviders({ children }: { children: React.ReactNode }) {
+export default function MuiProviders({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {

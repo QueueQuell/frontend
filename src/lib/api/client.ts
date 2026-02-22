@@ -2,7 +2,8 @@
 
 import { ApiResponse, ApiError } from "./types";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://queuequell-backend.onrender.com/api";
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000/api";
 
 class ApiClient {
   private baseURL: string;
@@ -49,7 +50,7 @@ class ApiClient {
       }
 
       const data = await response.json();
-      
+
       if (data.data?.access_token) {
         localStorage.setItem("accessToken", data.data.access_token);
         if (data.data.refresh_token) {
@@ -63,14 +64,14 @@ class ApiClient {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("tokenType");
-      
+
       if (
         typeof window !== "undefined" &&
         window.location.pathname !== "/login"
       ) {
         window.location.href = "/login";
       }
-      
+
       return null;
     }
   }
@@ -140,8 +141,16 @@ class ApiClient {
     }
   }
 
-  async get<T>(endpoint: string): Promise<ApiResponse<T>> {
-    return this.request<T>(endpoint, { method: "GET" });
+  async get<T>(
+    endpoint: string,
+    params?: Record<string, string>,
+  ): Promise<ApiResponse<T>> {
+    let url = endpoint;
+    if (params) {
+      const searchParams = new URLSearchParams(params);
+      url += `?${searchParams.toString()}`;
+    }
+    return this.request<T>(url, { method: "GET" });
   }
 
   async getWithMeta<T>(

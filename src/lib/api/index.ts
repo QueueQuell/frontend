@@ -11,6 +11,7 @@ export { userService } from "./services/user.service";
 export { adminService } from "./services/admin.service";
 export { pricingService } from "./services/pricing.service";
 export { subscriptionService } from "./services/subscription.service";
+export { categoryService } from "./services/category.service";
 
 // Export all types
 export type * from "./types";

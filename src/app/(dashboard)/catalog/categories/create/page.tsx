@@ -1,17 +1,21 @@
 "use client";
-import { Box, Button, Alert, Paper } from "@mui/material";
-import Link from "next/link";
-import CategoryIcon from "@mui/icons-material/Category";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Box, Button, Alert, Paper, CircularProgress } from "@mui/material";
+import Link from "next/link";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import SaveIcon from "@mui/icons-material/Save";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import PageFooter from "@/components/ui/PageFooter";
-import SectionForm, { SectionFormData } from "@/components/section/SectionForm";
+import CategoryForm, {
+  CategoryFormData,
+} from "@/components/category/CategoryForm";
+import { categoryService } from "@/lib/api/services/category.service";
 
 export default function CreateCategoryPage() {
   const router = useRouter();
-  const [formData, setFormData] = useState<SectionFormData>({
+  const [formData, setFormData] = useState<CategoryFormData>({
     name: "",
     description: "",
     displayOrder: "",
@@ -22,7 +26,7 @@ export default function CreateCategoryPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  const handleChange = (field: keyof SectionFormData, value: any) => {
+  const handleChange = (field: keyof CategoryFormData, value: any) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
@@ -42,18 +46,25 @@ export default function CreateCategoryPage() {
     setError(null);
 
     try {
-      // TODO: Replace with actual API call
-      // const response = await api.createCategory(formData);
+      const payload = {
+        name: formData.name,
+        description: formData.description || "",
+        displayOrder: formData.displayOrder
+          ? parseInt(formData.displayOrder as string)
+          : 1,
+      };
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const response = await categoryService.create(payload);
 
-      setSuccess(true);
-
-      setTimeout(() => {
-        setSuccess(false);
-        router.push("/items/categories");
-      }, 2000);
+      if (response.success) {
+        setSuccess(true);
+        setTimeout(() => {
+          setSuccess(false);
+          router.push("/catalog/categories");
+        }, 2000);
+      } else {
+        setError(response.message || "Failed to create category");
+      }
     } catch (err: any) {
       setError(err.message || "Failed to create category. Please try again.");
     } finally {
@@ -66,8 +77,8 @@ export default function CreateCategoryPage() {
       <Breadcrumb
         items={[
           { label: "Home", href: "/home" },
-          { label: "Items", href: "/items" },
-          { label: "Categories", href: "/items/categories" },
+          { label: "Items", href: "/catalog" },
+          { label: "Categories", href: "/catalog/categories" },
           { label: "Create New Category" },
         ]}
       />
@@ -86,11 +97,13 @@ export default function CreateCategoryPage() {
 
       <Paper sx={{ p: 4, maxWidth: 700, mx: "auto" }}>
         <form onSubmit={handleSubmit}>
-          <SectionForm formData={formData} onChange={handleChange} />
-          <Box sx={{ display: "flex", gap: 2, justifyContent: "flex-end", mt: 3 }}>
+          <CategoryForm formData={formData} onChange={handleChange} />
+          <Box
+            sx={{ display: "flex", gap: 2, justifyContent: "flex-end", mt: 3 }}
+          >
             <Button
               component={Link}
-              href="/items/categories"
+              href="/catalog/categories"
               variant="outlined"
               startIcon={<ArrowBackIcon />}
               disabled={isSubmitting}
@@ -101,7 +114,9 @@ export default function CreateCategoryPage() {
               type="submit"
               variant="contained"
               disabled={isSubmitting}
-              startIcon={<CategoryIcon />}
+              startIcon={
+                isSubmitting ? <CircularProgress size={20} /> : <SaveIcon />
+              }
             >
               {isSubmitting ? "Creating..." : "Create Category"}
             </Button>
@@ -109,8 +124,10 @@ export default function CreateCategoryPage() {
         </form>
       </Paper>
 
-      <PageFooter backHref="/items/categories" backText="Back to Categories" />
+      <PageFooter
+        backHref="/catalog/categories"
+        backText="Back to Categories"
+      />
     </Box>
   );
 }
-

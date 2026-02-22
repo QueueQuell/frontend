@@ -39,12 +39,12 @@ export const CUSTOMER_ENDPOINTS = {
 
 // Menu Item Endpoints
 export const MENU_ENDPOINTS = {
-  LIST: "/menu-items",
-  GET: (id: string) => `/menu-items/${id}`,
-  CREATE: "/menu-items",
-  UPDATE: (id: string) => `/menu-items/${id}`,
-  DELETE: (id: string) => `/menu-items/${id}`,
-  CATALOG: "/menu-items/catalog",
+  LIST: "/menu",
+  GET: (id: string) => `/menu/${id}`,
+  CREATE: "/menu",
+  UPDATE: (id: string) => `/menu/${id}`,
+  DELETE: (id: string) => `/menu/${id}`,
+  CATALOG: "/menu/catalog",
 };
 
 // Supplier Endpoints
@@ -96,4 +96,13 @@ export const ORGANISATION_ENDPOINTS = {
   CREATE: "/organisations",
   UPDATE: (id: string) => `/organisations/${id}`,
   DELETE: (id: string) => `/organisations/${id}`,
+};
+
+// Category Endpoints
+export const CATEGORY_ENDPOINTS = {
+  LIST: "/categories",
+  GET: (id: string) => `/categories/${id}`,
+  CREATE: "/categories",
+  UPDATE: (id: string) => `/categories/${id}`,
+  DELETE: (id: string) => `/categories/${id}`,
 };
