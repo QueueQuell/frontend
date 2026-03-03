@@ -79,6 +79,12 @@ export default function PaymentPage({
       return;
     }
 
+    // Validate phone number is 10 digits
+    if (customerPhone.length !== 10) {
+      setValidationError("Please enter a valid 10-digit phone number");
+      return;
+    }
+
     setValidationError("");
     setActiveStep(1);
   };
@@ -249,9 +255,15 @@ export default function PaymentPage({
                   fullWidth
                   label="Phone"
                   value={customerPhone}
-                  onChange={(e) => setCustomerPhone(e.target.value)}
+                  onChange={(e) => {
+                    const value = e.target.value
+                      .replace(/\D/g, "")
+                      .slice(0, 10);
+                    setCustomerPhone(value);
+                  }}
                   required
                   error={!!validationError && !customerPhone.trim()}
+                  placeholder="9876543210"
                   sx={{
                     "& .MuiOutlinedInput-root": {
                       borderRadius: 1,
@@ -261,7 +273,29 @@ export default function PaymentPage({
                     },
                     "& .MuiInputLabel-root": { color: "#666666" },
                   }}
+                  InputProps={{
+                    startAdornment: (
+                      <Box
+                        sx={{ display: "flex", alignItems: "center", mr: 1 }}
+                      >
+                        <Typography sx={{ color: "#666666", fontWeight: 500 }}>
+                          +91
+                        </Typography>
+                      </Box>
+                    ),
+                  }}
+                  inputProps={{
+                    maxLength: 10,
+                  }}
                 />
+                {customerPhone.length > 0 && customerPhone.length < 10 && (
+                  <Typography
+                    variant="caption"
+                    sx={{ color: "#DC2626", mt: 0.5, display: "block" }}
+                  >
+                    Phone number must be 10 digits
+                  </Typography>
+                )}
               </Grid>
             </Grid>
 
