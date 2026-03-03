@@ -43,8 +43,7 @@ import PaymentPage from "@/components/menu/PaymentPage";
 import LoadingSkeleton from "@/components/menu/LoadingSkeleton";
 import VegNonVegFilter from "@/components/menu/VegNonVegFilter";
 
-// Data
-import { menuData as mockMenuData } from "./menuData";
+// Data - Removed mock data import
 
 // Store
 import { useCartStore, MenuItemType } from "@/lib/store/cartStore";
@@ -217,8 +216,14 @@ function MenuComponent() {
   const cartOpen = useCartStore((state) => state.isOpen);
   const setCartOpen = useCartStore((state) => state.setCartOpen);
 
-  // Menu data state
-  const [menuData, setMenuData] = useState<MenuDataType>(mockMenuData);
+  // Menu data state - Initialize with empty data instead of mock
+  const [menuData, setMenuData] = useState<MenuDataType>({
+    categories: [{ id: "all", name: "All", icon: RestaurantMenu }],
+    items: [],
+  });
+
+  // Organization name from API
+  const [orgName, setOrgName] = useState<string>("Queue Quell");
 
   // Local state
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -226,7 +231,8 @@ function MenuComponent() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [currentView, setCurrentView] = useState<PageView>("menu");
   const [bottomNavValue, setBottomNavValue] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
+  // Initialize isLoading based on whether QR code exists
+  const [isLoading, setIsLoading] = useState(() => !!searchParams.get("qr"));
 
   // Filter state
   const [isVegOnly, setIsVegOnly] = useState(false);
@@ -241,6 +247,12 @@ function MenuComponent() {
         try {
           const response = await customerService.getMenuByQr(qrCode);
           if (response.success && response.data) {
+            // Set organization name from response
+            const organisation = (response.data as any)?.organisation;
+            if (organisation?.name) {
+              setOrgName(organisation.name);
+            }
+
             // response.data is MenuApiResponse which has { success, data: { organisation, context, menuItems } }
             const menuItems = (response.data as any)?.menuItems || [];
 
@@ -277,14 +289,20 @@ function MenuComponent() {
           }
         } catch (error) {
           console.error("Failed to fetch menu from API:", error);
-          // Fallback to mock data on error
-          setMenuData(mockMenuData);
+          // Set empty data on error - no fallback to mock data
+          setMenuData({
+            categories: [{ id: "all", name: "All", icon: RestaurantMenu }],
+            items: [],
+          });
         } finally {
           setIsLoading(false);
         }
       } else {
-        // No QR code, use mock data
-        setMenuData(mockMenuData);
+        // No QR code - show empty menu instead of mock data
+        setMenuData({
+          categories: [{ id: "all", name: "All", icon: RestaurantMenu }],
+          items: [],
+        });
       }
     };
 
@@ -321,7 +339,13 @@ function MenuComponent() {
     }
 
     return items;
-  }, [selectedCategory, searchQuery, isVegOnly]);
+  }, [
+    selectedCategory,
+    searchQuery,
+    isVegOnly,
+    menuData.items,
+    menuData.categories,
+  ]);
 
   // Category item counts
   const categoryCounts = useMemo(() => {
@@ -338,7 +362,7 @@ function MenuComponent() {
       counts[item.category] = (counts[item.category] || 0) + 1;
     });
     return counts;
-  }, [isVegOnly]);
+  }, [isVegOnly, menuData.items]);
 
   // Handlers
   const handleCategorySelect = (categoryId: string) => {
@@ -436,7 +460,7 @@ function MenuComponent() {
                 color: "#111111",
               }}
             >
-              QueueQuell
+              {orgName}
             </Typography>
           </Box>
         </Box>
@@ -503,7 +527,7 @@ function MenuComponent() {
                     color: "#111111",
                   }}
                 >
-                  QueueQuell
+                  {orgName}
                 </Typography>
                 <Typography
                   variant="caption"

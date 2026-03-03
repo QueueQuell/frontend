@@ -63,7 +63,6 @@ export default function PaymentPage({
   const [isProcessing, setIsProcessing] = useState(false);
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
-  const [tableNumber, setTableNumber] = useState("");
   const [validationError, setValidationError] = useState("");
 
   const tax = totalAmount * 0.1;
