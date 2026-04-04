@@ -11,11 +11,13 @@ import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import BusinessIcon from "@mui/icons-material/Business";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import PeopleIcon from "@mui/icons-material/People";
+import {
+  isAdminRole,
+  isSuperAdmin,
+  ADMIN_ROLES,
+} from "@/lib/utils/accessControl";
 
 const PHASE_1_ENABLED = process.env.NEXT_PUBLIC_PHASE_1_ENABLED === "true";
-
-// Roles that can see the Administrator section
-export const ADMIN_ROLES = ["SUPER_ADMIN", "OWNER", "ADMIN"];
 
 export type SectionKey =
   | "home"
@@ -81,7 +83,7 @@ const ALL_SIDEBAR_ITEMS: SidebarItem[] = [
     icon: <ShoppingCartIcon />,
     href: "/orders",
     subItems: createSubItems("/orders", [
-      ["List Orders", "/list"],
+      ["Orders", "/list"],
       ["Create Order", "/create"],
     ]),
   },
@@ -114,7 +116,7 @@ const ALL_SIDEBAR_ITEMS: SidebarItem[] = [
     icon: <LocalShippingIcon />,
     href: "/suppliers",
     subItems: createSubItems("/suppliers", [
-      ["List Suppliers", "/list"],
+      ["Suppliers", "/list"],
       ["Add Supplier", "/add"],
       ["Performance", "/performance"],
     ]),
@@ -126,7 +128,7 @@ const ALL_SIDEBAR_ITEMS: SidebarItem[] = [
     icon: <GroupIcon />,
     href: "/customers",
     subItems: createSubItems("/customers", [
-      ["List Customers", "/list"],
+      ["Customers", "/list"],
       ["Loyalty", "/loyalty"],
       ["Add Customer", "/add"],
     ]),
@@ -138,8 +140,8 @@ const ALL_SIDEBAR_ITEMS: SidebarItem[] = [
     icon: <QrCodeIcon />,
     href: "/qr",
     subItems: createSubItems("/qr", [
+      ["QR Codes", "/list"],
       ["Generate QR", "/generate"],
-      ["List All QR Codes", "/list"],
       // Tables and Menus disabled temporarily
       // ["Tables", "/tables"],
       // ["Menus", "/menus"],
@@ -151,10 +153,10 @@ const ALL_SIDEBAR_ITEMS: SidebarItem[] = [
     icon: <AdminPanelSettingsIcon />,
     href: "/administrator",
     subItems: createSubItems("/administrator", [
+      ["Organisations", "/organisations/list"],
       ["Create Organisation", "/organisations/create"],
-      ["Organisation List", "/organisations/list"],
+      ["Users", "/users/list"],
       ["Create User", "/users/create"],
-      ["User List", "/users/list"],
     ]),
     adminOnly: true,
   },
@@ -166,7 +168,11 @@ export const SIDEBAR_ITEMS: SidebarItem[] = ALL_SIDEBAR_ITEMS.filter(
 );
 
 // Helper function to check if user has admin access
+// Includes: SuperAdmin (SaaS), ADMIN, OWNER (organisation-level)
 export const hasAdminAccess = (role: string | undefined): boolean => {
   if (!role) return false;
-  return ADMIN_ROLES.includes(role);
+  // SuperAdmin has full access
+  if (isSuperAdmin(role)) return true;
+  // ADMIN and OWNER have organisation-level admin access
+  return isAdminRole(role);
 };

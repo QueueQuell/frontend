@@ -30,20 +30,20 @@ export default function SignInSide() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const email = data.get("email") as string;
+    const usernameOrEmail = data.get("usernameOrEmail") as string;
     const password = data.get("password") as string;
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email && !password) {
+    if (!usernameOrEmail && !password) {
       setError("Please enter email and password.");
       return;
-    } else if (!email) {
+    } else if (!usernameOrEmail) {
       setError("Please enter email.");
       return;
     } else if (!password) {
       setError("Please enter password.");
       return;
-    } else if (!emailRegex.test(email)) {
+    } else if (!emailRegex.test(usernameOrEmail)) {
       setError("Please enter a valid email address.");
       return;
     }
@@ -53,8 +53,8 @@ export default function SignInSide() {
 
     try {
       const response = await authService.login({
-        username_or_email: email,
-        password
+        usernameOrEmail: usernameOrEmail.trim(),
+        password,
       });
 
       if (response.success) {
@@ -62,7 +62,7 @@ export default function SignInSide() {
 
         // Get the 'next' parameter from URL
         const searchParams = new URLSearchParams(window.location.search);
-        const nextUrl = searchParams.get('next') || '/home';
+        const nextUrl = searchParams.get("next") || "/home";
 
         // Decode and redirect
         const decodedNext = decodeURIComponent(nextUrl);
@@ -71,7 +71,9 @@ export default function SignInSide() {
         setError("Login failed. Please try again.");
       }
     } catch (err: any) {
-      setError(err.message || "An error occurred during login. Please try again.");
+      setError(
+        err.message || "An error occurred during login. Please try again.",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -179,13 +181,20 @@ export default function SignInSide() {
           <Box component="form" noValidate onSubmit={handleSubmit}>
             <TextField
               fullWidth
-              id="email"
-              label="Email address"
-              name="email"
-              autoComplete="email"
+              id="usernameOrEmail"
+              label="Username or Email"
+              name="usernameOrEmail"
+              autoComplete="username"
               autoFocus
               size="medium"
-              sx={{ mb: 2, minWidth: 400, '& .MuiOutlinedInput-root': { '& fieldset': { borderColor: 'gray' }, '&.Mui-focused fieldset': { borderColor: 'black' } } }}
+              sx={{
+                mb: 2,
+                minWidth: 400,
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": { borderColor: "gray" },
+                  "&.Mui-focused fieldset": { borderColor: "black" },
+                },
+              }}
             />
 
             <Box sx={{ mb: 2 }}>
@@ -196,7 +205,13 @@ export default function SignInSide() {
                 type={showPassword ? "text" : "password"}
                 placeholder="6+ characters"
                 size="medium"
-                sx={{ minWidth: 400, '& .MuiOutlinedInput-root': { '& fieldset': { borderColor: 'gray' }, '&.Mui-focused fieldset': { borderColor: 'black' } } }}
+                sx={{
+                  minWidth: 400,
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": { borderColor: "gray" },
+                    "&.Mui-focused fieldset": { borderColor: "black" },
+                  },
+                }}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -238,7 +253,11 @@ export default function SignInSide() {
         onClose={() => setError(null)}
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
       >
-        <Alert onClose={() => setError(null)} severity="error" sx={{ width: "100%" }}>
+        <Alert
+          onClose={() => setError(null)}
+          severity="error"
+          sx={{ width: "100%" }}
+        >
           {error}
         </Alert>
       </Snackbar>

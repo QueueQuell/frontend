@@ -15,7 +15,18 @@ import {
   Chip,
   CircularProgress,
   IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Snackbar,
+  Alert,
+  TextField,
+  InputAdornment,
 } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import Link from "next/link";
 import PeopleIcon from "@mui/icons-material/People";
 import EditIcon from "@mui/icons-material/Edit";
@@ -23,36 +34,95 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import PageFooter from "@/components/ui/PageFooter";
-import {
-  userService,
-  AdminUser,
-  AdminUserListResponse,
-} from "@/lib/api/services/user.service";
+import { adminService } from "@/lib/api/services/admin.service";
+import type { User } from "@/lib/api/types";
 
 export default function UserListPage() {
-  const [users, setUsers] = useState<AdminUser[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
+  const [deleteDialog, setDeleteDialog] = useState<
+    | {
+        open: false;
+      }
+    | {
+        open: true;
+        userId: string;
+        userName: string;
+      }
+  >({ open: false });
+  const [deleting, setDeleting] = useState(false);
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: "success" | "error";
+  }>({ open: false, message: "", severity: "success" });
+  const [searchTerm, setSearchTerm] = useState("");
   const [limit] = useState(10);
+
+  const filteredUsers = users.filter(
+    (user) =>
+      user.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
 
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const response = await userService.getAdminUsers({ page, limit });
+      const response = await adminService.listUsers({ page, limit });
 
-      if (response.success && response.data) {
-        setUsers(response.data.data || []);
-        setTotal(response.data.total || 0);
+      if (response) {
+        const usersData = response.data || [];
+        const pagination = response.pagination;
+        setUsers(usersData);
+        setTotal(pagination?.total || 0);
+        setPage(pagination?.page || 1);
       } else {
-        setError(response.message || "Failed to fetch users");
+        setError("Failed to fetch users");
       }
     } catch (err: any) {
       setError(err.message || "Failed to fetch users");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleDeleteOpen = (userId: string, userName: string) => {
+    setDeleteDialog({ open: true, userId, userName });
+  };
+
+  const handleDeleteClose = () => {
+    setDeleteDialog({ open: false });
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (deleteDialog.open && deleteDialog.userId) {
+      try {
+        setDeleting(true);
+        await adminService.deleteUser(deleteDialog.userId);
+        setSnackbar({
+          open: true,
+          message: "User deleted successfully",
+          severity: "success",
+        });
+        fetchUsers(); // Refetch to update list
+        handleDeleteClose();
+      } catch (err: any) {
+        setSnackbar({
+          open: true,
+          message: err.message || "Failed to delete user",
+          severity: "error",
+        });
+      } finally {
+        setDeleting(false);
+      }
+    }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
   };
 
   useEffect(() => {
@@ -69,19 +139,19 @@ export default function UserListPage() {
 
   const getRoleColor = (role: string) => {
     switch (role) {
-      case "SUPER_ADMIN":
+      case "SuperAdmin":
         return "error";
-      case "ADMIN":
+      case "Admin":
         return "warning";
-      case "OWNER":
+      case "Owner":
         return "info";
-      case "MANAGER":
+      case "Manager":
         return "primary";
-      case "CHEF":
+      case "Chef":
         return "success";
-      case "WAITER":
+      case "Waiter":
         return "info";
-      case "DELIVERY_PERSONNEL":
+      case "DeliveryPersonnel":
         return "secondary";
       default:
         return "default";
@@ -156,6 +226,23 @@ export default function UserListPage() {
         </Typography>
       </Box>
 
+      <Box sx={{ mb: 3 }}>
+        <TextField
+          fullWidth
+          placeholder="Search users by name or email..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon sx={{ color: "text.secondary" }} />
+              </InputAdornment>
+            ),
+          }}
+          sx={{ maxWidth: 400 }}
+        />
+      </Box>
+
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -171,9 +258,9 @@ export default function UserListPage() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {users.map((user) => (
-              <TableRow key={user._id}>
-                <TableCell>{user._id}</TableCell>
+            {filteredUsers.map((user) => (
+              <TableRow key={user.id}>
+                <TableCell>{user.id}</TableCell>
                 <TableCell>{user.fullName}</TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell>
@@ -193,10 +280,26 @@ export default function UserListPage() {
                 </TableCell>
                 <TableCell>{formatDate(user.createdAt)}</TableCell>
                 <TableCell>
-                  <IconButton size="small">
+                  <IconButton
+                    component={Link}
+                    href={`/administrator/users/${user.id}`}
+                    size="small"
+                  >
+                    <VisibilityIcon />
+                  </IconButton>
+                  <IconButton
+                    component={Link}
+                    color="primary"
+                    href={`/administrator/users/${user.id}/edit`}
+                    size="small"
+                  >
                     <EditIcon />
                   </IconButton>
-                  <IconButton size="small" color="error">
+                  <IconButton
+                    size="small"
+                    color="error"
+                    onClick={() => handleDeleteOpen(user.id, user.fullName)}
+                  >
                     <DeleteIcon />
                   </IconButton>
                 </TableCell>
@@ -206,10 +309,12 @@ export default function UserListPage() {
         </Table>
       </TableContainer>
 
-      {users.length === 0 && (
+      {filteredUsers.length === 0 && (
         <Box sx={{ textAlign: "center", py: 4 }}>
           <Typography variant="body1" color="text.secondary">
-            No users found
+            {searchTerm
+              ? `No users found matching "${searchTerm}"`
+              : "No users found"}
           </Typography>
         </Box>
       )}
@@ -237,6 +342,52 @@ export default function UserListPage() {
       )}
 
       <PageFooter backHref="/administrator" backText="Back to Administrator" />
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteDialog.open}
+        onClose={handleDeleteClose}
+        aria-labelledby="delete-dialog-title"
+        aria-describedby="delete-dialog-description"
+      >
+        <DialogTitle id="delete-dialog-title">Confirm Delete</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="delete-dialog-description">
+            Are you sure you want to delete "
+            {deleteDialog.open ? deleteDialog.userName : ""}"? This action
+            cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDeleteClose} disabled={deleting}>
+            Cancel
+          </Button>
+          <Button
+            onClick={handleDeleteConfirm}
+            color="error"
+            variant="contained"
+            disabled={deleting}
+            autoFocus
+          >
+            {deleting ? "Deleting..." : "Delete"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Snackbar for feedback */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

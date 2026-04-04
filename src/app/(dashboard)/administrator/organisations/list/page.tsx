@@ -14,21 +14,41 @@ import {
   Button,
   Chip,
   CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  DialogContentText,
+  Alert,
+  TextField,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import BusinessIcon from "@mui/icons-material/Business";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import AddIcon from "@mui/icons-material/Add";
+import SearchIcon from "@mui/icons-material/Search";
 import PageFooter from "@/components/ui/PageFooter";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import { organisationService } from "@/lib/api/services/organisation.service";
 import { Organisation } from "@/lib/api/types";
 
 export default function OrganisationListPage() {
+  const router = useRouter();
   const [organisations, setOrganisations] = useState<Organisation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [organisationToDelete, setOrganisationToDelete] =
+    useState<Organisation | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteSuccess, setDeleteSuccess] = useState(false);
+
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     fetchOrganisations();
@@ -56,6 +76,47 @@ export default function OrganisationListPage() {
     }
   };
 
+  const handleDeleteClick = (org: Organisation) => {
+    setOrganisationToDelete(org);
+    setDeleteDialogOpen(true);
+    setDeleteSuccess(false);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!organisationToDelete) return;
+
+    try {
+      setDeleting(true);
+      const response = await organisationService.deleteOrganisation(
+        organisationToDelete._id,
+      );
+
+      if (response.success) {
+        setDeleteSuccess(true);
+        // Refresh the list after successful delete
+        setTimeout(() => {
+          fetchOrganisations();
+          setDeleteDialogOpen(false);
+          setOrganisationToDelete(null);
+        }, 1500);
+      } else {
+        setError(response.message || "Failed to delete organisation");
+        setDeleteDialogOpen(false);
+      }
+    } catch (err) {
+      setError("Failed to delete organisation");
+      console.error(err);
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteDialogOpen(false);
+    setOrganisationToDelete(null);
+    setDeleteSuccess(false);
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -71,6 +132,13 @@ export default function OrganisationListPage() {
   const getStatusColor = (status: string) => {
     return status === "active" ? "success" : "default";
   };
+
+  const filteredOrganisations = organisations.filter(
+    (org) =>
+      org.organisationName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      org.displayName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      org.email?.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
 
   if (loading) {
     return (
@@ -136,6 +204,23 @@ export default function OrganisationListPage() {
         </Typography>
       </Box>
 
+      <Box sx={{ mb: 3 }}>
+        <TextField
+          fullWidth
+          placeholder="Search organisations by name or email..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon sx={{ color: "text.secondary" }} />
+              </InputAdornment>
+            ),
+          }}
+          sx={{ maxWidth: 400 }}
+        />
+      </Box>
+
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -152,7 +237,7 @@ export default function OrganisationListPage() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {organisations.map((org) => (
+            {filteredOrganisations.map((org) => (
               <TableRow key={org._id}>
                 <TableCell>{org.organisationName}</TableCell>
                 <TableCell>{org.displayName}</TableCell>
@@ -178,12 +263,29 @@ export default function OrganisationListPage() {
                 </TableCell>
                 <TableCell>{formatDate(org.createdAt)}</TableCell>
                 <TableCell>
-                  <Button size="small" startIcon={<EditIcon />}>
-                    Edit
-                  </Button>
-                  <Button size="small" color="error" startIcon={<DeleteIcon />}>
-                    Delete
-                  </Button>
+                  <IconButton
+                    component={Link}
+                    href={`/administrator/organisations/${org._id}`}
+                    size="small"
+                  >
+                    <VisibilityIcon />
+                  </IconButton>
+                  <IconButton
+                    component={Link}
+                    color="primary"
+                    href={`/administrator/organisations/${org._id}/edit`}
+                    size="small"
+                  >
+                    <EditIcon />
+                  </IconButton>
+
+                  <IconButton
+                    size="small"
+                    color="error"
+                    onClick={() => handleDeleteClick(org)}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
                 </TableCell>
               </TableRow>
             ))}
@@ -191,15 +293,56 @@ export default function OrganisationListPage() {
         </Table>
       </TableContainer>
 
-      {organisations.length === 0 && (
+      {filteredOrganisations.length === 0 && (
         <Box sx={{ textAlign: "center", py: 4 }}>
           <Typography variant="body1" color="text.secondary">
-            No organisations found
+            {searchTerm
+              ? `No organisations found matching "${searchTerm}"`
+              : "No organisations found"}
           </Typography>
         </Box>
       )}
 
       <PageFooter backHref="/administrator" backText="Back to Administrator" />
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={handleDeleteCancel}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">Delete Organisation</DialogTitle>
+        <DialogContent>
+          {deleteSuccess ? (
+            <Alert severity="success">Organisation deleted successfully!</Alert>
+          ) : (
+            <DialogContentText id="alert-dialog-description">
+              Are you sure you want to delete{" "}
+              <strong>{organisationToDelete?.organisationName}</strong>? This
+              action cannot be undone.
+            </DialogContentText>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={handleDeleteCancel}
+            disabled={deleting || deleteSuccess}
+          >
+            {deleteSuccess ? "Close" : "Cancel"}
+          </Button>
+          {!deleteSuccess && (
+            <Button
+              onClick={handleDeleteConfirm}
+              color="error"
+              autoFocus
+              disabled={deleting}
+            >
+              {deleting ? "Deleting..." : "Delete"}
+            </Button>
+          )}
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

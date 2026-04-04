@@ -129,7 +129,7 @@ export default function QRListPage() {
         items={[
           { label: "Home", href: "/home" },
           { label: "QR", href: "/qr" },
-          { label: "List All QR Codes" },
+          { label: "QR Codes" },
         ]}
       />
 

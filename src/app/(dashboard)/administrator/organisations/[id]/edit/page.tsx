@@ -1,58 +1,59 @@
 "use client";
 
-import Breadcrumb from "@/components/ui/Breadcrumb";
-import PageFooter from "@/components/ui/PageFooter";
-import { organisationService } from "@/lib/api/services/organisation.service";
+import { useState, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
 import {
-  isSuperAdmin,
-  getRoleDisplayName,
-  type UserRole,
-} from "@/lib/utils/accessControl";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import BusinessIcon from "@mui/icons-material/Business";
-import SaveIcon from "@mui/icons-material/Save";
-import {
-  Alert,
+  Typography,
   Box,
+  Paper,
+  Grid,
+  TextField,
   Button,
   CircularProgress,
+  Alert,
   FormControl,
-  Grid,
   InputLabel,
-  MenuItem,
-  Paper,
   Select,
-  TextField,
-  Typography,
+  MenuItem,
   Chip,
   Switch,
+  FormControlLabel,
+  Divider,
 } from "@mui/material";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import SaveIcon from "@mui/icons-material/Save";
+import BusinessIcon from "@mui/icons-material/Business";
+import PageFooter from "@/components/ui/PageFooter";
+import Breadcrumb from "@/components/ui/Breadcrumb";
+import { organisationService } from "@/lib/api/services/organisation.service";
+import { Organisation } from "@/lib/api/types";
 
-export default function CreateOrganisationPage() {
-  const [loading, setLoading] = useState(false);
+export default function EditOrganisationPage() {
+  const params = useParams();
+  const router = useRouter();
+  const id = params?.id as string;
+
+  const [organisation, setOrganisation] = useState<Organisation | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const [isSuperAdminRole, setIsSuperAdminRole] = useState(false);
-  const [userRole, setUserRole] = useState<string>("");
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+  const [userOrgId, setUserOrgId] = useState<string>("");
 
-  // Check user role on mount and set default type using access control utility
+  // Check user role and organisation on mount
   useEffect(() => {
     const userDetails = localStorage.getItem("userDetails");
     if (userDetails) {
       const user = JSON.parse(userDetails);
-      const role = user.role as UserRole | undefined;
-      setUserRole(role || "");
+      const superAdminRoles = ["SuperAdmin"];
+      const userRole = user.role?.toUpperCase() || "";
+      const isSuper = superAdminRoles.some((role) => userRole.includes(role));
+      setIsSuperAdmin(isSuper);
 
-      // Use access control utility to check if super admin
-      const isSuper = isSuperAdmin(role);
-      setIsSuperAdminRole(isSuper);
-
-      // Set default type based on role - non-super admins can only create branches
-      if (!isSuper) {
-        setFormData((prev) => ({ ...prev, type: "branch" }));
-      }
+      // Get user's current organisation ID
+      setUserOrgId(user.organisationId);
     }
   }, []);
 
@@ -84,7 +85,7 @@ export default function CreateOrganisationPage() {
     },
     configurations: {
       business: {
-        taxPercentage: 18,
+        taxPercentage: 5,
         taxLabel: "GST",
         currency: "INR",
         currencySymbol: "₹",
@@ -102,15 +103,114 @@ export default function CreateOrganisationPage() {
       features: {
         videoMenuEnabled: false,
         multiLanguageEnabled: false,
-        ratingEnabled: false,
-        reviewsEnabled: false,
+        ratingEnabled: true,
+        reviewsEnabled: true,
         loyaltyEnabled: false,
         tableOrderingEnabled: false,
-        takeawayEnabled: false,
-        deliveryEnabled: false,
+        takeawayEnabled: true,
+        deliveryEnabled: true,
       },
     },
   });
+
+  useEffect(() => {
+    if (id) {
+      fetchOrganisation();
+    }
+  }, [id]);
+
+  const fetchOrganisation = async () => {
+    try {
+      setLoading(true);
+      const response = await organisationService.getOrganisation(id);
+
+      if (response.success && response.data) {
+        const org = response.data as Organisation;
+        setOrganisation(org);
+
+        // Populate form with existing data
+        // For non-super admins editing a branch, auto-set parentOrgId to their current org
+        const parentOrgId =
+          !isSuperAdmin && org.type === "branch"
+            ? userOrgId
+            : org.parentOrgId || "";
+
+        setFormData({
+          organisationName: org.organisationName || "",
+          displayName: org.displayName || "",
+          tagLine: org.tagLine || "",
+          logo: org.logo || "",
+          customDomain: org.customDomain || "",
+          type: org.type || "company",
+          parentOrgId: parentOrgId,
+          primaryPhone: org.primaryPhone || "",
+          secondaryPhone: org.secondaryPhone || "",
+          email: org.email || "",
+          secondaryEmail: org.secondaryEmail || "",
+          address: {
+            line1: org.address?.line1 || "",
+            line2: org.address?.line2 || "",
+            city: org.address?.city || "",
+            state: org.address?.state || "",
+            pinCode: org.address?.pinCode || "",
+            country: org.address?.country || "India",
+          },
+          paymentDetails: {
+            upiId: org.paymentDetails?.upiId || "",
+            merchantId: org.paymentDetails?.merchantId || "",
+            merchantName: org.paymentDetails?.merchantName || "",
+            enabledMethods: org.paymentDetails?.enabledMethods || [],
+          },
+          configurations: {
+            business: {
+              taxPercentage: org.configurations?.business?.taxPercentage || 18,
+              taxLabel: org.configurations?.business?.taxLabel || "GST",
+              currency: org.configurations?.business?.currency || "INR",
+              currencySymbol:
+                org.configurations?.business?.currencySymbol || "₹",
+              packagingCharge:
+                org.configurations?.business?.packagingCharge || 0,
+              deliveryCharge: org.configurations?.business?.deliveryCharge || 0,
+              freeDeliveryAbove:
+                org.configurations?.business?.freeDeliveryAbove || 0,
+              minOrderAmount: org.configurations?.business?.minOrderAmount || 0,
+            },
+            timing: {
+              openTime: org.configurations?.timing?.openTime || "09:00",
+              closeTime: org.configurations?.timing?.closeTime || "23:00",
+              timezone: org.configurations?.timing?.timezone || "Asia/Kolkata",
+              weeklyOff: org.configurations?.timing?.weeklyOff || [],
+            },
+            features: {
+              videoMenuEnabled:
+                org.configurations?.features?.videoMenuEnabled || false,
+              multiLanguageEnabled:
+                org.configurations?.features?.multiLanguageEnabled || false,
+              ratingEnabled:
+                org.configurations?.features?.ratingEnabled ?? true,
+              reviewsEnabled:
+                org.configurations?.features?.reviewsEnabled ?? true,
+              loyaltyEnabled:
+                org.configurations?.features?.loyaltyEnabled || false,
+              tableOrderingEnabled:
+                org.configurations?.features?.tableOrderingEnabled || false,
+              takeawayEnabled:
+                org.configurations?.features?.takeawayEnabled ?? true,
+              deliveryEnabled:
+                org.configurations?.features?.deliveryEnabled ?? true,
+            },
+          },
+        });
+      } else {
+        setError(response.message || "Failed to fetch organisation");
+      }
+    } catch (err) {
+      setError("Failed to fetch organisation");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleChange = (field: string, value: any) => {
     if (field.startsWith("address.")) {
@@ -189,7 +289,13 @@ export default function CreateOrganisationPage() {
     setSuccess(false);
 
     try {
-      setLoading(true);
+      setSaving(true);
+
+      // For non-super admins with branch type, auto-set parentOrgId to their current org
+      const parentOrgId =
+        !isSuperAdmin && formData.type === "branch"
+          ? userOrgId
+          : formData.parentOrgId;
 
       const payload = {
         organisationName: formData.organisationName,
@@ -197,8 +303,8 @@ export default function CreateOrganisationPage() {
         tagLine: formData.tagLine || undefined,
         logo: formData.logo || undefined,
         customDomain: formData.customDomain || undefined,
-        type: formData.type as "company" | "branch",
-        parentOrgId: formData.parentOrgId || null,
+        type: formData.type,
+        parentOrgId: parentOrgId,
         primaryPhone: formData.primaryPhone || undefined,
         secondaryPhone: formData.secondaryPhone || undefined,
         email: formData.email || undefined,
@@ -218,73 +324,23 @@ export default function CreateOrganisationPage() {
         },
       };
 
-      const response = await organisationService.createOrganisation(payload);
+      const response = await organisationService.updateOrganisation(
+        id,
+        payload,
+      );
 
       if (response.success) {
         setSuccess(true);
-        // Reset form
-        setFormData({
-          organisationName: "",
-          displayName: "",
-          tagLine: "",
-          logo: "",
-          customDomain: "",
-          type: "company",
-          parentOrgId: "",
-          primaryPhone: "",
-          secondaryPhone: "",
-          email: "",
-          secondaryEmail: "",
-          address: {
-            line1: "",
-            line2: "",
-            city: "",
-            state: "",
-            pinCode: "",
-            country: "India",
-          },
-          paymentDetails: {
-            upiId: "",
-            merchantId: "",
-            merchantName: "",
-            enabledMethods: [],
-          },
-          configurations: {
-            business: {
-              taxPercentage: 18,
-              taxLabel: "GST",
-              currency: "INR",
-              currencySymbol: "₹",
-              packagingCharge: 0,
-              deliveryCharge: 0,
-              freeDeliveryAbove: 0,
-              minOrderAmount: 0,
-            },
-            timing: {
-              openTime: "09:00",
-              closeTime: "23:00",
-              timezone: "Asia/Kolkata",
-              weeklyOff: [],
-            },
-            features: {
-              videoMenuEnabled: false,
-              multiLanguageEnabled: false,
-              ratingEnabled: false,
-              reviewsEnabled: false,
-              loyaltyEnabled: false,
-              tableOrderingEnabled: false,
-              takeawayEnabled: false,
-              deliveryEnabled: false,
-            },
-          },
-        });
+        setTimeout(() => {
+          router.push(`/administrator/organisations/${id}`);
+        }, 1500);
       } else {
-        setError(response.message || "Failed to create organisation");
+        setError(response.message || "Failed to update organisation");
       }
     } catch (err: any) {
-      setError(err.message || "Failed to create organisation");
+      setError(err.message || "Failed to update organisation");
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
 
@@ -299,6 +355,38 @@ export default function CreateOrganisationPage() {
     "Sunday",
   ];
 
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "400px",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error && !organisation) {
+    return (
+      <Box sx={{ p: 3 }}>
+        <Typography color="error">
+          {error || "Organisation not found"}
+        </Typography>
+        <Button
+          component={Link}
+          href="/administrator/organisations/list"
+          sx={{ mt: 2 }}
+        >
+          Back to List
+        </Button>
+      </Box>
+    );
+  }
+
   return (
     <Box sx={{ p: 3 }}>
       <Box sx={{ mb: 3 }}>
@@ -310,7 +398,11 @@ export default function CreateOrganisationPage() {
               label: "Organisations",
               href: "/administrator/organisations/list",
             },
-            { label: "Create Organisation" },
+            {
+              label: organisation?.organisationName || "Edit",
+              href: `/administrator/organisations/${id}`,
+            },
+            { label: "Edit" },
           ]}
         />
       </Box>
@@ -326,15 +418,15 @@ export default function CreateOrganisationPage() {
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <BusinessIcon sx={{ fontSize: 32, color: "primary.main" }} />
           <Typography variant="h4" sx={{ fontWeight: 600 }}>
-            Create Organisation
+            Edit Organisation
           </Typography>
         </Box>
         <Button
           component={Link}
-          href="/administrator/organisations/list"
+          href={`/administrator/organisations/${id}`}
           startIcon={<ArrowBackIcon />}
         >
-          Back to List
+          Cancel
         </Button>
       </Box>
 
@@ -346,7 +438,7 @@ export default function CreateOrganisationPage() {
 
       {success && (
         <Alert severity="success" sx={{ mb: 3 }}>
-          Organisation created successfully!
+          Organisation updated successfully! Redirecting...
         </Alert>
       )}
 
@@ -402,7 +494,7 @@ export default function CreateOrganisationPage() {
               />
             </Grid>
             <Grid size={{ xs: 12, md: 6 }}>
-              {isSuperAdminRole ? (
+              {isSuperAdmin ? (
                 <FormControl fullWidth>
                   <InputLabel>Type</InputLabel>
                   <Select
@@ -415,20 +507,14 @@ export default function CreateOrganisationPage() {
                   </Select>
                 </FormControl>
               ) : (
-                <TextField fullWidth label="Type" value="Branch" disabled />
-              )}
-            </Grid>
-            {formData.type === "branch" && (
-              <Grid size={{ xs: 12, md: 6 }}>
                 <TextField
                   fullWidth
-                  label="Parent Organisation ID"
-                  value={formData.parentOrgId}
-                  onChange={(e) => handleChange("parentOrgId", e.target.value)}
-                  placeholder="e.g., OR000001"
+                  label="Type"
+                  value={formData.type === "company" ? "Company" : "Branch"}
+                  disabled
                 />
-              </Grid>
-            )}
+              )}
+            </Grid>
           </Grid>
         </Paper>
 
@@ -487,7 +573,6 @@ export default function CreateOrganisationPage() {
                 label="Address Line 1"
                 value={formData.address.line1}
                 onChange={(e) => handleChange("address.line1", e.target.value)}
-                required
               />
             </Grid>
             <Grid size={{ xs: 12 }}>
@@ -504,7 +589,6 @@ export default function CreateOrganisationPage() {
                 label="City"
                 value={formData.address.city}
                 onChange={(e) => handleChange("address.city", e.target.value)}
-                required
               />
             </Grid>
             <Grid size={{ xs: 12, md: 4 }}>
@@ -513,7 +597,6 @@ export default function CreateOrganisationPage() {
                 label="State"
                 value={formData.address.state}
                 onChange={(e) => handleChange("address.state", e.target.value)}
-                required
               />
             </Grid>
             <Grid size={{ xs: 12, md: 4 }}>
@@ -540,7 +623,7 @@ export default function CreateOrganisationPage() {
         </Paper>
 
         {/* Payment Details - Only visible to Super Admin */}
-        {isSuperAdminRole && (
+        {isSuperAdmin && (
           <Paper sx={{ p: 3, mb: 3 }}>
             <Typography variant="h6" sx={{ mb: 2 }}>
               Payment Details
@@ -605,7 +688,7 @@ export default function CreateOrganisationPage() {
         )}
 
         {/* Business Configuration - Only visible to Super Admin */}
-        {isSuperAdminRole && (
+        {isSuperAdmin && (
           <Paper sx={{ p: 3, mb: 3 }}>
             <Typography variant="h6" sx={{ mb: 2 }}>
               Business Configuration
@@ -725,7 +808,7 @@ export default function CreateOrganisationPage() {
         )}
 
         {/* Timing - Only visible to Super Admin */}
-        {isSuperAdminRole && (
+        {isSuperAdmin && (
           <Paper sx={{ p: 3, mb: 3 }}>
             <Typography variant="h6" sx={{ mb: 2 }}>
               Timing
@@ -947,7 +1030,7 @@ export default function CreateOrganisationPage() {
         >
           <Button
             component={Link}
-            href="/administrator/organisations/list"
+            href={`/administrator/organisations/${id}`}
             variant="outlined"
           >
             Cancel
@@ -955,10 +1038,10 @@ export default function CreateOrganisationPage() {
           <Button
             type="submit"
             variant="contained"
-            startIcon={loading ? <CircularProgress size={20} /> : <SaveIcon />}
-            disabled={loading}
+            startIcon={saving ? <CircularProgress size={20} /> : <SaveIcon />}
+            disabled={saving}
           >
-            {loading ? "Creating..." : "Create Organisation"}
+            {saving ? "Saving..." : "Save Changes"}
           </Button>
         </Box>
       </form>

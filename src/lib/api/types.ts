@@ -6,52 +6,107 @@ export interface ApiError {
 
 // Authentication Types
 export interface LoginRequest {
-  username_or_email: string;
+  usernameOrEmail: string;
   password: string;
 }
 
-export interface Auth {
-  access_token: string;
-  refresh_token: string;
-  token_type?: string;
+export interface AuthDetails {
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: number;
+  tokenType: string;
 }
 
-export interface UserDetails {
-  initial: string;
-  firstname: string;
-  lastname: string;
+export interface User {
+  id: string;
   email: string;
-  phone?: string;
-  address?: string;
-  role?: string;
+  title: string;
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  phone: string;
+  role: string;
+  status: string;
+  organisationId: string;
+  isActive: boolean;
+  createdAt: string;
+  address: UserAddress;
+  org: UserOrg;
+  config: UserConfig;
 }
 
-export interface Config {
-  subscriptiondetail: string;
+export interface UserConfig {
+  theme: string;
+  language: string;
+  timezone?: string;
+  currency?: string;
+  notifications: {
+    email: boolean;
+    push: boolean;
+    sms: boolean;
+  };
+  dateFormat?: string;
+  showTutorial?: boolean;
+}
+
+export interface UserAddress {
+  addressLine1: string;
+  addressLine2?: string;
+  street: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
+  isVerified: boolean;
+}
+
+export interface UserOrg {
+  id: string;
+  name: string;
 }
 
 export interface LoginResponse {
-  auth: Auth;
-  userDetails: UserDetails;
-  config: Config;
+  authDetails: AuthDetails;
+  user: User;
 }
 
 export interface RefreshRequest {
   refresh_token: string;
 }
 
-export interface User {
-  id: string;
+export interface UserCreate {
   email: string;
-  name: string;
+  password: string;
+  title: string;
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  phone: string;
   role: string;
+  address: UserAddress;
 }
 
-export interface UserCreate {
-  name: string;
-  email: string;
+export interface UserListParams {
+  page: number;
+  limit: number;
+  search?: string;
+  status?: string;
   role?: string;
-  password: string;
+}
+
+export interface Pagination {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages?: number;
+  hasNext?: boolean;
+  hasPrevious?: boolean;
+}
+
+export interface UserListResponse {
+  success: boolean;
+  data: User[];
+  pagination: Pagination;
 }
 
 export interface UserUpdate {
@@ -76,20 +131,107 @@ export interface OrgOut {
 }
 
 // Organisation Types based on API response
+export interface OrganisationAddress {
+  line1: string;
+  line2?: string;
+  city: string;
+  state: string;
+  pinCode?: string;
+  country: string;
+}
+
+export interface OrganisationPaymentDetails {
+  upiQR?: string;
+  upiId?: string;
+  merchantId?: string;
+  merchantName?: string;
+  enabledMethods?: string[];
+  gatewayKeys?: {
+    razorpayKey?: string;
+    stripeKey?: string;
+  };
+}
+
+export interface OrganisationUIDesign {
+  logoUrl?: string;
+  bannerUrl?: string;
+  primaryColor?: string;
+  secondaryColor?: string;
+  fontFamily?: string;
+  theme?: string;
+  menuLayout?: string;
+}
+
+export interface OrganisationBusiness {
+  isPremium?: boolean;
+  taxPercentage?: number;
+  taxLabel?: string;
+  currency?: string;
+  currencySymbol?: string;
+  packagingCharge?: number;
+  deliveryCharge?: number;
+  freeDeliveryAbove?: number;
+  minOrderAmount?: number;
+}
+
+export interface OrganisationFeatures {
+  videoMenuEnabled?: boolean;
+  multiLanguageEnabled?: boolean;
+  supportedLanguages?: string[];
+  ratingEnabled?: boolean;
+  reviewsEnabled?: boolean;
+  loyaltyEnabled?: boolean;
+  tableOrderingEnabled?: boolean;
+  takeawayEnabled?: boolean;
+  deliveryEnabled?: boolean;
+}
+
+export interface OrganisationTiming {
+  timezone?: string;
+  openTime?: string;
+  closeTime?: string;
+  weeklyOff?: string[];
+  holidays?: string[];
+}
+
+export interface OrganisationNotifications {
+  emailEnabled?: boolean;
+  smsEnabled?: boolean;
+  whatsappEnabled?: boolean;
+  notificationEmail?: string;
+  notificationPhone?: string;
+}
+
+export interface OrganisationQRConfig {
+  customBaseUrl?: string;
+  useCustomUrl?: boolean;
+}
+
+export interface OrganisationConfigurations {
+  uiDesign?: OrganisationUIDesign;
+  business?: OrganisationBusiness;
+  features?: OrganisationFeatures;
+  timing?: OrganisationTiming;
+  notifications?: OrganisationNotifications;
+  qrConfig?: OrganisationQRConfig;
+}
+
 export interface Organisation {
   _id: string;
   parentOrgId: string | null;
   organisationName: string;
   displayName: string;
-  address: {
-    line1: string;
-    city: string;
-    state: string;
-    country: string;
-  };
-  primaryPhone: string;
-  email: string;
+  tagLine?: string;
+  logo?: string;
+  customDomain?: string;
   type: "company" | "branch";
+  primaryPhone?: string;
+  secondaryPhone?: string;
+  email?: string;
+  secondaryEmail?: string;
+  address: OrganisationAddress;
+  paymentDetails?: OrganisationPaymentDetails;
+  configurations?: OrganisationConfigurations;
   status: "active" | "inactive";
   isActive: boolean;
   createdAt: string;
@@ -246,6 +388,7 @@ export interface ValidationError {
  */
 export interface ApiResponse<T = any> {
   data?: T;
+  pagination?: Pagination;
   error?: string;
   message?: string;
   success?: boolean;

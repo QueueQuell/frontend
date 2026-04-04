@@ -9,32 +9,51 @@ export const authService = {
     try {
       const response = await apiClient.post<LoginResponse>(
         AUTH_ENDPOINTS.LOGIN,
-        credentials
+        credentials,
       );
-      
-      if (response?.success && response.data?.auth?.access_token) {
+
+      if (response?.success && response.data?.authDetails?.accessToken) {
         // Store tokens in localStorage
-        localStorage.setItem("accessToken", response.data.auth.access_token);
+        localStorage.setItem(
+          "accessToken",
+          response.data.authDetails.accessToken,
+        );
 
-        if (response.data.auth.refresh_token) {
-          localStorage.setItem("refreshToken", response.data.auth.refresh_token);
+        if (response.data.authDetails.refreshToken) {
+          localStorage.setItem(
+            "refreshToken",
+            response.data.authDetails.refreshToken,
+          );
         }
 
-        if (response.data.auth.token_type) {
-          localStorage.setItem("tokenType", response.data.auth.token_type);
+        if (response.data.authDetails.tokenType) {
+          localStorage.setItem(
+            "tokenType",
+            response.data.authDetails.tokenType,
+          );
         }
 
-        // Store user details if needed
-        if (response.data.userDetails) {
-          localStorage.setItem("userDetails", JSON.stringify(response.data.userDetails));
+        // Store token expiry
+        if (response.data.authDetails.expiresIn) {
+          const expiryTime =
+            Date.now() + response.data.authDetails.expiresIn * 1000;
+          localStorage.setItem("tokenExpiry", expiryTime.toString());
         }
 
-        // Store config if needed
-        if (response.data.config) {
-          localStorage.setItem("config", JSON.stringify(response.data.config));
+        // Store org ID
+        if (response.data.user?.org?.id) {
+          localStorage.setItem("orgId", response.data.user.org.id);
+        }
+
+        // Store full user details
+        if (response.data.user) {
+          localStorage.setItem(
+            "userDetails",
+            JSON.stringify(response.data.user),
+          );
         }
       }
-      
+
       return response;
     } catch (error) {
       console.error("Login error:", error);
@@ -46,7 +65,7 @@ export const authService = {
     try {
       // Get refresh token from localStorage
       const refreshToken = localStorage.getItem("refreshToken");
-      
+
       // Attempt to notify backend with refresh token
       await apiClient.post(AUTH_ENDPOINTS.LOGOUT, {
         refreshToken: refreshToken,
@@ -60,7 +79,8 @@ export const authService = {
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("tokenType");
       localStorage.removeItem("userDetails");
-      localStorage.removeItem("config");
+      localStorage.removeItem("tokenExpiry");
+      localStorage.removeItem("orgId");
     }
   },
 
@@ -75,7 +95,7 @@ export const authService = {
 
   async refreshToken() {
     const refreshToken = localStorage.getItem("refreshToken");
-    
+
     if (!refreshToken) {
       throw new Error("No refresh token available");
     }
@@ -83,14 +103,20 @@ export const authService = {
     try {
       const response = await apiClient.post<LoginResponse>(
         AUTH_ENDPOINTS.REFRESH,
-        { refresh_token: refreshToken }
+        { refresh_token: refreshToken },
       );
 
-      if (response?.success && response.data?.auth?.access_token) {
-        localStorage.setItem("accessToken", response.data.auth.access_token);
+      if (response?.success && response.data?.authDetails?.accessToken) {
+        localStorage.setItem(
+          "accessToken",
+          response.data.authDetails.accessToken,
+        );
 
-        if (response.data.auth.refresh_token) {
-          localStorage.setItem("refreshToken", response.data.auth.refresh_token);
+        if (response.data.authDetails.refreshToken) {
+          localStorage.setItem(
+            "refreshToken",
+            response.data.authDetails.refreshToken,
+          );
         }
       }
 

@@ -1,108 +1,115 @@
 // Authentication Endpoints
 export const AUTH_ENDPOINTS = {
-  LOGIN: "/auth/login",
-  LOGOUT: "/auth/logout",
-  REFRESH: "/auth/refresh",
-  ME: "/auth/me",
+  LOGIN: "/v1/admin/auth/login",
+  LOGOUT: "/v1/admin/auth/logout",
+  REFRESH: "/v1/admin/auth/refresh",
+  ME: "/v1/admin/auth/me",
 };
 
 // Inventory Endpoints
 export const INVENTORY_ENDPOINTS = {
-  LIST: "/inventory",
-  GET: (id: string) => `/inventory/${id}`,
-  CREATE: "/inventory",
-  UPDATE: (id: string) => `/inventory/${id}`,
-  DELETE: (id: string) => `/inventory/${id}`,
-  ADJUST: "/inventory/adjust",
+  LIST: "/v1/admin/inventory",
+  GET: (id: string) => `/v1/admin/inventory/${id}`,
+  CREATE: "/v1/admin/inventory",
+  UPDATE: (id: string) => `/v1/admin/inventory/${id}`,
+  DELETE: (id: string) => `/v1/admin/inventory/${id}`,
+  ADJUST: "/v1/admin/inventory/adjust",
 };
 
 // Order Endpoints
 export const ORDER_ENDPOINTS = {
-  LIST: "/orders",
-  GET: (id: string) => `/orders/${id}`,
-  CREATE: "/orders",
-  UPDATE: (id: string) => `/orders/${id}`,
-  DELETE: (id: string) => `/orders/${id}`,
-  UPDATE_STATUS: (id: string) => `/orders/${id}/status`,
+  LIST: "/v1/admin/orders",
+  GET: (id: string) => `/v1/admin/orders/${id}`,
+  CREATE: "/v1/admin/orders",
+  UPDATE: (id: string) => `/v1/admin/orders/${id}`,
+  DELETE: (id: string) => `/v1/admin/orders/${id}`,
+  UPDATE_STATUS: (id: string) => `/v1/admin/orders/${id}/status`,
 };
 
 // Customer Endpoints
 export const CUSTOMER_ENDPOINTS = {
-  LIST: "/customers",
-  GET: (id: string) => `/customers/${id}`,
-  CREATE: "/customers",
-  UPDATE: (id: string) => `/customers/${id}`,
-  DELETE: (id: string) => `/customers/${id}`,
-  LOYALTY: "/customers/loyalty",
-  LOYALTY_POINTS: (id: string) => `/customers/${id}/loyalty-points`,
+  LIST: "/v1/admin/customers",
+  GET: (id: string) => `/v1/admin/customers/${id}`,
+  CREATE: "/v1/admin/customers",
+  UPDATE: (id: string) => `/v1/admin/customers/${id}`,
+  DELETE: (id: string) => `/v1/admin/customers/${id}`,
+  LOYALTY: "/v1/admin/customers/loyalty",
+  LOYALTY_POINTS: (id: string) => `/v1/admin/customers/${id}/loyalty-points`,
 };
 
 // Menu Item Endpoints
 export const MENU_ENDPOINTS = {
-  LIST: "/menu",
-  GET: (id: string) => `/menu/${id}`,
-  CREATE: "/menu",
-  UPDATE: (id: string) => `/menu/${id}`,
-  DELETE: (id: string) => `/menu/${id}`,
-  CATALOG: "/menu/catalog",
+  LIST: "/v1/admin/menu",
+  GET: (id: string) => `/v1/admin/menu/${id}`,
+  CREATE: "/v1/admin/menu",
+  UPDATE: (id: string) => `/v1/admin/menu/${id}`,
+  DELETE: (id: string) => `/v1/admin/menu/${id}`,
+  CATALOG: "/v1/admin/menu/catalog",
 };
 
 // Supplier Endpoints
 export const SUPPLIER_ENDPOINTS = {
-  LIST: "/suppliers",
-  GET: (id: string) => `/suppliers/${id}`,
-  CREATE: "/suppliers",
-  UPDATE: (id: string) => `/suppliers/${id}`,
-  DELETE: (id: string) => `/suppliers/${id}`,
-  PERFORMANCE: "/suppliers/performance",
-  PROCUREMENT: "/suppliers/procurement",
+  LIST: "/v1/admin/suppliers",
+  GET: (id: string) => `/v1/admin/suppliers/${id}`,
+  CREATE: "/v1/admin/suppliers",
+  UPDATE: (id: string) => `/v1/admin/suppliers/${id}`,
+  DELETE: (id: string) => `/v1/admin/suppliers/${id}`,
+  PERFORMANCE: "/v1/admin/suppliers/performance",
+  PROCUREMENT: "/v1/admin/suppliers/procurement",
 };
 
 // Payment Endpoints
 export const PAYMENT_ENDPOINTS = {
-  LIST: "/payments",
-  GET: (id: string) => `/payments/${id}`,
-  CREATE: "/payments",
-  HISTORY: "/payments/history",
-  METHODS: "/payments/methods",
-  UPDATE_METHOD: (id: string) => `/payments/methods/${id}`,
-  RECONCILIATION: "/payments/reconciliation",
+  LIST: "/v1/admin/payments",
+  GET: (id: string) => `/v1/admin/payments/${id}`,
+  CREATE: "/v1/admin/payments",
+  HISTORY: "/v1/admin/payments/history",
+  METHODS: "/v1/admin/payments/methods",
+  UPDATE_METHOD: (id: string) => `/v1/admin/payments/methods/${id}`,
+  RECONCILIATION: "/v1/admin/payments/reconciliation",
 };
 
 // QR Code Endpoints
 export const QR_ENDPOINTS = {
-  GENERATE: "/qr/generate",
-  LIST: "/qr/list",
-  GET: (id: string) => `/qr/${id}`,
-  DELETE: (id: string) => `/qr/${id}`,
-  TABLES: "/qr/tables",
-  MENUS: "/qr/menus",
+  GENERATE: "/v1/admin/qr/generate",
+  LIST: "/v1/admin/qr/list",
+  GET: (id: string) => `/v1/admin/qr/${id}`,
+  DELETE: (id: string) => `/v1/admin/qr/${id}`,
+  TABLES: "/v1/admin/qr/tables",
+  MENUS: "/v1/admin/qr/menus",
 };
 
 // User Endpoints
 export const USER_ENDPOINTS = {
-  PROFILE: "/users/profile",
-  UPDATE_PROFILE: "/users/profile",
-  ADDRESS: "/users/address",
-  UPDATE_ADDRESS: "/users/address",
-  REGISTER: "/auth/register",
-  ADMIN_LIST: "/admin/users",
+  PROFILE: "/v1/admin/users/profile",
+  UPDATE_PROFILE: "/v1/admin/users/profile",
+  ADDRESS: "/v1/admin/users/address",
+  UPDATE_ADDRESS: "/v1/admin/users/address",
+  REGISTER: "/v1/admin/auth/register",
+};
+
+export const ADMIN_USER_ENDPOINTS = {
+  LIST: "/v1/admin/users",
+  DETAIL: (id: string) => `/v1/admin/users/${id}`,
+  CREATE: "/v1/admin/users",
+  UPDATE: (id: string) => `/v1/admin/users/${id}`,
+  DELETE: (id: string) => `/v1/admin/users/${id}`,
 };
 
 // Organisation Endpoints
 export const ORGANISATION_ENDPOINTS = {
-  LIST: "/organisations",
-  GET: (id: string) => `/organisations/${id}`,
-  CREATE: "/organisations",
-  UPDATE: (id: string) => `/organisations/${id}`,
-  DELETE: (id: string) => `/organisations/${id}`,
+  LIST: "/v1/admin/organisations",
+  GET: (id: string) => `/v1/admin/organisations/${id}`,
+  CREATE: "/v1/admin/organisations",
+  UPDATE: (id: string) => `/v1/admin/organisations/${id}`,
+  DELETE: (id: string) => `/v1/admin/organisations/${id}`,
 };
 
 // Category Endpoints
 export const CATEGORY_ENDPOINTS = {
-  LIST: "/categories",
-  GET: (id: string) => `/categories/${id}`,
-  CREATE: "/categories",
-  UPDATE: (id: string) => `/categories/${id}`,
-  DELETE: (id: string) => `/categories/${id}`,
+  LIST: "/v1/admin/categories",
+  GET: (id: string) => `/v1/admin/categories/${id}`,
+  CREATE: "/v1/admin/categories",
+  UPDATE: (id: string) => `/v1/admin/categories/${id}`,
+  DELETE: (id: string) => `/v1/admin/categories/${id}`,
 };

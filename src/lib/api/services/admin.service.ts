@@ -1,22 +1,48 @@
 import { apiClient } from "../client";
-import { User, OrgOut, OrgCreate, StoreOut, StoreCreate, UserCreate } from "../types";
+import { ADMIN_USER_ENDPOINTS } from "../endpoints";
+import {
+  User,
+  UserListResponse,
+  OrgOut,
+  OrgCreate,
+  StoreOut,
+  StoreCreate,
+  UserCreate,
+  UserListParams,
+} from "../types";
 
 export const adminService = {
-  // Users
-  async getUsers() {
-    return apiClient.get<User[]>("/admin/users");
+  // Users (migrated to v1 specs)
+  async listUsers(params: UserListParams): Promise<UserListResponse> {
+    const query = new URLSearchParams({
+      page: params.page.toString(),
+      limit: params.limit.toString(),
+      ...(params.search && { search: params.search }),
+      ...(params.status && { status: params.status }),
+      ...(params.role && { role: params.role }),
+    });
+    const response = await apiClient.getPaginated<User>(
+      ADMIN_USER_ENDPOINTS.LIST,
+      params,
+    );
+
+    return response;
+  },
+
+  async getUser(id: string) {
+    return apiClient.get<User>(ADMIN_USER_ENDPOINTS.DETAIL(id));
   },
 
   async createUser(data: UserCreate) {
-    return apiClient.post<User>("/admin/users", data);
+    return apiClient.post<User>(ADMIN_USER_ENDPOINTS.CREATE, data);
   },
 
-  async updateUser(data: User) {
-    return apiClient.put<User>("/admin/users", data);
+  async updateUser(id: string, data: Partial<User>) {
+    return apiClient.put<User>(ADMIN_USER_ENDPOINTS.UPDATE(id), data);
   },
 
   async deleteUser(id: string) {
-    return apiClient.delete(`/admin/users?id=${id}`);
+    return apiClient.delete(ADMIN_USER_ENDPOINTS.DELETE(id));
   },
 
   // Organizations

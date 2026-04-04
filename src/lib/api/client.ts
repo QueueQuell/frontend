@@ -1,6 +1,12 @@
 "use client";
 
-import { ApiResponse, ApiError } from "./types";
+import {
+  ApiResponse,
+  ApiError,
+  Pagination,
+  UserListResponse,
+  UserListParams,
+} from "./types";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000/api";
@@ -128,6 +134,7 @@ class ApiClient {
       return {
         success: true,
         data: data.data || data,
+        pagination: data.pagination,
         message: data.message,
       };
     } catch (error: any) {
@@ -153,66 +160,6 @@ class ApiClient {
     return this.request<T>(url, { method: "GET" });
   }
 
-  async getWithMeta<T>(
-    endpoint: string,
-  ): Promise<ApiResponse<T> & { meta?: Record<string, any> }> {
-    const token = this.getAuthToken();
-    const headers = new Headers();
-    headers.set("Content-Type", "application/json");
-
-    if (token && token.trim()) {
-      headers.set("Authorization", `Bearer ${token}`);
-    }
-
-    try {
-      const response = await fetch(`${this.baseURL}${endpoint}`, {
-        method: "GET",
-        headers,
-      });
-
-      if (response.status === 401 && typeof window !== "undefined") {
-        if (!this.isRefreshing) {
-          this.isRefreshing = true;
-          const newToken = await this.refreshToken();
-          this.isRefreshing = false;
-
-          if (newToken) {
-            this.onTokenRefreshed(newToken);
-            headers.set("Authorization", `Bearer ${newToken}`);
-            return this.getWithMeta<T>(endpoint);
-          }
-        }
-      }
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw {
-          success: false,
-          message: data.message || data.detail || "An error occurred",
-          errors: data.errors,
-        } as ApiError;
-      }
-
-      const { data: responseData, total, page, limit, ...rest } = data;
-
-      return {
-        success: true,
-        data: responseData || data,
-        message: data.message,
-        meta: { total, page, limit, ...rest },
-      };
-    } catch (error: any) {
-      if (error.success === false) {
-        throw error;
-      }
-      throw {
-        success: false,
-        message: error.message || "Network error occurred",
-      } as ApiError;
-    }
-  }
-
   async post<T>(endpoint: string, data?: any): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       method: "POST",
@@ -236,6 +183,71 @@ class ApiClient {
 
   async delete<T>(endpoint: string): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, { method: "DELETE" });
+  }
+
+  async getPaginated<T = any>(
+    endpoint: string,
+    params: UserListParams,
+  ): Promise<UserListResponse> {
+    // Ensure page and limit are strings for URL params
+    const queryParams = {
+      page: "1",
+      limit: "20",
+      ...Object.fromEntries(
+        Object.entries(params).map(([k, v]) => [k, String(v)]),
+      ),
+    };
+
+    let url = endpoint;
+    const searchParams = new URLSearchParams(queryParams);
+    if (searchParams.toString()) {
+      url += `?${searchParams.toString()}`;
+    }
+
+    try {
+      const response = await this.get<any>(url);
+
+      if (!response.success) {
+        throw new Error(response.message || "Failed to fetch data");
+      }
+
+      // Backend returns { success, data: T[], pagination }
+      // request() extracts data.data || data, so adjust
+      const items = Array.isArray(response.data)
+        ? response.data
+        : response.data?.data || [];
+      console.log(JSON.stringify(response, null, 2));
+      const paginationData = response.pagination ||
+        response.data?.pagination || {
+          page: parseInt(queryParams.page || "1"),
+          limit: parseInt(queryParams.limit || "20"),
+          total: items.length,
+          totalPages: 1,
+          hasNext: false,
+          hasPrevious: false,
+        };
+
+      console.log(JSON.stringify(paginationData, null, 2));
+
+      return {
+        success: true,
+        data: items,
+        pagination: paginationData as Pagination,
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: [],
+        pagination: {
+          page: parseInt(queryParams.page || "1"),
+          limit: parseInt(queryParams.limit || "20"),
+          total: 0,
+          totalPages: 0,
+          hasNext: false,
+          hasPrevious: false,
+        },
+      };
+    }
   }
 }
 

@@ -27,7 +27,7 @@ import {
   Settings as SettingsIcon,
   Logout as LogoutIcon,
 } from "@mui/icons-material";
-import { UserDetails } from "../../lib/api/types";
+import { User } from "../../lib/api/types";
 import { authService } from "../../lib/api/services/auth.service";
 
 interface UserMenuDrawerProps {
@@ -45,7 +45,7 @@ export default function UserMenuDrawer({ open, onClose }: UserMenuDrawerProps) {
 
   const drawerWidth = 320;
 
-  const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
+  const [userDetails, setUserDetails] = useState<User | null>(null);
 
   useEffect(() => {
     const storedUserDetails = localStorage.getItem("userDetails");
@@ -76,11 +76,6 @@ export default function UserMenuDrawer({ open, onClose }: UserMenuDrawerProps) {
       icon: PersonIcon,
       text: "Profile",
       href: "/user/profile",
-    },
-    {
-      icon: AssignmentIcon,
-      text: "Address",
-      href: "/user/address",
     },
     {
       icon: PaymentIcon,
@@ -147,14 +142,14 @@ export default function UserMenuDrawer({ open, onClose }: UserMenuDrawerProps) {
           }}
           src="/api/placeholder/80/80" // Placeholder; replace with real user avatar if available
         >
-          {userDetails?.initial || "U"}
+          {userDetails?.title || "U"}
         </Avatar>
         <Typography
           variant="h6"
           sx={{ fontWeight: 600, mb: 0.5, color: "text.primary" }}
         >
           {userDetails
-            ? `${userDetails.firstname} ${userDetails.lastname}`
+            ? `${userDetails.title} ${userDetails.firstName} ${userDetails.lastName}`
             : "Loading..."}
         </Typography>
         <Typography variant="body2" color="text.secondary">

@@ -2,10 +2,13 @@
 
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import PageFooter from "@/components/ui/PageFooter";
-import { RegisterRequest, userService } from "@/lib/api/services/user.service";
+import { RegisterRequest } from "@/lib/api/services/user.service";
+import { adminService } from "@/lib/api/services/admin.service";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import PeopleIcon from "@mui/icons-material/People";
 import SaveIcon from "@mui/icons-material/Save";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import {
   Alert,
   Box,
@@ -13,6 +16,8 @@ import {
   CircularProgress,
   FormControl,
   Grid,
+  IconButton,
+  InputAdornment,
   InputLabel,
   MenuItem,
   Paper,
@@ -21,17 +26,20 @@ import {
   Typography,
 } from "@mui/material";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import type { UserCreate } from "@/lib/api/types";
 import { useState } from "react";
 
 const USER_ROLES = [
-  { value: "USER", label: "User" },
-  { value: "ADMIN", label: "Admin" },
-  { value: "MANAGER", label: "Manager" },
-  { value: "SUPER_ADMIN", label: "Super Admin" },
-  { value: "DELIVERY_PERSONNEL", label: "Delivery Personnel" },
-  { value: "CHEF", label: "Chef" },
-  { value: "WAITER", label: "Waiter" },
-  { value: "STAFF", label: "Staff" },
+  { value: "User", label: "User" },
+  { value: "Admin", label: "Admin" },
+  { value: "Manager", label: "Manager" },
+  { value: "SuperAdmin", label: "Super Admin" },
+  { value: "DeliveryPersonnel", label: "Delivery Personnel" },
+  { value: "Chef", label: "Chef" },
+  { value: "Waiter", label: "Waiter" },
+  { value: "Staff", label: "Staff" },
+  { value: "Owner", label: "Owner" },
 ];
 
 interface FieldError {
@@ -50,26 +58,29 @@ export default function CreateUserPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [showPassword, setShowPassword] = useState(false);
 
-  const [formData, setFormData] = useState<RegisterRequest>({
+  const router = useRouter();
+
+  const [formData, setFormData] = useState({
     email: "",
     password: "",
+    title: "",
     firstName: "",
     lastName: "",
-    organisationId: "",
-    role: "USER",
+    phone: "",
+    role: "User",
   });
 
-  const handleChange = (field: keyof RegisterRequest, value: string) => {
+  const handleChange = (field: keyof typeof formData, value: string) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
-    // Clear field error when user starts typing
-    if (fieldErrors[field]) {
+    if (fieldErrors[field as string]) {
       setFieldErrors((prev) => {
         const newErrors = { ...prev };
-        delete newErrors[field];
+        delete newErrors[field as string];
         return newErrors;
       });
     }
@@ -83,22 +94,32 @@ export default function CreateUserPage() {
 
     try {
       setLoading(true);
-
-      const response = await userService.register(formData);
+      const fullName =
+        `${formData.firstName} ${formData.lastName || ""}`.trim();
+      const response = await adminService.createUser({
+        email: formData.email,
+        password: formData.password,
+        title: formData.title,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        fullName,
+        phone: formData.phone || "",
+        role: formData.role,
+      } as UserCreate);
 
       if (response.success) {
         setSuccess(true);
-        // Reset form
+        router.push("/administrator/users/list");
         setFormData({
           email: "",
           password: "",
+          title: "",
           firstName: "",
           lastName: "",
-          organisationId: "",
-          role: "USER",
+          phone: "",
+          role: "User",
         });
       } else {
-        // Handle validation errors from successful response
         if (response.errors && Array.isArray(response.errors)) {
           const errors: Record<string, string> = {};
           (response.errors as FieldError[]).forEach((err) => {
@@ -111,7 +132,6 @@ export default function CreateUserPage() {
         }
       }
     } catch (err: any) {
-      // Handle error response with errors array
       const errorData = err as ApiError;
       if (errorData.errors && Array.isArray(errorData.errors)) {
         const errors: Record<string, string> = {};
@@ -169,7 +189,6 @@ export default function CreateUserPage() {
           {error}
         </Alert>
       )}
-
       {success && (
         <Alert severity="success" sx={{ mb: 3 }}>
           User created successfully!
@@ -224,7 +243,7 @@ export default function CreateUserPage() {
               <TextField
                 fullWidth
                 label="Password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 value={formData.password}
                 onChange={(e) => handleChange("password", e.target.value)}
                 required
@@ -233,19 +252,40 @@ export default function CreateUserPage() {
                   fieldErrors.password ||
                   "Must contain uppercase, lowercase, and special character"
                 }
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowPassword(!showPassword)}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
             </Grid>
 
             <Grid size={{ xs: 12, md: 6 }}>
               <TextField
                 fullWidth
-                label="Organisation ID"
-                value={formData.organisationId}
-                onChange={(e) => handleChange("organisationId", e.target.value)}
-                required
-                placeholder="e.g., OR000001"
-                error={!!fieldErrors.organisationId}
-                helperText={fieldErrors.organisationId}
+                label="Title"
+                value={formData.title}
+                onChange={(e) => handleChange("title", e.target.value)}
+                error={!!fieldErrors.title}
+                helperText={fieldErrors.title}
+              />
+            </Grid>
+
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                fullWidth
+                label="Phone"
+                value={formData.phone}
+                onChange={(e) => handleChange("phone", e.target.value)}
+                error={!!fieldErrors.phone}
+                helperText={fieldErrors.phone}
               />
             </Grid>
 
@@ -255,7 +295,7 @@ export default function CreateUserPage() {
                 <Select
                   labelId="role-label"
                   id="role-select"
-                  value={formData.role || "USER"}
+                  value={formData.role || "User"}
                   label="Role"
                   onChange={(e) => handleChange("role", e.target.value)}
                 >
@@ -268,7 +308,6 @@ export default function CreateUserPage() {
               </FormControl>
             </Grid>
           </Grid>
-
           <Box
             sx={{ mt: 4, display: "flex", justifyContent: "flex-end", gap: 2 }}
           >
