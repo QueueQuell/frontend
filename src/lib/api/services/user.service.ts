@@ -1,3 +1,4 @@
+import { UserRole } from "@/lib/utils/accessControl";
 import { apiClient } from "../client";
 import { USER_ENDPOINTS } from "../endpoints";
 import {
@@ -7,17 +8,6 @@ import {
   UserListResponse,
   UserProfile,
 } from "../types";
-import { adminService } from "./admin.service";
-
-export type UserRole =
-  | "User"
-  | "Admin"
-  | "Manager"
-  | "SuperAdmin"
-  | "DeliveryPersonnel"
-  | "Chef"
-  | "Waiter"
-  | "Staff";
 
 export interface RegisterRequest {
   email: string;

@@ -6,7 +6,7 @@ import { organisationService } from "@/lib/api/services/organisation.service";
 import {
   isSuperAdmin,
   getRoleDisplayName,
-  type UserRole,
+  UserRole,
 } from "@/lib/utils/accessControl";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import BusinessIcon from "@mui/icons-material/Business";
