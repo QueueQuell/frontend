@@ -44,9 +44,7 @@ class ApiClient {
       await authService.refreshToken();
       return authService.getToken();
     } catch (error) {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-      localStorage.removeItem("tokenType");
+      await authService.logout();
 
       if (
         typeof window !== "undefined" &&
