@@ -9,6 +9,7 @@ import {
   Button,
   CircularProgress,
   Container,
+  Grid,
   IconButton,
   InputAdornment,
   Link,
@@ -19,13 +20,23 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 export default function SignInSide() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Auto-dismiss error after 5 seconds
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        setError(null);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -244,23 +255,30 @@ export default function SignInSide() {
                 "Sign in"
               )}
             </Button>
+
+            <Grid
+              container
+              justifyContent="flex-end"
+              sx={{ mt: 2, position: "relative" }}
+            >
+              {error && (
+                <Alert
+                  severity="error"
+                  onClose={() => setError(null)}
+                  sx={{
+                    mt: 2,
+                    position: "absolute",
+                    width: "100%",
+                    boxSizing: "border-box",
+                  }}
+                >
+                  {error}
+                </Alert>
+              )}
+            </Grid>
           </Box>
         </Box>
       </Box>
-      <Snackbar
-        open={!!error}
-        autoHideDuration={6000}
-        onClose={() => setError(null)}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-      >
-        <Alert
-          onClose={() => setError(null)}
-          severity="error"
-          sx={{ width: "100%" }}
-        >
-          {error}
-        </Alert>
-      </Snackbar>
     </Box>
   );
 }
