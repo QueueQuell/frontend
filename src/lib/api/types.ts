@@ -798,7 +798,7 @@ export interface AdminQRGenerateResponse {
 
 // Admin QR List Response Type
 export interface AdminQRListItem {
-  _id: string;
+  id: string;
   qrString: string;
   qrUrl: string;
   baseUrl: string;

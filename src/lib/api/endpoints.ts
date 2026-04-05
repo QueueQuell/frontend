@@ -76,8 +76,10 @@ export const PAYMENT_ENDPOINTS = {
 export const QR_ENDPOINTS = {
   GENERATE: `${ADMIN_BASE}/qr/generate`,
   LIST: `${ADMIN_BASE}/qr/list`,
-  GET: (id: string) => `${ADMIN_BASE}/qr/${id}`,
-  DELETE: (id: string) => `${ADMIN_BASE}/qr/${id}`,
+  GET: (qrId: string) => `${ADMIN_BASE}/qr/${qrId}`,
+  DEACTIVATE: (qrId: string) => `${ADMIN_BASE}/qr/${qrId}/deactivate`,
+  REACTIVATE: (qrId: string) => `${ADMIN_BASE}/qr/${qrId}/reactivate`,
+  DELETE: (qrId: string) => `${ADMIN_BASE}/qr/${qrId}`,
   TABLES: `${ADMIN_BASE}/qr/tables`,
   MENUS: `${ADMIN_BASE}/qr/menus`,
 };

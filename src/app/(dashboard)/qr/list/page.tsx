@@ -34,6 +34,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CloseIcon from "@mui/icons-material/Close";
+import AddIcon from "@mui/icons-material/Add";
 import DownloadIcon from "@mui/icons-material/Download";
 import { qrService } from "@/lib/api/services/qr.service";
 import { AdminQRListItem } from "@/lib/api/types";
@@ -104,7 +105,7 @@ export default function QRListPage() {
     return (
       qr.qrString?.toLowerCase().includes(query) ||
       qr.qrUrl?.toLowerCase().includes(query) ||
-      qr._id?.toLowerCase().includes(query) ||
+      qr.id?.toLowerCase().includes(query) ||
       qr.tableNumber?.toLowerCase().includes(query)
     );
   });
@@ -174,7 +175,7 @@ export default function QRListPage() {
     if (selectedQR?.qrImageUrl) {
       const link = document.createElement("a");
       link.href = selectedQR.qrImageUrl;
-      link.download = `qr-code-${selectedQR.tableNumber || selectedQR._id}.png`;
+      link.download = `qr-code-${selectedQR.tableNumber || selectedQR.id}.png`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -219,9 +220,11 @@ export default function QRListPage() {
               sx={{ width: 300 }}
             />
             <Button
+              component={Link}
+              href="/qr/generate"
               variant="contained"
               size="small"
-              onClick={() => window.open("/qr/create", "_blank")}
+              startIcon={<AddIcon />}
             >
               Add QR Code
             </Button>
@@ -271,7 +274,7 @@ export default function QRListPage() {
                   ) : (
                     paginatedQRCodes.map((qr) => (
                       <TableRow
-                        key={qr._id}
+                        key={qr.id}
                         hover
                         onClick={() => handleRowClick(qr)}
                         sx={{ cursor: "pointer" }}
@@ -285,7 +288,7 @@ export default function QRListPage() {
                             }}
                           >
                             <QrCodeIcon fontSize="small" color="action" />
-                            <Typography variant="body2">{qr._id}</Typography>
+                            <Typography variant="body2">{qr.id}</Typography>
                           </Box>
                         </TableCell>
                         <TableCell>
@@ -361,7 +364,7 @@ export default function QRListPage() {
                           </IconButton>
                           <IconButton
                             component={Link}
-                            href={`/qr/${qr._id}/edit`}
+                            href={`/qr/${qr.id}/edit`}
                             color="primary"
                             size="small"
                             onClick={(e) => e.stopPropagation()}
@@ -374,7 +377,7 @@ export default function QRListPage() {
                             color="error"
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleDeleteOpen(qr._id, qr.tableNumber);
+                              handleDeleteOpen(qr.id, qr.tableNumber);
                             }}
                             title="Delete"
                           >
@@ -467,7 +470,7 @@ export default function QRListPage() {
                     QR ID:
                   </Typography>
                   <Typography variant="body2" sx={{ fontFamily: "monospace" }}>
-                    {selectedQR._id}
+                    {selectedQR.id}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     QR String:
