@@ -71,7 +71,7 @@ const ALL_SIDEBAR_ITEMS: SidebarItem[] = [
     icon: <RestaurantMenuIcon />,
     href: "/catalog",
     subItems: createSubItems("/catalog", [
-      ["Items", "/items"],
+      ["Items", "/items/list"],
       ["Create Item", "/items/create"],
       ["Categories", "/categories"],
       ["Create Category", "/categories/create"],

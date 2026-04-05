@@ -105,7 +105,7 @@ export default function TopItems() {
 
         <Button
           component={Link}
-          href="/catalog/items"
+          href="/catalog/items/list"
           fullWidth
           size="small"
           variant="outlined"

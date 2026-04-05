@@ -202,7 +202,7 @@ export default function CreateItemPage() {
 
         setTimeout(() => {
           setSuccess(false);
-          router.push("/catalog/items");
+          router.push("/catalog/items/list");
         }, 2000);
       } else {
         setError(response.error || "Failed to create item. Please try again.");
@@ -220,7 +220,7 @@ export default function CreateItemPage() {
         items={[
           { label: "Home", href: "/home" },
           { label: "Items", href: "/catalog" },
-          { label: "Items", href: "/catalog/items" },
+          { label: "Items", href: "/catalog/items/list" },
           { label: "Create New Menu Item" },
         ]}
       />
@@ -249,7 +249,7 @@ export default function CreateItemPage() {
           >
             <Button
               component={Link}
-              href="/catalog/items"
+              href="/catalog/items/list"
               variant="outlined"
               startIcon={<ArrowBackIcon />}
               disabled={isSubmitting}
@@ -268,7 +268,7 @@ export default function CreateItemPage() {
         </form>
       </Paper>
 
-      <PageFooter backHref="/catalog/items" backText="Back to Items" />
+      <PageFooter backHref="/catalog/items/list" backText="Back to Items" />
     </Box>
   );
 }
