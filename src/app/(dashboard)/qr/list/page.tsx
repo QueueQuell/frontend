@@ -21,13 +21,18 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
+  DialogContentText,
   DialogActions,
   Button,
+  Snackbar,
+  Link,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import QrCodeIcon from "@mui/icons-material/QrCode";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import CloseIcon from "@mui/icons-material/Close";
 import DownloadIcon from "@mui/icons-material/Download";
 import { qrService } from "@/lib/api/services/qr.service";
@@ -44,6 +49,22 @@ export default function QRListPage() {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedQR, setSelectedQR] = useState<AdminQRListItem | null>(null);
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+  const [deleteDialog, setDeleteDialog] = useState<
+    | {
+        open: false;
+      }
+    | {
+        open: true;
+        qrId: string;
+        tableNumber?: string | null;
+      }
+  >({ open: false });
+  const [deleting, setDeleting] = useState(false);
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: "success" | "error";
+  }>({ open: false, message: "", severity: "success" });
 
   const fetchQRCodes = async () => {
     setLoading(true);
@@ -102,6 +123,43 @@ export default function QRListPage() {
     return new Date(dateString).toLocaleString();
   };
 
+  const handleDeleteOpen = (qrId: string, tableNumber?: string | null) => {
+    setDeleteDialog({ open: true, qrId, tableNumber });
+  };
+
+  const handleDeleteClose = () => {
+    setDeleteDialog({ open: false });
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (deleteDialog.open) {
+      const qrId = deleteDialog.qrId;
+      try {
+        setDeleting(true);
+        await qrService.delete(qrId);
+        setSnackbar({
+          open: true,
+          message: "QR code deleted successfully",
+          severity: "success",
+        });
+        fetchQRCodes();
+        handleDeleteClose();
+      } catch (err: any) {
+        setSnackbar({
+          open: true,
+          message: err.message || "Failed to delete QR code",
+          severity: "error",
+        });
+      } finally {
+        setDeleting(false);
+      }
+    }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+
   const handleRowClick = (qr: AdminQRListItem) => {
     setSelectedQR(qr);
     setDialogOpen(true);
@@ -145,20 +203,29 @@ export default function QRListPage() {
           <Typography variant="h6" gutterBottom>
             All QR Codes
           </Typography>
-          <TextField
-            size="small"
-            placeholder="Search QR codes..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-            sx={{ width: 300 }}
-          />
+          <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+            <TextField
+              size="small"
+              placeholder="Search QR codes..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+              sx={{ width: 300 }}
+            />
+            <Button
+              variant="contained"
+              size="small"
+              onClick={() => window.open("/qr/create", "_blank")}
+            >
+              Add QR Code
+            </Button>
+          </Box>
         </Box>
 
         {error && (
@@ -252,7 +319,7 @@ export default function QRListPage() {
                               size="small"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                copyToClipboard(qr.qrUrl);
+                                copyToClipboard(qr.qrUrl || "");
                               }}
                             >
                               <ContentCopyIcon fontSize="small" />
@@ -288,9 +355,30 @@ export default function QRListPage() {
                               e.stopPropagation();
                               handleRowClick(qr);
                             }}
-                            title="View QR Code"
+                            title="View"
                           >
                             <VisibilityIcon fontSize="small" />
+                          </IconButton>
+                          <IconButton
+                            component={Link}
+                            href={`/qr/${qr._id}/edit`}
+                            color="primary"
+                            size="small"
+                            onClick={(e) => e.stopPropagation()}
+                            title="Edit"
+                          >
+                            <EditIcon fontSize="small" />
+                          </IconButton>
+                          <IconButton
+                            size="small"
+                            color="error"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteOpen(qr._id, qr.tableNumber);
+                            }}
+                            title="Delete"
+                          >
+                            <DeleteIcon fontSize="small" />
                           </IconButton>
                         </TableCell>
                       </TableRow>
@@ -352,7 +440,6 @@ export default function QRListPage() {
                 gap: 2,
               }}
             >
-              {/* QR Image */}
               <Box
                 sx={{
                   p: 2,
@@ -367,8 +454,6 @@ export default function QRListPage() {
                   style={{ width: 250, height: 250, objectFit: "contain" }}
                 />
               </Box>
-
-              {/* QR Details */}
               <Box sx={{ width: "100%", mt: 2 }}>
                 <Box
                   sx={{
@@ -384,7 +469,6 @@ export default function QRListPage() {
                   <Typography variant="body2" sx={{ fontFamily: "monospace" }}>
                     {selectedQR._id}
                   </Typography>
-
                   <Typography variant="body2" color="text.secondary">
                     QR String:
                   </Typography>
@@ -394,21 +478,18 @@ export default function QRListPage() {
                   >
                     {selectedQR.qrString}
                   </Typography>
-
                   <Typography variant="body2" color="text.secondary">
                     URL:
                   </Typography>
                   <Typography variant="body2" sx={{ wordBreak: "break-all" }}>
                     {selectedQR.qrUrl}
                   </Typography>
-
                   <Typography variant="body2" color="text.secondary">
                     Order Type:
                   </Typography>
                   <Typography variant="body2">
                     {selectedQR.orderType || "-"}
                   </Typography>
-
                   <Typography variant="body2" color="text.secondary">
                     Status:
                   </Typography>
@@ -417,14 +498,12 @@ export default function QRListPage() {
                     size="small"
                     color={selectedQR.isActive ? "success" : "default"}
                   />
-
                   <Typography variant="body2" color="text.secondary">
                     Scans:
                   </Typography>
                   <Typography variant="body2">
                     {selectedQR.scannedCount || 0}
                   </Typography>
-
                   <Typography variant="body2" color="text.secondary">
                     Created:
                   </Typography>
@@ -453,6 +532,53 @@ export default function QRListPage() {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteDialog.open}
+        onClose={handleDeleteClose}
+        aria-labelledby="delete-dialog-title"
+        aria-describedby="delete-dialog-description"
+      >
+        <DialogTitle id="delete-dialog-title">Confirm Delete</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="delete-dialog-description">
+            Are you sure you want to delete QR code for table '
+            {deleteDialog.open
+              ? deleteDialog.tableNumber || deleteDialog.qrId
+              : "QR Code"}
+            '? This action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDeleteClose} disabled={deleting}>
+            Cancel
+          </Button>
+          <Button
+            onClick={handleDeleteConfirm}
+            color="error"
+            variant="contained"
+            disabled={deleting}
+            autoFocus
+          >
+            {deleting ? "Deleting..." : "Delete"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
 
       <PageFooter backHref="/qr" backText="Back to QR Management" />
     </Box>

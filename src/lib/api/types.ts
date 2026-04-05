@@ -103,9 +103,7 @@ export interface Pagination {
   hasPrevious?: boolean;
 }
 
-export interface UserListResponse {
-  success: boolean;
-  data: User[];
+export interface UserListResponse extends ApiResponse<User[]> {
   pagination: Pagination;
 }
 
@@ -217,7 +215,7 @@ export interface OrganisationConfigurations {
 }
 
 export interface Organisation {
-  _id: string;
+  id: string;
   parentOrgId: string | null;
   organisationName: string;
   displayName: string;
@@ -238,11 +236,8 @@ export interface Organisation {
   updatedAt: string;
 }
 
-export interface OrganisationListResponse {
-  data: Organisation[];
-  total: number;
-  page: number;
-  limit: number;
+export interface OrganisationListResponse extends ApiResponse<Organisation[]> {
+  pagination: Pagination;
 }
 
 export interface StoreCreate {
@@ -391,19 +386,8 @@ export interface ApiResponse<T = any> {
   pagination?: Pagination;
   error?: string;
   message?: string;
-  success?: boolean;
+  success: boolean;
   errors?: { field: string; message: string }[];
-}
-
-/**
- * Paginated response wrapper
- */
-export interface PaginatedResponse<T = any> {
-  items: T[];
-  total: number;
-  page: number;
-  size: number;
-  hasMore?: boolean;
 }
 
 /**

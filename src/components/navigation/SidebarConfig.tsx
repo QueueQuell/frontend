@@ -154,9 +154,7 @@ const ALL_SIDEBAR_ITEMS: SidebarItem[] = [
     href: "/administrator",
     subItems: createSubItems("/administrator", [
       ["Organisations", "/organisations/list"],
-      ["Create Organisation", "/organisations/create"],
       ["Users", "/users/list"],
-      ["Create User", "/users/create"],
     ]),
     adminOnly: true,
   },

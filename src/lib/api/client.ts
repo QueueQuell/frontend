@@ -7,6 +7,7 @@ import {
   UserListResponse,
   UserListParams,
 } from "./types";
+import { authService } from "./services/auth.service";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000/api";
@@ -39,33 +40,9 @@ class ApiClient {
   private async refreshToken(): Promise<string | null> {
     if (typeof window === "undefined") return null;
 
-    const refreshToken = localStorage.getItem("refreshToken");
-    if (!refreshToken) {
-      return null;
-    }
-
     try {
-      const response = await fetch(`${this.baseURL}/auth/refresh`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ refresh_token: refreshToken }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Token refresh failed");
-      }
-
-      const data = await response.json();
-
-      if (data.data?.access_token) {
-        localStorage.setItem("accessToken", data.data.access_token);
-        if (data.data.refresh_token) {
-          localStorage.setItem("refreshToken", data.data.refresh_token);
-        }
-        return data.data.access_token;
-      }
-
-      return null;
+      await authService.refreshToken();
+      return authService.getToken();
     } catch (error) {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
