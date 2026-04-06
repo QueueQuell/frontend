@@ -2,6 +2,7 @@ export interface ApiError {
   success: false;
   message: string;
   errors?: Record<string, string[]>;
+  status?: number;
 }
 
 // Authentication Types
@@ -212,6 +213,11 @@ export interface OrganisationConfigurations {
   timing?: OrganisationTiming;
   notifications?: OrganisationNotifications;
   qrConfig?: OrganisationQRConfig;
+  limits?: {
+    maxUsers: number;
+    maxQRs: number;
+    maxBranches: number;
+  };
 }
 
 export interface Organisation {
@@ -223,6 +229,7 @@ export interface Organisation {
   logo?: string;
   customDomain?: string;
   type: "company" | "branch";
+  tier: "basic" | "pro" | "enterprise";
   primaryPhone?: string;
   secondaryPhone?: string;
   email?: string;
