@@ -32,6 +32,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
+import RefreshIcon from "@mui/icons-material/Refresh";
 import Link from "next/link";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import PageFooter from "@/components/ui/PageFooter";
@@ -197,6 +198,15 @@ export default function OrganisationListPage() {
               sx={{ width: 300 }}
             />
             <Button
+              variant="outlined"
+              size="small"
+              startIcon={<RefreshIcon />}
+              onClick={fetchOrganisations}
+              disabled={loading}
+            >
+              Refresh
+            </Button>
+            <Button
               component={Link}
               href="/administrator/organisations/create"
               variant="contained"
@@ -229,6 +239,7 @@ export default function OrganisationListPage() {
                     <TableCell>Organisation Name</TableCell>
                     <TableCell>Display Name</TableCell>
                     <TableCell>Type</TableCell>
+                    <TableCell>Tier</TableCell>
                     <TableCell>Location</TableCell>
                     <TableCell>Phone</TableCell>
                     <TableCell>Email</TableCell>
@@ -240,7 +251,7 @@ export default function OrganisationListPage() {
                 <TableBody>
                   {paginatedOrganisations.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={9} align="center">
+                      <TableCell colSpan={10} align="center">
                         <Typography
                           variant="body2"
                           color="text.secondary"
@@ -259,6 +270,19 @@ export default function OrganisationListPage() {
                           <Chip
                             label={org.type}
                             color={getTypeColor(org.type)}
+                            size="small"
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Chip
+                            label={org.tier}
+                            color={
+                              org.tier === "enterprise"
+                                ? "primary"
+                                : org.tier === "pro"
+                                  ? "secondary"
+                                  : "default"
+                            }
                             size="small"
                           />
                         </TableCell>

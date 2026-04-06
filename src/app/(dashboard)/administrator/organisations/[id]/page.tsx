@@ -200,6 +200,22 @@ export default function ViewOrganisationPage() {
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
             <Typography variant="body2" color="text.secondary">
+              Tier
+            </Typography>
+            <Chip
+              label={organisation.tier}
+              color={
+                organisation.tier === "enterprise"
+                  ? "primary"
+                  : organisation.tier === "pro"
+                    ? "secondary"
+                    : "default"
+              }
+              size="small"
+            />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <Typography variant="body2" color="text.secondary">
               Status
             </Typography>
             <Chip
@@ -554,6 +570,41 @@ export default function ViewOrganisationPage() {
                 }
                 size="small"
               />
+            </Grid>
+          </Grid>
+        </Paper>
+      )}
+
+      {/* Limits Configuration */}
+      {organisation.configurations?.limits && (
+        <Paper sx={{ p: 3, mb: 3 }}>
+          <Typography variant="h6" sx={{ mb: 2 }}>
+            Limits Configuration
+          </Typography>
+          <Grid container spacing={2}>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Typography variant="body2" color="text.secondary">
+                Max Users
+              </Typography>
+              <Typography variant="body1">
+                {organisation.configurations.limits.maxUsers}
+              </Typography>
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Typography variant="body2" color="text.secondary">
+                Max QRs
+              </Typography>
+              <Typography variant="body1">
+                {organisation.configurations.limits.maxQRs}
+              </Typography>
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Typography variant="body2" color="text.secondary">
+                Max Branches
+              </Typography>
+              <Typography variant="body1">
+                {organisation.configurations.limits.maxBranches}
+              </Typography>
             </Grid>
           </Grid>
         </Paper>

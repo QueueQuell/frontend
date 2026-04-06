@@ -27,7 +27,7 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import type { UserCreate } from "@/lib/api/types";
+import type { UserCreate, ApiError } from "@/lib/api/types";
 import { useState } from "react";
 
 const USER_ROLES = [
@@ -45,12 +45,6 @@ const USER_ROLES = [
 interface FieldError {
   field: string;
   message: string;
-}
-
-interface ApiError {
-  success: boolean;
-  message: string;
-  errors?: FieldError[];
 }
 
 export default function CreateUserPage() {
@@ -133,7 +127,13 @@ export default function CreateUserPage() {
       }
     } catch (err: any) {
       const errorData = err as ApiError;
-      if (errorData.errors && Array.isArray(errorData.errors)) {
+      if (errorData.status === 403) {
+        if (errorData.message?.includes("limit")) {
+          setError("User creation limit reached for this organisation");
+        } else {
+          setError("Access denied: Insufficient permissions to create user");
+        }
+      } else if (errorData.errors && Array.isArray(errorData.errors)) {
         const errors: Record<string, string> = {};
         (errorData.errors as FieldError[]).forEach((error: FieldError) => {
           errors[error.field] = error.message;

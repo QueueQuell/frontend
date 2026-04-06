@@ -32,6 +32,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
+import RefreshIcon from "@mui/icons-material/Refresh";
 import Link from "next/link";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import PageFooter from "@/components/ui/PageFooter";
@@ -216,6 +217,15 @@ export default function UserListPage() {
               }}
               sx={{ width: 300 }}
             />
+            <Button
+              variant="outlined"
+              size="small"
+              startIcon={<RefreshIcon />}
+              onClick={fetchUsers}
+              disabled={loading}
+            >
+              Refresh
+            </Button>
             <Button
               component={Link}
               href="/administrator/users/create"

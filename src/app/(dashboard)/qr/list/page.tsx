@@ -35,6 +35,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
+import RefreshIcon from "@mui/icons-material/Refresh";
 import DownloadIcon from "@mui/icons-material/Download";
 import { qrService } from "@/lib/api/services/qr.service";
 import { AdminQRListItem } from "@/lib/api/types";
@@ -219,6 +220,15 @@ export default function QRListPage() {
               }}
               sx={{ width: 300 }}
             />
+            <Button
+              variant="outlined"
+              size="small"
+              startIcon={<RefreshIcon />}
+              onClick={fetchQRCodes}
+              disabled={loading}
+            >
+              Refresh
+            </Button>
             <Button
               component={Link}
               href="/qr/generate"

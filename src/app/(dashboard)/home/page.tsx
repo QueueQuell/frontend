@@ -4,6 +4,7 @@ import StatsCards from "@/components/dashboard/StatsCards";
 import QuickActions from "@/components/dashboard/QuickActions";
 import RecentOrders from "@/components/dashboard/RecentOrders";
 import TopItems from "@/components/dashboard/TopItems";
+import OrganisationLimits from "@/components/dashboard/OrganisationLimits";
 
 export default function ModernDashboard() {
   return (
@@ -17,6 +18,9 @@ export default function ModernDashboard() {
           Welcome back! Here's what's happening with your restaurant today.
         </Typography>
       </Box>
+
+      {/* Organisation Limits */}
+      <OrganisationLimits />
 
       {/* Stats Cards */}
       <StatsCards />

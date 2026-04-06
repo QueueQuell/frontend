@@ -49,7 +49,9 @@ export default function EditOrganisationPage() {
       const user = JSON.parse(userDetails);
       const superAdminRoles = ["SuperAdmin"];
       const userRole = user.role?.toUpperCase() || "";
-      const isSuper = superAdminRoles.some((role) => userRole.includes(role));
+      const isSuper = superAdminRoles.some((role) =>
+        userRole.includes(role.toUpperCase()),
+      );
       setIsSuperAdmin(isSuper);
 
       // Get user's current organisation ID
@@ -64,6 +66,7 @@ export default function EditOrganisationPage() {
     logo: "",
     customDomain: "",
     type: "company" as "company" | "branch",
+    tier: "basic" as "basic" | "pro" | "enterprise",
     parentOrgId: "",
     primaryPhone: "",
     secondaryPhone: "",
@@ -110,6 +113,11 @@ export default function EditOrganisationPage() {
         takeawayEnabled: true,
         deliveryEnabled: true,
       },
+      limits: {
+        maxUsers: 10,
+        maxQRs: 5,
+        maxBranches: 3,
+      },
     },
   });
 
@@ -142,6 +150,7 @@ export default function EditOrganisationPage() {
           logo: org.logo || "",
           customDomain: org.customDomain || "",
           type: org.type || "company",
+          tier: org.tier || "basic",
           parentOrgId: parentOrgId,
           primaryPhone: org.primaryPhone || "",
           secondaryPhone: org.secondaryPhone || "",
@@ -198,6 +207,11 @@ export default function EditOrganisationPage() {
                 org.configurations?.features?.takeawayEnabled ?? true,
               deliveryEnabled:
                 org.configurations?.features?.deliveryEnabled ?? true,
+            },
+            limits: {
+              maxUsers: org.configurations?.limits?.maxUsers || 10,
+              maxQRs: org.configurations?.limits?.maxQRs || 5,
+              maxBranches: org.configurations?.limits?.maxBranches || 3,
             },
           },
         });
@@ -267,6 +281,18 @@ export default function EditOrganisationPage() {
           },
         },
       }));
+    } else if (field.startsWith("configurations.limits.")) {
+      const limitField = field.replace("configurations.limits.", "");
+      setFormData((prev) => ({
+        ...prev,
+        configurations: {
+          ...prev.configurations,
+          limits: {
+            ...prev.configurations.limits,
+            [limitField]: value,
+          },
+        },
+      }));
     } else {
       setFormData((prev) => ({
         ...prev,
@@ -304,6 +330,7 @@ export default function EditOrganisationPage() {
         logo: formData.logo || undefined,
         customDomain: formData.customDomain || undefined,
         type: formData.type,
+        tier: formData.tier,
         parentOrgId: parentOrgId,
         primaryPhone: formData.primaryPhone || undefined,
         secondaryPhone: formData.secondaryPhone || undefined,
@@ -321,6 +348,7 @@ export default function EditOrganisationPage() {
           business: formData.configurations.business,
           timing: formData.configurations.timing,
           features: formData.configurations.features,
+          limits: isSuperAdmin ? formData.configurations.limits : undefined,
         },
       };
 
@@ -338,7 +366,19 @@ export default function EditOrganisationPage() {
         setError(response.message || "Failed to update organisation");
       }
     } catch (err: any) {
-      setError(err.message || "Failed to update organisation");
+      if (err.status === 403) {
+        if (err.message?.includes("tier") || err.message?.includes("limit")) {
+          setError(
+            "Access denied: Only SuperAdmin can update organisation tier or limits",
+          );
+        } else {
+          setError(
+            "Access denied: Insufficient permissions to perform this action",
+          );
+        }
+      } else {
+        setError(err.message || "Failed to update organisation");
+      }
     } finally {
       setSaving(false);
     }
@@ -511,6 +551,32 @@ export default function EditOrganisationPage() {
                   fullWidth
                   label="Type"
                   value={formData.type === "company" ? "Company" : "Branch"}
+                  disabled
+                />
+              )}
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              {isSuperAdmin ? (
+                <FormControl fullWidth>
+                  <InputLabel>Tier</InputLabel>
+                  <Select
+                    value={formData.tier}
+                    label="Tier"
+                    onChange={(e) => handleChange("tier", e.target.value)}
+                  >
+                    <MenuItem value="basic">Basic</MenuItem>
+                    <MenuItem value="pro">Pro</MenuItem>
+                    <MenuItem value="enterprise">Enterprise</MenuItem>
+                  </Select>
+                </FormControl>
+              ) : (
+                <TextField
+                  fullWidth
+                  label="Tier"
+                  value={
+                    formData.tier.charAt(0).toUpperCase() +
+                    formData.tier.slice(1)
+                  }
                   disabled
                 />
               )}
@@ -1024,6 +1090,65 @@ export default function EditOrganisationPage() {
             </Grid>
           </Grid>
         </Paper>
+
+        {/* Limits Configuration - SuperAdmin Only */}
+        {isSuperAdmin && (
+          <Paper sx={{ p: 3, mb: 3 }}>
+            <Typography variant="h6" sx={{ mb: 2 }}>
+              Limits Configuration
+            </Typography>
+            <Grid container spacing={2}>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  fullWidth
+                  label="Max Users"
+                  type="number"
+                  value={formData.configurations.limits?.maxUsers}
+                  onChange={(e) =>
+                    handleChange(
+                      "configurations.limits.maxUsers",
+                      parseInt(e.target.value) || 0,
+                    )
+                  }
+                  inputProps={{ min: 1 }}
+                  required
+                />
+              </Grid>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  fullWidth
+                  label="Max QRs"
+                  type="number"
+                  value={formData.configurations.limits?.maxQRs}
+                  onChange={(e) =>
+                    handleChange(
+                      "configurations.limits.maxQRs",
+                      parseInt(e.target.value) || 0,
+                    )
+                  }
+                  inputProps={{ min: 1 }}
+                  required
+                />
+              </Grid>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  fullWidth
+                  label="Max Branches"
+                  type="number"
+                  value={formData.configurations.limits?.maxBranches}
+                  onChange={(e) =>
+                    handleChange(
+                      "configurations.limits.maxBranches",
+                      parseInt(e.target.value) || 0,
+                    )
+                  }
+                  inputProps={{ min: 1 }}
+                  required
+                />
+              </Grid>
+            </Grid>
+          </Paper>
+        )}
 
         <Box
           sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mb: 3 }}
