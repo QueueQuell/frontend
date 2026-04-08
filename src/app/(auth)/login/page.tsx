@@ -41,20 +41,20 @@ export default function SignInSide() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const usernameOrEmail = data.get("usernameOrEmail") as string;
+    const email = data.get("email") as string;
     const password = data.get("password") as string;
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!usernameOrEmail && !password) {
+    if (!email && !password) {
       setError("Please enter email and password.");
       return;
-    } else if (!usernameOrEmail) {
+    } else if (!email) {
       setError("Please enter email.");
       return;
     } else if (!password) {
       setError("Please enter password.");
       return;
-    } else if (!emailRegex.test(usernameOrEmail)) {
+    } else if (!emailRegex.test(email)) {
       setError("Please enter a valid email address.");
       return;
     }
@@ -64,7 +64,7 @@ export default function SignInSide() {
 
     try {
       const response = await authService.login({
-        usernameOrEmail: usernameOrEmail.trim(),
+        email: email.trim(),
         password,
       });
 
@@ -192,10 +192,11 @@ export default function SignInSide() {
           <Box component="form" noValidate onSubmit={handleSubmit}>
             <TextField
               fullWidth
-              id="usernameOrEmail"
-              label="Username or Email"
-              name="usernameOrEmail"
-              autoComplete="username"
+              id="email"
+              label="Email"
+              name="email"
+              type="email"
+              autoComplete="email"
               autoFocus
               size="medium"
               sx={{
