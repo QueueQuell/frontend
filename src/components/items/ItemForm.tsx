@@ -106,7 +106,7 @@ export interface AvailabilityFormData {
 interface ItemFormProps {
   formData: ItemFormData;
   onChange: (field: keyof ItemFormData, value: any) => void;
-  categories?: { _id: string; name: string }[];
+  categories?: { id: string; name: string }[];
 }
 
 export default function ItemForm({
@@ -165,7 +165,7 @@ export default function ItemForm({
               <MenuItem value="">Loading...</MenuItem>
             ) : categories.length > 0 ? (
               categories.map((cat) => (
-                <MenuItem key={cat._id} value={cat._id}>
+                <MenuItem key={cat.id} value={cat.id}>
                   {cat.name}
                 </MenuItem>
               ))
