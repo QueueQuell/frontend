@@ -105,11 +105,7 @@ export default function ViewUserPage() {
     return (
       <Box sx={{ p: 3 }}>
         <Typography color="error">{error || "User not found"}</Typography>
-        <Button
-          component={Link}
-          href="/administrator/users/list"
-          sx={{ mt: 2 }}
-        >
+        <Button component={Link} href="/administrator/users" sx={{ mt: 2 }}>
           Back to List
         </Button>
       </Box>
@@ -123,7 +119,7 @@ export default function ViewUserPage() {
           items={[
             { label: "Home", href: "/home" },
             { label: "Administrator", href: "/administrator" },
-            { label: "Users", href: "/administrator/users/list" },
+            { label: "Users", href: "/administrator/users" },
             { label: user.fullName },
           ]}
         />
@@ -146,7 +142,7 @@ export default function ViewUserPage() {
         <Box sx={{ display: "flex", gap: 1 }}>
           <Button
             component={Link}
-            href="/administrator/users/list"
+            href="/administrator/users"
             startIcon={<ArrowBackIcon />}
           >
             Back to List
@@ -221,10 +217,7 @@ export default function ViewUserPage() {
         </Grid>
       </Paper>
 
-      <PageFooter
-        backHref="/administrator/users/list"
-        backText="Back to Users"
-      />
+      <PageFooter backHref="/administrator/users" backText="Back to Users" />
     </Box>
   );
 }

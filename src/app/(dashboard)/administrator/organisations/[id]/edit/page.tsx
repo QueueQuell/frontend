@@ -418,7 +418,7 @@ export default function EditOrganisationPage() {
         </Typography>
         <Button
           component={Link}
-          href="/administrator/organisations/list"
+          href="/administrator/organisations"
           sx={{ mt: 2 }}
         >
           Back to List
@@ -436,7 +436,7 @@ export default function EditOrganisationPage() {
             { label: "Administrator", href: "/administrator" },
             {
               label: "Organisations",
-              href: "/administrator/organisations/list",
+              href: "/administrator/organisations",
             },
             {
               label: organisation?.organisationName || "Edit",
@@ -1172,7 +1172,7 @@ export default function EditOrganisationPage() {
       </form>
 
       <PageFooter
-        backHref="/administrator/organisations/list"
+        backHref="/administrator/organisations"
         backText="Back to Organisations"
       />
     </Box>

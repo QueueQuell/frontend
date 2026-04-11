@@ -118,7 +118,7 @@ export default function CategoryEditPage() {
           items={[
             { label: "Home", href: "/home" },
             { label: "Catalog", href: "/catalog" },
-            { label: "Categories", href: "/catalog/categories/list" },
+            { label: "Categories", href: "/catalog/categories" },
             { label: "Edit Category" },
           ]}
         />
@@ -126,7 +126,7 @@ export default function CategoryEditPage() {
           {error}
         </Alert>
         <PageFooter
-          backHref="/catalog/categories/list"
+          backHref="/catalog/categories"
           backText="Back to Categories"
         />
       </Box>
@@ -139,7 +139,7 @@ export default function CategoryEditPage() {
         items={[
           { label: "Home", href: "/home" },
           { label: "Catalog", href: "/catalog" },
-          { label: "Categories", href: "/catalog/categories/list" },
+          { label: "Categories", href: "/catalog/categories" },
           { label: category?.name || "Edit Category" },
         ]}
       />
@@ -183,7 +183,7 @@ export default function CategoryEditPage() {
                 <Button
                   variant="outlined"
                   component={Link}
-                  href="/catalog/categories/list"
+                  href="/catalog/categories"
                 >
                   Cancel
                 </Button>
@@ -200,7 +200,7 @@ export default function CategoryEditPage() {
           </Paper>
 
           <PageFooter
-            backHref="/catalog/categories/list"
+            backHref="/catalog/categories"
             backText="Back to Categories"
           />
         </>

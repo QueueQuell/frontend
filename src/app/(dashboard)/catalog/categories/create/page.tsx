@@ -60,7 +60,7 @@ export default function CreateCategoryPage() {
         setSuccess(true);
         setTimeout(() => {
           setSuccess(false);
-          router.push("/catalog/categories/list");
+          router.push("/catalog/categories");
         }, 2000);
       } else {
         setError(response.message || "Failed to create category");
@@ -103,7 +103,7 @@ export default function CreateCategoryPage() {
           >
             <Button
               component={Link}
-              href="/catalog/categories/list"
+              href="/catalog/categories"
               variant="outlined"
               startIcon={<ArrowBackIcon />}
               disabled={isSubmitting}
@@ -125,7 +125,7 @@ export default function CreateCategoryPage() {
       </Paper>
 
       <PageFooter
-        backHref="/catalog/categories/list"
+        backHref="/catalog/categories"
         backText="Back to Categories"
       />
     </Box>
