@@ -49,7 +49,7 @@ export default function CreateItemPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const [categories, setCategories] = useState<{ _id: string; name: string }[]>(
+  const [categories, setCategories] = useState<{ id: string; name: string }[]>(
     [],
   );
 
@@ -60,8 +60,8 @@ export default function CreateItemPage() {
         if (response.success && response.data) {
           // Only store categoryId and name
           setCategories(
-            response.data.map((cat: { _id: string; name: string }) => ({
-              _id: cat._id,
+            response.data.map((cat: { id: string; name: string }) => ({
+              id: cat.id,
               name: cat.name,
             })),
           );
