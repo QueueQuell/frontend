@@ -73,7 +73,7 @@ const ALL_SIDEBAR_ITEMS: SidebarItem[] = [
     subItems: createSubItems("/catalog", [
       ["Items", "/items/list"],
       ["Create Item", "/items/create"],
-      ["Categories", "/categories"],
+      ["Categories", "/categories/list"],
       ["Create Category", "/categories/create"],
     ]),
   },

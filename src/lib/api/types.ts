@@ -882,7 +882,7 @@ export interface UpdateAddressRequest {
 // Category Types (from JSON schema)
 // ============================================================================
 export interface Category {
-  _id: string;
+  id: string;
   name: string;
   description?: string;
   active: boolean;
