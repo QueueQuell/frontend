@@ -236,7 +236,7 @@ export default function QRListPage() {
               size="small"
               startIcon={<AddIcon />}
             >
-              Add QR Code
+              Generate QR
             </Button>
           </Box>
         </Box>
