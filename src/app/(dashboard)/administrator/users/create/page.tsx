@@ -88,15 +88,12 @@ export default function CreateUserPage() {
 
     try {
       setLoading(true);
-      const fullName =
-        `${formData.firstName} ${formData.lastName || ""}`.trim();
       const response = await adminService.createUser({
         email: formData.email,
         password: formData.password,
         title: formData.title,
         firstName: formData.firstName,
         lastName: formData.lastName,
-        fullName,
         phone: formData.phone || "",
         role: formData.role,
       } as UserCreate);

@@ -24,7 +24,6 @@ export interface User {
   title: string;
   firstName: string;
   lastName: string;
-  fullName: string;
   phone: string;
   role: string;
   status: string;
@@ -81,7 +80,6 @@ export interface UserCreate {
   title: string;
   firstName: string;
   lastName: string;
-  fullName: string;
   phone: string;
   role: string;
   address: UserAddress;

@@ -48,7 +48,9 @@ export default function EditUserPage() {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   const [formData, setFormData] = useState({
-    fullName: "",
+    title: "",
+    firstName: "",
+    lastName: "",
     email: "",
     role: "" as string,
     organisationId: "",
@@ -70,7 +72,9 @@ export default function EditUserPage() {
         const fetchedUser = response.data as User;
         setUser(fetchedUser);
         setFormData({
-          fullName: fetchedUser.fullName || "",
+          title: fetchedUser.title || "",
+          firstName: fetchedUser.firstName || "",
+          lastName: fetchedUser.lastName || "",
           email: fetchedUser.email || "",
           role: fetchedUser.role || "",
           organisationId: fetchedUser.organisationId || "",
@@ -87,12 +91,12 @@ export default function EditUserPage() {
     }
   };
 
-  const handleChange = (field: string, value: string) => {
+  const handleChange = (field: keyof typeof formData, value: string) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
-    if (fieldErrors[field as keyof typeof fieldErrors]) {
+    if (fieldErrors[field as string]) {
       setFieldErrors((prev) => {
         const newErrors = { ...prev };
         delete newErrors[field as keyof typeof fieldErrors];
@@ -111,7 +115,9 @@ export default function EditUserPage() {
     try {
       setSaving(true);
       const payload = {
-        fullName: formData.fullName,
+        title: formData.title,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
         email: formData.email,
         role: formData.role,
         organisationId: formData.organisationId || undefined,
@@ -181,7 +187,7 @@ export default function EditUserPage() {
             { label: "Administrator", href: "/administrator" },
             { label: "Users", href: "/administrator/users/list" },
             {
-              label: user?.fullName || "Edit User",
+              label: `${user?.firstName} ${user?.lastName}` || "Edit User",
               href: `/administrator/users/${id}`,
             },
             { label: "Edit" },
@@ -231,15 +237,36 @@ export default function EditUserPage() {
           </Typography>
 
           <Grid container spacing={3}>
-            <Grid size={{ xs: 12, md: 6 }}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <TextField
                 fullWidth
-                label="Full Name"
-                value={formData.fullName}
-                onChange={(e) => handleChange("fullName", e.target.value)}
+                label="Title"
+                value={formData.title}
+                onChange={(e) => handleChange("title", e.target.value)}
+                error={!!fieldErrors.title}
+                helperText={fieldErrors.title}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 4 }}>
+              <TextField
+                fullWidth
+                label="First Name"
+                value={formData.firstName}
+                onChange={(e) => handleChange("firstName", e.target.value)}
                 required
-                error={!!fieldErrors.fullName}
-                helperText={fieldErrors.fullName}
+                error={!!fieldErrors.firstName}
+                helperText={fieldErrors.firstName}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 4 }}>
+              <TextField
+                fullWidth
+                label="Last Name"
+                value={formData.lastName}
+                onChange={(e) => handleChange("lastName", e.target.value)}
+                required
+                error={!!fieldErrors.lastName}
+                helperText={fieldErrors.lastName}
               />
             </Grid>
 

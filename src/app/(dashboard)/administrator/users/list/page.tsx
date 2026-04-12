@@ -99,7 +99,6 @@ export default function UserListPage() {
     if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
     return (
-      user.fullName.toLowerCase().includes(query) ||
       user.email.toLowerCase().includes(query) ||
       user.role.toLowerCase().includes(query)
     );
@@ -257,7 +256,8 @@ export default function UserListPage() {
                 <TableHead>
                   <TableRow>
                     <TableCell>User ID</TableCell>
-                    <TableCell>Name</TableCell>
+                    <TableCell>First Name</TableCell>
+                    <TableCell>Last Name</TableCell>
                     <TableCell>Email</TableCell>
                     <TableCell>Role</TableCell>
                     <TableCell>Organisation ID</TableCell>
@@ -285,7 +285,8 @@ export default function UserListPage() {
                         <TableCell>
                           <Typography variant="body2">{user.id}</Typography>
                         </TableCell>
-                        <TableCell>{user.fullName}</TableCell>
+                        <TableCell>{user.firstName}</TableCell>
+                        <TableCell>{user.lastName}</TableCell>
                         <TableCell>{user.email}</TableCell>
                         <TableCell>
                           <Chip
@@ -325,7 +326,10 @@ export default function UserListPage() {
                             size="small"
                             color="error"
                             onClick={() =>
-                              handleDeleteOpen(user.id, user.fullName)
+                              handleDeleteOpen(
+                                user.id,
+                                `${user.firstName} ${user.lastName}`,
+                              )
                             }
                             title="Delete"
                           >

@@ -124,7 +124,7 @@ export default function ViewUserPage() {
             { label: "Home", href: "/home" },
             { label: "Administrator", href: "/administrator" },
             { label: "Users", href: "/administrator/users/list" },
-            { label: user.fullName },
+            { label: `${user.firstName} ${user.lastName}` },
           ]}
         />
       </Box>
@@ -172,7 +172,7 @@ export default function ViewUserPage() {
               Full Name
             </Typography>
             <Typography variant="body1" sx={{ fontWeight: 500 }}>
-              {user.fullName}
+              {user.firstName} {user.lastName}
             </Typography>
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>

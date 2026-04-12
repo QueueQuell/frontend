@@ -23,7 +23,6 @@ export interface RegisterResponse {
     email: string;
     firstName: string;
     lastName: string;
-    fullName: string;
     role: string;
     loginProvider: string;
     status: string;
