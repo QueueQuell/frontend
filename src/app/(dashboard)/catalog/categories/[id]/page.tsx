@@ -73,7 +73,7 @@ export default function CategoryViewPage() {
           items={[
             { label: "Home", href: "/home" },
             { label: "Catalog", href: "/catalog" },
-            { label: "Categories", href: "/catalog/categories/list" },
+            { label: "Categories", href: "/catalog/categories" },
             { label: "View Category" },
           ]}
         />
@@ -81,7 +81,7 @@ export default function CategoryViewPage() {
           {error || "Category not found"}
         </Alert>
         <PageFooter
-          backHref="/catalog/categories/list"
+          backHref="/catalog/categories"
           backText="Back to Categories List"
         />
       </Box>
@@ -94,7 +94,7 @@ export default function CategoryViewPage() {
         items={[
           { label: "Home", href: "/home" },
           { label: "Catalog", href: "/catalog" },
-          { label: "Categories", href: "/catalog/categories/list" },
+          { label: "Categories", href: "/catalog/categories" },
           { label: category.name! },
         ]}
       />
@@ -178,7 +178,7 @@ export default function CategoryViewPage() {
       </Paper>
 
       <PageFooter
-        backHref="/catalog/categories/list"
+        backHref="/catalog/categories"
         backText="Back to Categories List"
       />
     </Box>
