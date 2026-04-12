@@ -73,7 +73,7 @@ const ALL_SIDEBAR_ITEMS: SidebarItem[] = [
     subItems: createSubItems("/catalog", [
       ["Items", "/items/list"],
       ["Create Item", "/items/create"],
-      ["Categories", "/categories"],
+      ["Categories", "/categories/list"],
     ]),
   },
   {
@@ -152,8 +152,8 @@ const ALL_SIDEBAR_ITEMS: SidebarItem[] = [
     icon: <AdminPanelSettingsIcon />,
     href: "/administrator",
     subItems: createSubItems("/administrator", [
-      ["Organisations", "/organisations"],
-      ["Users", "/users"],
+      ["Organisations", "/organisations/list"],
+      ["Users", "/users/list"],
     ]),
     adminOnly: true,
   },

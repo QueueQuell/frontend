@@ -43,14 +43,14 @@ export default function AdministratorPage() {
       title: "Organisations",
       description: "Manage organisations, branches, and company settings",
       icon: <BusinessIcon sx={{ fontSize: 48, color: "#1976d2" }} />,
-      href: "/administrator/organisations",
+      href: "/administrator/organisations/list",
       color: "#e3f2fd",
     },
     {
       title: "Users",
       description: "Create, manage, and monitor user accounts and permissions",
       icon: <PeopleIcon sx={{ fontSize: 48, color: "#2e7d32" }} />,
-      href: "/administrator/users",
+      href: "/administrator/users/list",
       color: "#e8f5e9",
     },
   ];

@@ -100,7 +100,7 @@ export default function ViewOrganisationPage() {
         </Typography>
         <Button
           component={Link}
-          href="/administrator/organisations"
+          href="/administrator/organisations/list"
           sx={{ mt: 2 }}
         >
           Back to List
@@ -118,7 +118,7 @@ export default function ViewOrganisationPage() {
             { label: "Administrator", href: "/administrator" },
             {
               label: "Organisations",
-              href: "/administrator/organisations",
+              href: "/administrator/organisations/list",
             },
             { label: organisation.organisationName },
           ]}
@@ -142,7 +142,7 @@ export default function ViewOrganisationPage() {
         <Box sx={{ display: "flex", gap: 1 }}>
           <Button
             component={Link}
-            href="/administrator/organisations"
+            href="/administrator/organisations/list"
             startIcon={<ArrowBackIcon />}
           >
             Back to List
@@ -636,7 +636,7 @@ export default function ViewOrganisationPage() {
       </Paper>
 
       <PageFooter
-        backHref="/administrator/organisations"
+        backHref="/administrator/organisations/list"
         backText="Back to Organisations"
       />
     </Box>

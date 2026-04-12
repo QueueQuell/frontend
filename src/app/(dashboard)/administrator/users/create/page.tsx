@@ -103,7 +103,7 @@ export default function CreateUserPage() {
 
       if (response.success) {
         setSuccess(true);
-        router.push("/administrator/users");
+        router.push("/administrator/users/list");
         setFormData({
           email: "",
           password: "",
@@ -155,7 +155,7 @@ export default function CreateUserPage() {
           items={[
             { label: "Home", href: "/home" },
             { label: "Administrator", href: "/administrator" },
-            { label: "Users", href: "/administrator/users" },
+            { label: "Users", href: "/administrator/users/list" },
             { label: "Create User" },
           ]}
         />
@@ -177,7 +177,7 @@ export default function CreateUserPage() {
         </Box>
         <Button
           component={Link}
-          href="/administrator/users"
+          href="/administrator/users/list"
           startIcon={<ArrowBackIcon />}
         >
           Back to List
@@ -313,7 +313,7 @@ export default function CreateUserPage() {
           >
             <Button
               component={Link}
-              href="/administrator/users"
+              href="/administrator/users/list"
               variant="outlined"
             >
               Cancel
@@ -332,7 +332,10 @@ export default function CreateUserPage() {
         </Paper>
       </form>
 
-      <PageFooter backHref="/administrator/users" backText="Back to Users" />
+      <PageFooter
+        backHref="/administrator/users/list"
+        backText="Back to Users"
+      />
     </Box>
   );
 }

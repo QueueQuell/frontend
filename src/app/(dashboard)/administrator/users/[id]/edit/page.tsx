@@ -161,7 +161,11 @@ export default function EditUserPage() {
     return (
       <Box sx={{ p: 3 }}>
         <Typography color="error">{error || "User not found"}</Typography>
-        <Button component={Link} href="/administrator/users" sx={{ mt: 2 }}>
+        <Button
+          component={Link}
+          href="/administrator/users/list"
+          sx={{ mt: 2 }}
+        >
           Back to List
         </Button>
       </Box>
@@ -175,7 +179,7 @@ export default function EditUserPage() {
           items={[
             { label: "Home", href: "/home" },
             { label: "Administrator", href: "/administrator" },
-            { label: "Users", href: "/administrator/users" },
+            { label: "Users", href: "/administrator/users/list" },
             {
               label: user?.fullName || "Edit User",
               href: `/administrator/users/${id}`,
@@ -321,7 +325,10 @@ export default function EditUserPage() {
         </Paper>
       </form>
 
-      <PageFooter backHref="/administrator/users" backText="Back to Users" />
+      <PageFooter
+        backHref="/administrator/users/list"
+        backText="Back to Users"
+      />
     </Box>
   );
 }

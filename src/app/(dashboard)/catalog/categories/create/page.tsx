@@ -60,7 +60,7 @@ export default function CreateCategoryPage() {
         setSuccess(true);
         setTimeout(() => {
           setSuccess(false);
-          router.push("/catalog/categories");
+          router.push("/catalog/categories/list");
         }, 2000);
       } else {
         setError(response.message || "Failed to create category");
@@ -78,7 +78,7 @@ export default function CreateCategoryPage() {
         items={[
           { label: "Home", href: "/home" },
           { label: "Items", href: "/catalog" },
-          { label: "Categories", href: "/catalog/categories" },
+          { label: "Categories", href: "/catalog/categories/list" },
           { label: "Create New Category" },
         ]}
       />
@@ -103,7 +103,7 @@ export default function CreateCategoryPage() {
           >
             <Button
               component={Link}
-              href="/catalog/categories"
+              href="/catalog/categories/list"
               variant="outlined"
               startIcon={<ArrowBackIcon />}
               disabled={isSubmitting}
@@ -125,7 +125,7 @@ export default function CreateCategoryPage() {
       </Paper>
 
       <PageFooter
-        backHref="/catalog/categories"
+        backHref="/catalog/categories/list"
         backText="Back to Categories"
       />
     </Box>

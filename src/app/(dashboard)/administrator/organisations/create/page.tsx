@@ -356,7 +356,7 @@ export default function CreateOrganisationPage() {
             { label: "Administrator", href: "/administrator" },
             {
               label: "Organisations",
-              href: "/administrator/organisations",
+              href: "/administrator/organisations/list",
             },
             { label: "Create Organisation" },
           ]}
@@ -379,7 +379,7 @@ export default function CreateOrganisationPage() {
         </Box>
         <Button
           component={Link}
-          href="/administrator/organisations"
+          href="/administrator/organisations/list"
           startIcon={<ArrowBackIcon />}
         >
           Back to List
@@ -1072,7 +1072,7 @@ export default function CreateOrganisationPage() {
         >
           <Button
             component={Link}
-            href="/administrator/organisations"
+            href="/administrator/organisations/list"
             variant="outlined"
           >
             Cancel
@@ -1089,7 +1089,7 @@ export default function CreateOrganisationPage() {
       </form>
 
       <PageFooter
-        backHref="/administrator/organisations"
+        backHref="/administrator/organisations/list"
         backText="Back to Organisations"
       />
     </Box>
