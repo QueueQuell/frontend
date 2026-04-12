@@ -104,20 +104,23 @@ export const authService = {
       const response = await apiClient.post<LoginResponse>(
         AUTH_ENDPOINTS.REFRESH,
         { refresh_token: refreshToken },
+        { skipAuth: true, retryOn401: false },
       );
 
-      if (response?.success && response.data?.authDetails?.accessToken) {
-        localStorage.setItem(
-          "accessToken",
-          response.data.authDetails.accessToken,
-        );
+      if (!response?.success || !response.data?.authDetails?.accessToken) {
+        throw new Error("Token refresh failed");
+      }
 
-        if (response.data.authDetails.refreshToken) {
-          localStorage.setItem(
-            "refreshToken",
-            response.data.authDetails.refreshToken,
-          );
-        }
+      localStorage.setItem(
+        "accessToken",
+        response.data.authDetails.accessToken,
+      );
+
+      if (response.data.authDetails.refreshToken) {
+        localStorage.setItem(
+          "refreshToken",
+          response.data.authDetails.refreshToken,
+        );
       }
 
       return response;
