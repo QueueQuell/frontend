@@ -389,8 +389,9 @@ export default function UserListPage() {
 
       <Snackbar
         open={snackbar.open}
-        autoHideDuration={6000}
+        autoHideDuration={3000}
         onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       >
         <Alert
           onClose={handleSnackbarClose}
