@@ -430,14 +430,90 @@ export interface OrgMember {
 // Menu & Pricing Types
 // ============================================================================
 
-export interface MenuItem {
+export interface MenuItemType {
   id: string;
+  _id: string;
   name: string;
-  description?: string;
-  price: number;
+  description: string;
+  imageUrls: Array<{
+    url: string;
+    type: "primary" | "thumbnail" | "gallery";
+  }>;
+  cuisine: string;
+  type: string;
+  spicinessLevel: string;
+  preparationTime: number;
+  allergens: string[];
+  isVegetarian: boolean;
+  isVegan: boolean;
+  isGlutenFree: boolean;
+  dietaryTags: string[];
+  pricingModel: string;
+  basePrice: number;
+  currency: string;
+  active: boolean;
+  status: string;
+  variantGroups: Array<{
+    name: string;
+    isRequired: boolean;
+    selectionType: "single" | "multiple";
+    options: Array<{
+      name: string;
+      price: number;
+      calories: number;
+    }>;
+  }>;
+  addonGroups: Array<{
+    name: string;
+    selectionType: "single" | "multiple";
+    options: Array<{
+      name: string;
+      price: number;
+    }>;
+  }>;
+  components: Array<{
+    itemId: string;
+    quantity: number;
+    isOptional: boolean;
+  }>;
+  nutritionalInfo: {
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+    sugar: number;
+  };
+  availability: {
+    days: string[];
+    startTime: string;
+    endTime: string;
+  };
+  rating: {
+    average: number;
+    count: number;
+  };
+  isRecommended: boolean;
+  isPopular: boolean;
+  organisationId: string;
+  category: {
+    id: string;
+    name: string;
+  };
   section?: string;
-  is_available: boolean;
-  image_url?: string;
+  imageUrl?: string;
+  price?: number;
+  nonVeg?: boolean;
+  is_available?: boolean;
+  isVeg?: boolean;
+  displayOrder: number;
+  createdBy: string;
+  updatedBy: string;
+  createdAt: string;
+  updatedAt: string;
+  isAvailable: boolean;
+  isCurrentlyAvailable: boolean;
+  calculatedMinPrice: number;
+  calculatedMaxPrice: number;
 }
 
 export interface PricingBook {
@@ -704,7 +780,9 @@ export interface MenuItemComponent {
 export interface CreateMenuItemRequest {
   name: string;
   description?: string;
+  price: number;
   imageUrl?: string;
+  category: string;
   categoryId: string;
   nonVeg: boolean;
   type?: string;
@@ -712,6 +790,12 @@ export interface CreateMenuItemRequest {
   spicinessLevel?: string;
   pricingModel?: string;
   basePrice: number;
+  currency?: string;
+  preparationTime?: number;
+  allergens?: string[];
+  isVegetarian?: boolean;
+  isVegan?: boolean;
+  isGlutenFree?: boolean;
   active?: boolean;
   status?: string;
   isRecommended?: boolean;

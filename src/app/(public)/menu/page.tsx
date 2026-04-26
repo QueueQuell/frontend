@@ -71,23 +71,44 @@ type MenuDataType = {
   items: MenuItemType[];
 };
 
+function getMenuItemCategoryId(item: MenuItemType) {
+  if (item.categoryId) return item.categoryId;
+  if (typeof item.category === "string") return item.category;
+  return item.category?.id ?? "";
+}
+
 // Helper function to map API menu item to MenuItemType
 function mapApiMenuItemToMenuItemType(apiItem: ApiMenuItem): MenuItemType {
   return {
     id: apiItem._id || apiItem.id,
     name: apiItem.name,
-    category:
-      apiItem.category?.toLowerCase().replace(/\s+/g, "-") ||
-      apiItem.categoryId?.toLowerCase() ||
-      "uncategorized",
-    price: apiItem.basePrice,
-    weight: "",
-    isVeg: !apiItem.nonVeg,
-    image: apiItem.imageUrl || "",
-    images: apiItem.imageUrl ? [apiItem.imageUrl] : [],
     description: apiItem.description || "",
-    isPremium: apiItem.isRecommended || false,
+    price: apiItem.basePrice,
+    categoryId: apiItem.categoryId || undefined,
+    categoryName: apiItem.category || undefined,
+    category:
+      apiItem.categoryId || apiItem.category
+        ? {
+            id: apiItem.categoryId || apiItem.category,
+            name: apiItem.category || apiItem.categoryId || "",
+          }
+        : undefined,
+    image: apiItem.imageUrl || "",
+    images: apiItem.imageUrl
+      ? [
+          {
+            url: apiItem.imageUrl,
+            type: "primary",
+          },
+        ]
+      : [],
     isAvailable: apiItem.active !== false,
+    isVegetarian: apiItem.nonVeg === false,
+    isVegan: false,
+    isGlutenFree: false,
+    allergens: [],
+    variants: [],
+    addOns: [],
   };
 }
 
@@ -252,8 +273,16 @@ function MenuComponent() {
             // Extract unique categories from API response
             const categoryMap = new Map<string, string>();
             mappedItems.forEach((item: MenuItemType) => {
-              if (item.category && !categoryMap.has(item.category)) {
-                categoryMap.set(item.category, item.category);
+              const categoryId = getMenuItemCategoryId(item);
+              const categoryName =
+                item.categoryName ||
+                (typeof item.category === "string"
+                  ? item.category
+                  : item.category?.name) ||
+                categoryId;
+
+              if (categoryId && !categoryMap.has(categoryId)) {
+                categoryMap.set(categoryId, categoryName);
               }
             });
 
@@ -262,9 +291,7 @@ function MenuComponent() {
               { id: "all", name: "All", icon: RestaurantMenu },
               ...Array.from(categoryMap.entries()).map(([id, name]) => ({
                 id,
-                name:
-                  name.charAt(0).toUpperCase() +
-                  name.slice(1).replace(/-/g, " "),
+                name,
                 icon: RestaurantMenu,
               })),
             ];
@@ -296,13 +323,15 @@ function MenuComponent() {
     let items =
       selectedCategory === "all"
         ? [...menuData.items]
-        : menuData.items.filter((item) => item.category === selectedCategory);
+        : menuData.items.filter(
+            (item) => getMenuItemCategoryId(item) === selectedCategory,
+          );
 
     if (selectedCategory === "all") {
       const categoryOrder = menuData.categories.map((c) => c.id);
       items.sort((a, b) => {
-        const aIndex = categoryOrder.indexOf(a.category);
-        const bIndex = categoryOrder.indexOf(b.category);
+        const aIndex = categoryOrder.indexOf(getMenuItemCategoryId(a));
+        const bIndex = categoryOrder.indexOf(getMenuItemCategoryId(b));
         return aIndex - bIndex;
       });
     }
@@ -317,7 +346,7 @@ function MenuComponent() {
     }
 
     if (isVegOnly) {
-      items = items.filter((item) => item.isVeg);
+      items = items.filter((item) => item.isVegetarian ?? item.isVeg ?? false);
     }
 
     return items;
@@ -329,13 +358,15 @@ function MenuComponent() {
 
     // Filter items by veg if filter is applied
     const itemsToCount = isVegOnly
-      ? menuData.items.filter((item) => item.isVeg)
+      ? menuData.items.filter((item) => item.isVegetarian ?? item.isVeg)
       : menuData.items;
 
     counts.all = itemsToCount.length;
 
     itemsToCount.forEach((item) => {
-      counts[item.category] = (counts[item.category] || 0) + 1;
+      const categoryId = getMenuItemCategoryId(item);
+      if (!categoryId) return;
+      counts[categoryId] = (counts[categoryId] || 0) + 1;
     });
     return counts;
   }, [isVegOnly]);

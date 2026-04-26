@@ -1,27 +1,53 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
 // Types for menu items
-export interface MenuItemType {
+export interface Variant {
   id: string;
   name: string;
-  category: string;
-  subcategory?: string;
-  price: number;
-  weight: string;
-  isVeg: boolean;
-  image: string;
-  images?: string[];
-  description: string;
-  isPremium?: boolean;
-  videoUrl?: string;
-  addons?: Addon[];
-  isAvailable?: boolean;
+  priceModifier: number;
+  isDefault: boolean;
 }
 
 export interface Addon {
   id: string;
   name: string;
   price: number;
+  isAvailable?: boolean;
+}
+
+export interface MenuItemType {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  categoryId?: string;
+  categoryName?: string;
+  category?:
+    | string
+    | {
+        id: string;
+        name: string;
+      };
+  image: string;
+  images?: Array<{
+    url: string;
+    type: "primary" | "gallery" | "thumbnail" | "secondary";
+  }>;
+  isAvailable?: boolean;
+  preparationTime?: number;
+  allergens?: string[];
+  isVegetarian?: boolean;
+  isVegan?: boolean;
+  isGlutenFree?: boolean;
+  variants?: Variant[];
+  addOns?: Addon[];
+  createdAt?: string;
+  updatedAt?: string;
+  weight?: string;
+  isVeg?: boolean;
+  isPremium?: boolean;
+  videoUrl?: string;
+  addons?: Addon[];
 }
 
 export interface CartItem extends MenuItemType {
@@ -33,16 +59,21 @@ export interface CartItem extends MenuItemType {
 interface CartState {
   items: CartItem[];
   isOpen: boolean;
-  
+
   // Actions
-  addItem: (item: MenuItemType, quantity?: number, addons?: Addon[], instructions?: string) => void;
+  addItem: (
+    item: MenuItemType,
+    quantity?: number,
+    addons?: Addon[],
+    instructions?: string,
+  ) => void;
   removeItem: (itemId: string) => void;
   updateQuantity: (itemId: string, quantity: number) => void;
   updateItemAddons: (itemId: string, addons: Addon[]) => void;
   clearCart: () => void;
   toggleCart: () => void;
   setCartOpen: (open: boolean) => void;
-  
+
   // Computed
   getTotalItems: () => number;
   getTotalPrice: () => number;
@@ -52,11 +83,12 @@ export const useCartStore = create<CartState>((set, get) => ({
   items: [],
   isOpen: false,
 
-  addItem: (item, quantity = 1, addons = [], instructions = '') => {
+  addItem: (item, quantity = 1, addons = [], instructions = "") => {
     set((state) => {
       const existingIndex = state.items.findIndex(
-        (i) => i.id === item.id && 
-        JSON.stringify(i.selectedAddons) === JSON.stringify(addons)
+        (i) =>
+          i.id === item.id &&
+          JSON.stringify(i.selectedAddons) === JSON.stringify(addons),
       );
 
       if (existingIndex >= 0) {
@@ -93,7 +125,7 @@ export const useCartStore = create<CartState>((set, get) => ({
 
     set((state) => ({
       items: state.items.map((item) =>
-        item.id === itemId ? { ...item, quantity } : item
+        item.id === itemId ? { ...item, quantity } : item,
       ),
     }));
   },
@@ -101,7 +133,7 @@ export const useCartStore = create<CartState>((set, get) => ({
   updateItemAddons: (itemId, addons) => {
     set((state) => ({
       items: state.items.map((item) =>
-        item.id === itemId ? { ...item, selectedAddons: addons } : item
+        item.id === itemId ? { ...item, selectedAddons: addons } : item,
       ),
     }));
   },
@@ -124,7 +156,8 @@ export const useCartStore = create<CartState>((set, get) => ({
 
   getTotalPrice: () => {
     return get().items.reduce((sum, item) => {
-      const addonsPrice = item.selectedAddons?.reduce((a, addon) => a + addon.price, 0) || 0;
+      const addonsPrice =
+        item.selectedAddons?.reduce((a, addon) => a + addon.price, 0) || 0;
       return sum + (item.price + addonsPrice) * item.quantity;
     }, 0);
   },
@@ -136,7 +169,7 @@ interface FilterState {
   isNonVegOnly: boolean;
   searchQuery: string;
   selectedCategory: string;
-  
+
   // Actions
   setVegFilter: (veg: boolean) => void;
   setNonVegFilter: (nonVeg: boolean) => void;
@@ -148,17 +181,18 @@ interface FilterState {
 export const useFilterStore = create<FilterState>((set) => ({
   isVegOnly: false,
   isNonVegOnly: false,
-  searchQuery: '',
-  selectedCategory: 'all',
+  searchQuery: "",
+  selectedCategory: "all",
 
   setVegFilter: (veg) => set({ isVegOnly: veg, isNonVegOnly: false }),
   setNonVegFilter: (nonVeg) => set({ isNonVegOnly: nonVeg, isVegOnly: false }),
   setSearchQuery: (query) => set({ searchQuery: query }),
   setSelectedCategory: (category) => set({ selectedCategory: category }),
-  clearFilters: () => set({
-    isVegOnly: false,
-    isNonVegOnly: false,
-    searchQuery: '',
-    selectedCategory: 'all'
-  }),
+  clearFilters: () =>
+    set({
+      isVegOnly: false,
+      isNonVegOnly: false,
+      searchQuery: "",
+      selectedCategory: "all",
+    }),
 }));
