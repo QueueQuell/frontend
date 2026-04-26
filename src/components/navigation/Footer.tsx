@@ -12,7 +12,10 @@ export default function Footer() {
       }}
     >
       <Typography variant="body2" sx={{ fontSize: 13, color: "#777" }}>
-        © {new Date().getFullYear()} QueueQuell — Built with Next.js
+        © {new Date().getFullYear()} QueueQuell®
+      </Typography>
+      <Typography variant="body2" sx={{ fontSize: 13, color: "#777" }}>
+        Built with Love and Compassion
       </Typography>
     </Box>
   );
