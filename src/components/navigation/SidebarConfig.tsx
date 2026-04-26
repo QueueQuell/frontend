@@ -72,7 +72,6 @@ const ALL_SIDEBAR_ITEMS: SidebarItem[] = [
     href: "/catalog",
     subItems: createSubItems("/catalog", [
       ["Items", "/items/list"],
-      ["Create Item", "/items/create"],
       ["Categories", "/categories/list"],
     ]),
   },

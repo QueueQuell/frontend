@@ -9,8 +9,8 @@ import PeopleIcon from "@mui/icons-material/People";
 import SaveIcon from "@mui/icons-material/Save";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import SnackbarAlert from "@/components/ui/SnackbarAlert";
 import {
-  Alert,
   Box,
   Button,
   CircularProgress,
@@ -49,8 +49,11 @@ interface FieldError {
 
 export default function CreateUserPage() {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: "success" | "error";
+  }>({ open: false, message: "", severity: "success" });
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [showPassword, setShowPassword] = useState(false);
 
@@ -80,11 +83,14 @@ export default function CreateUserPage() {
     }
   };
 
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
     setFieldErrors({});
-    setSuccess(false);
+    setSnackbar({ open: false, message: "", severity: "success" });
 
     try {
       setLoading(true);
@@ -99,7 +105,11 @@ export default function CreateUserPage() {
       } as UserCreate);
 
       if (response.success) {
-        setSuccess(true);
+        setSnackbar({
+          open: true,
+          message: "User created successfully!",
+          severity: "success",
+        });
         router.push("/administrator/users/list");
         setFormData({
           email: "",
@@ -117,18 +127,34 @@ export default function CreateUserPage() {
             errors[err.field] = err.message;
           });
           setFieldErrors(errors);
-          setError(response.message || "Validation failed");
+          setSnackbar({
+            open: true,
+            message: response.message || "Validation failed",
+            severity: "error",
+          });
         } else {
-          setError(response.message || "Failed to create user");
+          setSnackbar({
+            open: true,
+            message: response.message || "Failed to create user",
+            severity: "error",
+          });
         }
       }
     } catch (err: any) {
       const errorData = err as ApiError;
       if (errorData.status === 403) {
         if (errorData.message?.includes("limit")) {
-          setError("User creation limit reached for this organisation");
+          setSnackbar({
+            open: true,
+            message: "User creation limit reached for this organisation",
+            severity: "error",
+          });
         } else {
-          setError("Access denied: Insufficient permissions to create user");
+          setSnackbar({
+            open: true,
+            message: "Access denied: Insufficient permissions to create user",
+            severity: "error",
+          });
         }
       } else if (errorData.errors && Array.isArray(errorData.errors)) {
         const errors: Record<string, string> = {};
@@ -136,9 +162,17 @@ export default function CreateUserPage() {
           errors[error.field] = error.message;
         });
         setFieldErrors(errors);
-        setError(errorData.message || "Validation failed");
+        setSnackbar({
+          open: true,
+          message: errorData.message || "Validation failed",
+          severity: "error",
+        });
       } else {
-        setError(err.message || "Failed to create user");
+        setSnackbar({
+          open: true,
+          message: err.message || "Failed to create user",
+          severity: "error",
+        });
       }
     } finally {
       setLoading(false);
@@ -180,17 +214,6 @@ export default function CreateUserPage() {
           Back to List
         </Button>
       </Box>
-
-      {error && (
-        <Alert severity="error" sx={{ mb: 3 }}>
-          {error}
-        </Alert>
-      )}
-      {success && (
-        <Alert severity="success" sx={{ mb: 3 }}>
-          User created successfully!
-        </Alert>
-      )}
 
       <form onSubmit={handleSubmit}>
         <Paper sx={{ p: 3 }}>
@@ -328,6 +351,13 @@ export default function CreateUserPage() {
           </Box>
         </Paper>
       </form>
+
+      <SnackbarAlert
+        open={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        onClose={handleSnackbarClose}
+      />
 
       <PageFooter
         backHref="/administrator/users/list"

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import SnackbarAlert from "@/components/ui/SnackbarAlert";
 import {
   Typography,
   Box,
@@ -24,7 +25,6 @@ import {
   DialogContentText,
   DialogActions,
   Button,
-  Snackbar,
   Divider,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
@@ -387,20 +387,12 @@ export default function UserListPage() {
         </DialogActions>
       </Dialog>
 
-      <Snackbar
+      <SnackbarAlert
         open={snackbar.open}
-        autoHideDuration={3000}
+        message={snackbar.message}
+        severity={snackbar.severity}
         onClose={handleSnackbarClose}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity={snackbar.severity}
-          sx={{ width: "100%" }}
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
+      />
 
       <PageFooter backHref="/administrator" backText="Back to Administrator" />
     </Box>

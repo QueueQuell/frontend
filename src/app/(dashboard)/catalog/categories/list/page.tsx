@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import SnackbarAlert from "@/components/ui/SnackbarAlert";
 import {
   Typography,
   Box,
@@ -24,7 +25,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
-  Snackbar,
   Divider,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
@@ -343,19 +343,12 @@ export default function CategoriesListPage() {
         </DialogActions>
       </Dialog>
 
-      <Snackbar
+      <SnackbarAlert
         open={snackbar.open}
-        autoHideDuration={6000}
+        message={snackbar.message}
+        severity={snackbar.severity}
         onClose={handleSnackbarClose}
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity={snackbar.severity}
-          sx={{ width: "100%" }}
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
+      />
 
       <PageFooter backHref="/catalog" backText="Back to Catalog" />
     </Box>

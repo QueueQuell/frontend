@@ -15,7 +15,6 @@ import {
   DialogContentText,
   DialogActions,
   Button,
-  Snackbar,
   Chip,
   Grid,
 } from "@mui/material";
@@ -27,6 +26,7 @@ import { qrService } from "@/lib/api/services/qr.service";
 import type { AdminQRListItem } from "@/lib/api/types";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import PageFooter from "@/components/ui/PageFooter";
+import SnackbarAlert from "@/components/ui/SnackbarAlert";
 
 export default function QREditPage() {
   const params = useParams();
@@ -317,15 +317,12 @@ export default function QREditPage() {
         </DialogActions>
       </Dialog>
 
-      <Snackbar
+      <SnackbarAlert
         open={snackbar.open}
-        autoHideDuration={6000}
+        message={snackbar.message}
+        severity={snackbar.severity}
         onClose={handleSnackbarClose}
-      >
-        <Alert onClose={handleSnackbarClose} severity={snackbar.severity}>
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
+      />
 
       <PageFooter backHref="/qr/list" backText="Back to QR List" />
     </Box>

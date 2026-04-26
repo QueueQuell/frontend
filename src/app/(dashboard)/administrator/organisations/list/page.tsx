@@ -24,7 +24,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
-  Snackbar,
   Divider,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
@@ -38,6 +37,7 @@ import Breadcrumb from "@/components/ui/Breadcrumb";
 import PageFooter from "@/components/ui/PageFooter";
 import { organisationService } from "@/lib/api/services/organisation.service";
 import type { Organisation } from "@/lib/api/types";
+import SnackbarAlert from "@/components/ui/SnackbarAlert";
 
 export default function OrganisationListPage() {
   const [organisations, setOrganisations] = useState<Organisation[]>([]);
@@ -380,19 +380,12 @@ export default function OrganisationListPage() {
         </DialogActions>
       </Dialog>
 
-      <Snackbar
+      <SnackbarAlert
         open={snackbar.open}
-        autoHideDuration={6000}
+        message={snackbar.message}
+        severity={snackbar.severity}
         onClose={handleSnackbarClose}
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity={snackbar.severity}
-          sx={{ width: "100%" }}
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
+      />
 
       <PageFooter backHref="/administrator" backText="Back to Administrator" />
     </Box>

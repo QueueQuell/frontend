@@ -24,7 +24,6 @@ import {
   DialogContentText,
   DialogActions,
   Button,
-  Snackbar,
   Link,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
@@ -41,6 +40,7 @@ import { qrService } from "@/lib/api/services/qr.service";
 import { AdminQRListItem } from "@/lib/api/types";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import PageFooter from "@/components/ui/PageFooter";
+import SnackbarAlert from "@/components/ui/SnackbarAlert";
 
 export default function QRListPage() {
   const [qrCodes, setQrCodes] = useState<AdminQRListItem[]>([]);
@@ -579,19 +579,12 @@ export default function QRListPage() {
         </DialogActions>
       </Dialog>
 
-      <Snackbar
+      <SnackbarAlert
         open={snackbar.open}
-        autoHideDuration={6000}
+        message={snackbar.message}
+        severity={snackbar.severity}
         onClose={handleSnackbarClose}
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity={snackbar.severity}
-          sx={{ width: "100%" }}
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
+      />
 
       <PageFooter backHref="/qr" backText="Back to QR Management" />
     </Box>

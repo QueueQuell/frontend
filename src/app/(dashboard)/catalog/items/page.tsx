@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import SnackbarAlert from "@/components/ui/SnackbarAlert";
 import {
   Typography,
   Box,
@@ -24,7 +25,6 @@ import {
   DialogContentText,
   DialogActions,
   Button,
-  Snackbar,
   Divider,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
@@ -97,8 +97,9 @@ export default function ItemsListPage() {
         const query = searchQuery.toLowerCase();
         return (
           item.name.toLowerCase().includes(query) ||
-          (item.category && item.category.toLowerCase().includes(query)) ||
-          (item.type && item.type.toLowerCase().includes(query))
+          item.category?.name?.toLowerCase().includes(query) ||
+          item.category?.id?.toLowerCase().includes(query) ||
+          item.type?.toLowerCase().includes(query)
         );
       })
     : [];
@@ -235,14 +236,19 @@ export default function ItemsListPage() {
                     <TableCell>Name</TableCell>
                     <TableCell>Category</TableCell>
                     <TableCell align="right">Unit Cost</TableCell>
-                    <TableCell>Location</TableCell>
+                    <TableCell>Type</TableCell>
+                    <TableCell>Cuisine</TableCell>
+                    <TableCell>Status</TableCell>
+                    <TableCell>Active</TableCell>
+                    <TableCell align="right">Price</TableCell>
+                    <TableCell align="right">Description</TableCell>
                     <TableCell align="center">Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {paginatedItems.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={8} align="center">
+                      <TableCell colSpan={10} align="center">
                         <Typography
                           variant="body2"
                           color="text.secondary"
@@ -261,17 +267,44 @@ export default function ItemsListPage() {
                         <TableCell>{item.name}</TableCell>
                         <TableCell>
                           <Chip
-                            label={item.section}
+                            label={
+                              item.category?.name ||
+                              item.category?.id ||
+                              "Uncategorized"
+                            }
                             size="small"
                             color="primary"
                           />
                         </TableCell>
-                        <TableCell align="right">
-                          ₹{(item.price || 0).toFixed(2)}
+                        <TableCell>{item.type || "Regular"}</TableCell>
+                        <TableCell>
+                          <Chip
+                            label={
+                              (item.isAvailable ?? item.active)
+                                ? "Available"
+                                : "Unavailable"
+                            }
+                            size="small"
+                            color={
+                              (item.isAvailable ?? item.active)
+                                ? "success"
+                                : "error"
+                            }
+                          />
                         </TableCell>
                         <TableCell>
+                          <Chip
+                            label={item.active ? "Yes" : "No"}
+                            size="small"
+                            color={item.active ? "success" : "default"}
+                          />
+                        </TableCell>
+                        <TableCell align="right">
+                          ₹{item.basePrice?.toFixed(2) ?? 0}
+                        </TableCell>
+                        <TableCell align="right">
                           {item.description
-                            ? item.description.substring(0, 50) + "..."
+                            ? item.description.substring(0, 30) + "..."
                             : "No description"}
                         </TableCell>
                         <TableCell align="center">
@@ -352,19 +385,12 @@ export default function ItemsListPage() {
         </DialogActions>
       </Dialog>
 
-      <Snackbar
+      <SnackbarAlert
         open={snackbar.open}
-        autoHideDuration={6000}
+        message={snackbar.message}
+        severity={snackbar.severity}
         onClose={handleSnackbarClose}
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity={snackbar.severity}
-          sx={{ width: "100%" }}
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
+      />
 
       <PageFooter backHref="/catalog" backText="Back to Catalog" />
     </Box>
