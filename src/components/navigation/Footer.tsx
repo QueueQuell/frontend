@@ -5,7 +5,7 @@ export default function Footer() {
     <Box
       component="footer"
       sx={{
-        backgroundColor: "#f1f3f5",
+        bgcolor: "#f1f3f5",
         borderTop: "1px solid #e6e6e6",
         p: 1.5,
         textAlign: "center",
@@ -13,8 +13,7 @@ export default function Footer() {
     >
       <Typography variant="body2" sx={{ fontSize: 13, color: "#777" }}>
         © {new Date().getFullYear()} QueueQuell®
-      </Typography>
-      <Typography variant="body2" sx={{ fontSize: 13, color: "#777" }}>
+        <br />
         Built with Love and Compassion
       </Typography>
     </Box>
