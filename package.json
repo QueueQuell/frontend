@@ -4,28 +4,36 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "dev:local": "cross-env NODE_ENV=development next dev --turbopack",
+    "dev:local": "cross-env NODE_ENV=local next dev --turbopack",
+    "dev:dev": "cross-env NODE_ENV=development next dev --turbopack",
     "dev:prod": "cross-env NODE_ENV=production next dev --turbopack",
     "build": "next build --turbopack",
     "build:dev": "cross-env NODE_ENV=development next build --turbopack",
     "build:prod": "cross-env NODE_ENV=production next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:e2e": "testcafe chrome tests/fixtures/ -S -s path=screenshots,path=videos",
+    "test:e2e:headless": "testcafe chrome:headless tests/fixtures/ -S -s path=screenshots,path=videos",
+    "test:e2e:live": "testcafe chrome tests/fixtures/ --live"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@fontsource/inter": "^5.2.8",
     "@fontsource/roboto": "^5.2.8",
+    "@hookform/resolvers": "^5.2.2",
     "@mui/icons-material": "^7.3.4",
     "@mui/material": "^7.3.4",
+    "@tanstack/react-query": "^5.99.0",
     "framer-motion": "^12.23.24",
     "lucide-react": "^0.546.0",
     "next": "^16.0.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-hook-form": "^7.72.1",
     "react-icons": "^5.5.0",
     "swr": "^2.3.6",
+    "zod": "^4.3.6",
     "zustand": "^5.0.11"
   },
   "devDependencies": {
@@ -37,6 +45,9 @@
     "cross-env": "^7.0.3",
     "eslint": "^9",
     "eslint-config-next": "^16.0.0",
+    "testcafe": "^3.7.4",
+    "testcafe-reporter-json": "^2.2.0",
+    "testcafe-reporter-spec": "^2.2.0",
     "typescript": "^5"
   }
 }

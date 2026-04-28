@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import SnackbarAlert from "@/components/ui/SnackbarAlert";
 import {
   Typography,
   Box,
@@ -11,40 +12,64 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Button,
+  TablePagination,
   Chip,
-  CircularProgress,
   IconButton,
+  CircularProgress,
+  Alert,
+  TextField,
+  InputAdornment,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button,
+  Divider,
 } from "@mui/material";
-import Link from "next/link";
-import PeopleIcon from "@mui/icons-material/People";
+import SearchIcon from "@mui/icons-material/Search";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import Link from "next/link";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import PageFooter from "@/components/ui/PageFooter";
-import {
-  userService,
-  AdminUser,
-  AdminUserListResponse,
-} from "@/lib/api/services/user.service";
+import { adminService } from "@/lib/api/services/admin.service";
+import type { User } from "@/lib/api/types";
 
 export default function UserListPage() {
-  const [users, setUsers] = useState<AdminUser[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(1);
-  const [limit] = useState(10);
+  const [error, setError] = useState<string>("");
+  const [page, setPage] = useState<number>(0);
+  const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [deleteDialog, setDeleteDialog] = useState<
+    | {
+        open: false;
+      }
+    | {
+        open: true;
+        userId: string;
+        userName: string;
+      }
+  >({ open: false });
+  const [deleting, setDeleting] = useState(false);
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: "success" | "error";
+  }>({ open: false, message: "", severity: "success" });
 
   const fetchUsers = async () => {
+    setLoading(true);
+    setError("");
     try {
-      setLoading(true);
-      const response = await userService.getAdminUsers({ page, limit });
-
+      const response = await adminService.listUsers({ page: 1, limit: 100 });
       if (response.success && response.data) {
-        setUsers(response.data.data || []);
-        setTotal(response.data.total || 0);
+        setUsers(response.data as User[]);
       } else {
         setError(response.message || "Failed to fetch users");
       }
@@ -57,9 +82,71 @@ export default function UserListPage() {
 
   useEffect(() => {
     fetchUsers();
-  }, [page]);
+  }, []);
+
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const filteredUsers = users.filter((user) => {
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      user.email.toLowerCase().includes(query) ||
+      user.role.toLowerCase().includes(query)
+    );
+  });
+
+  const paginatedUsers = filteredUsers.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage,
+  );
+
+  const handleDeleteOpen = (userId: string, userName: string) => {
+    setDeleteDialog({ open: true, userId, userName });
+  };
+
+  const handleDeleteClose = () => {
+    setDeleteDialog({ open: false });
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (deleteDialog.open && deleteDialog.userId) {
+      try {
+        setDeleting(true);
+        await adminService.deleteUser(deleteDialog.userId);
+        setSnackbar({
+          open: true,
+          message: "User deleted successfully",
+          severity: "success",
+        });
+        fetchUsers();
+        handleDeleteClose();
+      } catch (err: any) {
+        setSnackbar({
+          open: true,
+          message: err.message || "Failed to delete user",
+          severity: "error",
+        });
+      } finally {
+        setDeleting(false);
+      }
+    }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
 
   const formatDate = (dateString: string) => {
+    if (!dateString) return "-";
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
@@ -69,20 +156,20 @@ export default function UserListPage() {
 
   const getRoleColor = (role: string) => {
     switch (role) {
-      case "SUPER_ADMIN":
+      case "SuperAdmin":
         return "error";
-      case "ADMIN":
+      case "Admin":
         return "warning";
-      case "OWNER":
+      case "Owner":
         return "info";
-      case "MANAGER":
+      case "Manager":
         return "primary";
-      case "CHEF":
+      case "Chef":
         return "success";
-      case "WAITER":
-        return "info";
-      case "DELIVERY_PERSONNEL":
+      case "Waiter":
         return "secondary";
+      case "DeliveryPersonnel":
+        return "info";
       default:
         return "default";
     }
@@ -92,149 +179,220 @@ export default function UserListPage() {
     return status === "active" ? "success" : "default";
   };
 
-  if (loading && users.length === 0) {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: "400px",
-        }}
-      >
-        <CircularProgress />
-      </Box>
-    );
-  }
-
-  if (error) {
-    return (
-      <Box sx={{ p: 3 }}>
-        <Typography color="error">{error}</Typography>
-        <Button onClick={fetchUsers} sx={{ mt: 2 }}>
-          Retry
-        </Button>
-      </Box>
-    );
-  }
-
   return (
     <Box sx={{ p: 3 }}>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          mb: 3,
-        }}
-      >
-        <Breadcrumb
-          items={[
-            { label: "Home", href: "/home" },
-            { label: "Administrator", href: "/administrator" },
-            { label: "Users", href: "/administrator/users/list" },
-            { label: "List" },
-          ]}
-        />
-        <Button
-          component={Link}
-          href="/administrator/users/create"
-          variant="contained"
-          startIcon={<AddIcon />}
+      <Breadcrumb
+        items={[
+          { label: "Home", href: "/home" },
+          { label: "Administrator", href: "/administrator" },
+          { label: "Users" },
+        ]}
+      />
+
+      <Paper sx={{ p: 3, mb: 3 }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            mb: 3,
+          }}
         >
-          Add User
-        </Button>
-      </Box>
-
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 3 }}>
-        <PeopleIcon sx={{ fontSize: 32, color: "primary.main" }} />
-        <Typography variant="h4" sx={{ fontWeight: 600 }}>
-          Users
-        </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
-          ({total} total)
-        </Typography>
-      </Box>
-
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>User ID</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Role</TableCell>
-              <TableCell>Organisation ID</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Created At</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {users.map((user) => (
-              <TableRow key={user._id}>
-                <TableCell>{user._id}</TableCell>
-                <TableCell>{user.fullName}</TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>
-                  <Chip
-                    label={user.role.replace(/_/g, " ")}
-                    color={getRoleColor(user.role)}
-                    size="small"
-                  />
-                </TableCell>
-                <TableCell>{user.organisationId}</TableCell>
-                <TableCell>
-                  <Chip
-                    label={user.status}
-                    color={getStatusColor(user.status)}
-                    size="small"
-                  />
-                </TableCell>
-                <TableCell>{formatDate(user.createdAt)}</TableCell>
-                <TableCell>
-                  <IconButton size="small">
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton size="small" color="error">
-                    <DeleteIcon />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
-      {users.length === 0 && (
-        <Box sx={{ textAlign: "center", py: 4 }}>
-          <Typography variant="body1" color="text.secondary">
-            No users found
+          <Typography variant="h6" gutterBottom>
+            Users ({filteredUsers.length} total)
           </Typography>
+          <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+            <TextField
+              size="small"
+              placeholder="Search users by name or email..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+              sx={{ width: 300 }}
+            />
+            <Button
+              variant="outlined"
+              size="small"
+              startIcon={<RefreshIcon />}
+              onClick={fetchUsers}
+              disabled={loading}
+            >
+              Refresh
+            </Button>
+            <Button
+              component={Link}
+              href="/administrator/users/create"
+              variant="contained"
+              size="small"
+              startIcon={<AddIcon />}
+            >
+              Add User
+            </Button>
+          </Box>
         </Box>
-      )}
 
-      {total > limit && (
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 2, gap: 1 }}>
-          <Button
-            disabled={page === 1}
-            onClick={() => setPage(page - 1)}
-            variant="outlined"
-          >
-            Previous
+        <Divider sx={{ mb: 3 }} />
+
+        {error && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
+
+        {loading ? (
+          <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
+            <CircularProgress />
+          </Box>
+        ) : (
+          <>
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>User ID</TableCell>
+                    <TableCell>First Name</TableCell>
+                    <TableCell>Last Name</TableCell>
+                    <TableCell>Email</TableCell>
+                    <TableCell>Role</TableCell>
+                    <TableCell>Organisation ID</TableCell>
+                    <TableCell>Status</TableCell>
+                    <TableCell>Created At</TableCell>
+                    <TableCell align="center">Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {paginatedUsers.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={8} align="center">
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          sx={{ py: 4 }}
+                        >
+                          No users found
+                        </Typography>
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    paginatedUsers.map((user) => (
+                      <TableRow key={user.id} hover>
+                        <TableCell>
+                          <Typography variant="body2">{user.id}</Typography>
+                        </TableCell>
+                        <TableCell>{user.firstName}</TableCell>
+                        <TableCell>{user.lastName}</TableCell>
+                        <TableCell>{user.email}</TableCell>
+                        <TableCell>
+                          <Chip
+                            label={user.role.replace(/_/g, " ")}
+                            color={getRoleColor(user.role)}
+                            size="small"
+                          />
+                        </TableCell>
+                        <TableCell>{user.organisationId}</TableCell>
+                        <TableCell>
+                          <Chip
+                            label={user.status}
+                            color={getStatusColor(user.status)}
+                            size="small"
+                          />
+                        </TableCell>
+                        <TableCell>{formatDate(user.createdAt)}</TableCell>
+                        <TableCell align="center">
+                          <IconButton
+                            component={Link}
+                            href={`/administrator/users/${user.id}`}
+                            size="small"
+                            title="View"
+                          >
+                            <VisibilityIcon fontSize="small" />
+                          </IconButton>
+                          <IconButton
+                            component={Link}
+                            href={`/administrator/users/${user.id}/edit`}
+                            color="primary"
+                            size="small"
+                            title="Edit"
+                          >
+                            <EditIcon fontSize="small" />
+                          </IconButton>
+                          <IconButton
+                            size="small"
+                            color="error"
+                            onClick={() =>
+                              handleDeleteOpen(
+                                user.id,
+                                `${user.firstName} ${user.lastName}`,
+                              )
+                            }
+                            title="Delete"
+                          >
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 25, 50]}
+              component="div"
+              count={filteredUsers.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+          </>
+        )}
+      </Paper>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteDialog.open}
+        onClose={handleDeleteClose}
+        aria-labelledby="delete-dialog-title"
+        aria-describedby="delete-dialog-description"
+      >
+        <DialogTitle id="delete-dialog-title">Confirm Delete</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="delete-dialog-description">
+            Are you sure you want to delete "
+            {deleteDialog.open ? deleteDialog.userName : ""}"? This action
+            cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDeleteClose} disabled={deleting}>
+            Cancel
           </Button>
-          <Typography sx={{ display: "flex", alignItems: "center", px: 2 }}>
-            Page {page} of {Math.ceil(total / limit)}
-          </Typography>
           <Button
-            disabled={page * limit >= total}
-            onClick={() => setPage(page + 1)}
-            variant="outlined"
+            onClick={handleDeleteConfirm}
+            color="error"
+            variant="contained"
+            disabled={deleting}
+            autoFocus
           >
-            Next
+            {deleting ? "Deleting..." : "Delete"}
           </Button>
-        </Box>
-      )}
+        </DialogActions>
+      </Dialog>
+
+      <SnackbarAlert
+        open={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        onClose={handleSnackbarClose}
+      />
 
       <PageFooter backHref="/administrator" backText="Back to Administrator" />
     </Box>

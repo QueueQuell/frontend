@@ -9,7 +9,7 @@ import AddIcon from "@mui/icons-material/Add";
 
 const itemActions = [
   {
-    href: "/catalog/items",
+    href: "/catalog/items/list",
     label: "Menu Items",
     icon: RestaurantMenuIcon,
     description: "Browse complete menu items",

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import SnackbarAlert from "@/components/ui/SnackbarAlert";
 import {
   Typography,
   Box,
@@ -35,12 +36,19 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import Link from "next/link";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import PageFooter from "@/components/ui/PageFooter";
-import { organisationService } from "@/lib/api/services/organisation.service";
-import type { Organisation } from "@/lib/api/types";
-import SnackbarAlert from "@/components/ui/SnackbarAlert";
+import { categoryService } from "@/lib/api/services/category.service";
+import type { Category } from "@/lib/api/types";
 
-export default function OrganisationListPage() {
-  const [organisations, setOrganisations] = useState<Organisation[]>([]);
+interface CategoryListItem {
+  id: string;
+  name: string;
+  description?: string;
+  displayOrder: number;
+  active: boolean;
+}
+
+export default function CategoriesListPage() {
+  const [categories, setCategories] = useState<CategoryListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
 
@@ -49,7 +57,7 @@ export default function OrganisationListPage() {
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const [deleteDialog, setDeleteDialog] = useState<
-    { open: false } | { open: true; orgId: string; orgName: string }
+    { open: false } | { open: true; categoryId: string; categoryName: string }
   >({ open: false });
   const [deleting, setDeleting] = useState(false);
   const [snackbar, setSnackbar] = useState<{
@@ -58,27 +66,27 @@ export default function OrganisationListPage() {
     severity: "success" | "error";
   }>({ open: false, message: "", severity: "success" });
 
-  const fetchOrganisations = async () => {
+  const fetchCategories = async () => {
     setLoading(true);
     setError("");
 
     try {
-      const response = await organisationService.getOrganisations();
+      const response = await categoryService.getAll();
       if (response.success && response.data) {
-        const orgData = Array.isArray(response.data) ? response.data : [];
-        setOrganisations(orgData as Organisation[]);
+        const categoryData = Array.isArray(response.data) ? response.data : [];
+        setCategories(categoryData as CategoryListItem[]);
       } else {
-        setError(response.message || "Failed to fetch organisations");
+        setError(response.message || "Failed to fetch categories");
       }
     } catch (err: any) {
-      setError(err.message || "Failed to fetch organisations");
+      setError(err.message || "Failed to fetch categories");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchOrganisations();
+    fetchCategories();
   }, []);
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -92,23 +100,22 @@ export default function OrganisationListPage() {
     setPage(0);
   };
 
-  const filteredOrganisations = organisations.filter((org) => {
+  const filteredCategories = categories.filter((category) => {
     if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
     return (
-      org.organisationName.toLowerCase().includes(query) ||
-      org.displayName.toLowerCase().includes(query) ||
-      org.email?.toLowerCase().includes(query)
+      category.name.toLowerCase().includes(query) ||
+      category.description?.toLowerCase().includes(query)
     );
   });
 
-  const paginatedOrganisations = filteredOrganisations.slice(
+  const paginatedCategories = filteredCategories.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage,
   );
 
-  const handleDeleteOpen = (orgId: string, orgName: string) => {
-    setDeleteDialog({ open: true, orgId, orgName });
+  const handleDeleteOpen = (categoryId: string, categoryName: string) => {
+    setDeleteDialog({ open: true, categoryId, categoryName });
   };
 
   const handleDeleteClose = () => {
@@ -116,21 +123,21 @@ export default function OrganisationListPage() {
   };
 
   const handleDeleteConfirm = async () => {
-    if (deleteDialog.open && deleteDialog.orgId) {
+    if (deleteDialog.open && deleteDialog.categoryId) {
       try {
         setDeleting(true);
-        await organisationService.deleteOrganisation(deleteDialog.orgId);
+        await categoryService.delete(deleteDialog.categoryId);
         setSnackbar({
           open: true,
-          message: "Organisation deleted successfully",
+          message: "Category deleted successfully",
           severity: "success",
         });
-        fetchOrganisations();
+        fetchCategories();
         handleDeleteClose();
       } catch (err: any) {
         setSnackbar({
           open: true,
-          message: err.message || "Failed to delete organisation",
+          message: err.message || "Failed to delete category",
           severity: "error",
         });
       } finally {
@@ -143,21 +150,8 @@ export default function OrganisationListPage() {
     setSnackbar({ ...snackbar, open: false });
   };
 
-  const formatDate = (dateString: string) => {
-    if (!dateString) return "-";
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
-
-  const getTypeColor = (type: string) => {
-    return type === "company" ? "primary" : "secondary";
-  };
-
-  const getStatusColor = (status: string) => {
-    return status === "active" ? "success" : "default";
+  const getStatusColor = (active: boolean) => {
+    return active ? "success" : "default";
   };
 
   return (
@@ -165,8 +159,8 @@ export default function OrganisationListPage() {
       <Breadcrumb
         items={[
           { label: "Home", href: "/home" },
-          { label: "Administrator", href: "/administrator" },
-          { label: "Organisations" },
+          { label: "Catalog", href: "/catalog" },
+          { label: "Categories" },
         ]}
       />
 
@@ -180,12 +174,12 @@ export default function OrganisationListPage() {
           }}
         >
           <Typography variant="h6" gutterBottom>
-            Organisations ({filteredOrganisations.length} total)
+            Categories ({filteredCategories.length} total)
           </Typography>
           <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
             <TextField
               size="small"
-              placeholder="Search organisations by name or email..."
+              placeholder="Search categories by name..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               InputProps={{
@@ -201,19 +195,19 @@ export default function OrganisationListPage() {
               variant="outlined"
               size="small"
               startIcon={<RefreshIcon />}
-              onClick={fetchOrganisations}
+              onClick={fetchCategories}
               disabled={loading}
             >
               Refresh
             </Button>
             <Button
               component={Link}
-              href="/administrator/organisations/create"
+              href="/catalog/categories/create"
               variant="contained"
               size="small"
               startIcon={<AddIcon />}
             >
-              Add Organisation
+              Add Category
             </Button>
           </Box>
         </Box>
@@ -236,74 +230,43 @@ export default function OrganisationListPage() {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell>Organisation Name</TableCell>
-                    <TableCell>Display Name</TableCell>
-                    <TableCell>Type</TableCell>
-                    <TableCell>Tier</TableCell>
-                    <TableCell>Location</TableCell>
-                    <TableCell>Phone</TableCell>
-                    <TableCell>Email</TableCell>
+                    <TableCell>Name</TableCell>
+                    <TableCell>Description</TableCell>
+                    <TableCell>Display Order</TableCell>
                     <TableCell>Status</TableCell>
-                    <TableCell>Created At</TableCell>
                     <TableCell align="center">Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {paginatedOrganisations.length === 0 ? (
+                  {paginatedCategories.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={10} align="center">
+                      <TableCell colSpan={5} align="center">
                         <Typography
                           variant="body2"
                           color="text.secondary"
                           sx={{ py: 4 }}
                         >
-                          No organisations found
+                          No categories found
                         </Typography>
                       </TableCell>
                     </TableRow>
                   ) : (
-                    paginatedOrganisations.map((org) => (
-                      <TableRow key={org.id} hover>
-                        <TableCell>{org.organisationName}</TableCell>
-                        <TableCell>{org.displayName}</TableCell>
+                    paginatedCategories.map((category) => (
+                      <TableRow key={category.id} hover>
+                        <TableCell>{category.name}</TableCell>
+                        <TableCell>{category.description || "-"}</TableCell>
+                        <TableCell>{category.displayOrder}</TableCell>
                         <TableCell>
                           <Chip
-                            label={org.type}
-                            color={getTypeColor(org.type)}
+                            label={category.active ? "Active" : "Inactive"}
+                            color={getStatusColor(category.active)}
                             size="small"
                           />
                         </TableCell>
-                        <TableCell>
-                          <Chip
-                            label={org.tier}
-                            color={
-                              org.tier === "enterprise"
-                                ? "primary"
-                                : org.tier === "pro"
-                                  ? "secondary"
-                                  : "default"
-                            }
-                            size="small"
-                          />
-                        </TableCell>
-                        <TableCell>
-                          {org.address?.city}, {org.address?.state},{" "}
-                          {org.address?.country}
-                        </TableCell>
-                        <TableCell>{org.primaryPhone}</TableCell>
-                        <TableCell>{org.email}</TableCell>
-                        <TableCell>
-                          <Chip
-                            label={org.status}
-                            color={getStatusColor(org.status)}
-                            size="small"
-                          />
-                        </TableCell>
-                        <TableCell>{formatDate(org.createdAt)}</TableCell>
                         <TableCell align="center">
                           <IconButton
                             component={Link}
-                            href={`/administrator/organisations/${org.id}`}
+                            href={`/catalog/categories/${category.id}`}
                             size="small"
                             title="View"
                           >
@@ -311,7 +274,7 @@ export default function OrganisationListPage() {
                           </IconButton>
                           <IconButton
                             component={Link}
-                            href={`/administrator/organisations/${org.id}/edit`}
+                            href={`/catalog/categories/${category.id}/edit`}
                             color="primary"
                             size="small"
                             title="Edit"
@@ -322,7 +285,7 @@ export default function OrganisationListPage() {
                             size="small"
                             color="error"
                             onClick={() =>
-                              handleDeleteOpen(org.id!, org.organisationName)
+                              handleDeleteOpen(category.id, category.name)
                             }
                             title="Delete"
                           >
@@ -339,7 +302,7 @@ export default function OrganisationListPage() {
             <TablePagination
               rowsPerPageOptions={[5, 10, 25, 50]}
               component="div"
-              count={filteredOrganisations.length}
+              count={filteredCategories.length}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}
@@ -360,8 +323,8 @@ export default function OrganisationListPage() {
         <DialogContent>
           <DialogContentText id="delete-dialog-description">
             Are you sure you want to delete "
-            {deleteDialog.open ? deleteDialog.orgName : ""}"? This action cannot
-            be undone.
+            {deleteDialog.open ? deleteDialog.categoryName : ""}"? This action
+            cannot be undone.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -387,7 +350,7 @@ export default function OrganisationListPage() {
         onClose={handleSnackbarClose}
       />
 
-      <PageFooter backHref="/administrator" backText="Back to Administrator" />
+      <PageFooter backHref="/catalog" backText="Back to Catalog" />
     </Box>
   );
 }

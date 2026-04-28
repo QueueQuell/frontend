@@ -9,6 +9,7 @@ import {
   Button,
   CircularProgress,
   Container,
+  Grid,
   IconButton,
   InputAdornment,
   Link,
@@ -19,13 +20,23 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 export default function SignInSide() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Auto-dismiss error after 5 seconds
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        setError(null);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -53,8 +64,8 @@ export default function SignInSide() {
 
     try {
       const response = await authService.login({
-        username_or_email: email,
-        password
+        email: email.trim(),
+        password,
       });
 
       if (response.success) {
@@ -62,7 +73,7 @@ export default function SignInSide() {
 
         // Get the 'next' parameter from URL
         const searchParams = new URLSearchParams(window.location.search);
-        const nextUrl = searchParams.get('next') || '/home';
+        const nextUrl = searchParams.get("next") || "/home";
 
         // Decode and redirect
         const decodedNext = decodeURIComponent(nextUrl);
@@ -71,7 +82,9 @@ export default function SignInSide() {
         setError("Login failed. Please try again.");
       }
     } catch (err: any) {
-      setError(err.message || "An error occurred during login. Please try again.");
+      setError(
+        err.message || "An error occurred during login. Please try again.",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -180,12 +193,20 @@ export default function SignInSide() {
             <TextField
               fullWidth
               id="email"
-              label="Email address"
+              label="Email"
               name="email"
+              type="email"
               autoComplete="email"
               autoFocus
               size="medium"
-              sx={{ mb: 2, minWidth: 400, '& .MuiOutlinedInput-root': { '& fieldset': { borderColor: 'gray' }, '&.Mui-focused fieldset': { borderColor: 'black' } } }}
+              sx={{
+                mb: 2,
+                minWidth: 400,
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": { borderColor: "gray" },
+                  "&.Mui-focused fieldset": { borderColor: "black" },
+                },
+              }}
             />
 
             <Box sx={{ mb: 2 }}>
@@ -196,7 +217,13 @@ export default function SignInSide() {
                 type={showPassword ? "text" : "password"}
                 placeholder="6+ characters"
                 size="medium"
-                sx={{ minWidth: 400, '& .MuiOutlinedInput-root': { '& fieldset': { borderColor: 'gray' }, '&.Mui-focused fieldset': { borderColor: 'black' } } }}
+                sx={{
+                  minWidth: 400,
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": { borderColor: "gray" },
+                    "&.Mui-focused fieldset": { borderColor: "black" },
+                  },
+                }}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -229,19 +256,30 @@ export default function SignInSide() {
                 "Sign in"
               )}
             </Button>
+
+            <Grid
+              container
+              justifyContent="flex-end"
+              sx={{ mt: 2, position: "relative" }}
+            >
+              {error && (
+                <Alert
+                  severity="error"
+                  onClose={() => setError(null)}
+                  sx={{
+                    mt: 2,
+                    position: "absolute",
+                    width: "100%",
+                    boxSizing: "border-box",
+                  }}
+                >
+                  {error}
+                </Alert>
+              )}
+            </Grid>
           </Box>
         </Box>
       </Box>
-      <Snackbar
-        open={!!error}
-        autoHideDuration={6000}
-        onClose={() => setError(null)}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-      >
-        <Alert onClose={() => setError(null)} severity="error" sx={{ width: "100%" }}>
-          {error}
-        </Alert>
-      </Snackbar>
     </Box>
   );
 }

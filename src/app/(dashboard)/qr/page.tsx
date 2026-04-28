@@ -17,7 +17,7 @@ const qrActions = [
   },
   {
     href: "/qr/list",
-    label: "List All QR Codes",
+    label: "QR Codes",
     icon: ListIcon,
     description: "View all generated QR codes",
   },

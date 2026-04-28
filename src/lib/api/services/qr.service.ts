@@ -7,6 +7,7 @@ import {
   AdminQRGenerateRequest,
   AdminQRGenerateResponse,
   AdminQRListResponse,
+  AdminQRListItem,
 } from "../types";
 
 export const qrService = {
@@ -32,6 +33,16 @@ export const qrService = {
 
   async getMenus() {
     return apiClient.get<QRCode[]>(QR_ENDPOINTS.MENUS);
+  },
+
+  // Deactivate QR
+  async deactivate(id: string) {
+    return apiClient.patch<AdminQRListItem>(QR_ENDPOINTS.DEACTIVATE(id));
+  },
+
+  // Reactivate QR
+  async reactivate(id: string) {
+    return apiClient.patch<AdminQRListItem>(QR_ENDPOINTS.REACTIVATE(id));
   },
 
   // Admin QR Generate

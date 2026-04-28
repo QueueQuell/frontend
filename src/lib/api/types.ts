@@ -2,56 +2,108 @@ export interface ApiError {
   success: false;
   message: string;
   errors?: Record<string, string[]>;
+  status?: number;
 }
 
 // Authentication Types
 export interface LoginRequest {
-  username_or_email: string;
+  email: string;
   password: string;
 }
 
-export interface Auth {
-  access_token: string;
-  refresh_token: string;
-  token_type?: string;
+export interface AuthDetails {
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: number;
+  tokenType: string;
 }
 
-export interface UserDetails {
-  initial: string;
-  firstname: string;
-  lastname: string;
+export interface User {
+  id: string;
   email: string;
-  phone?: string;
-  address?: string;
-  role?: string;
+  title: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  role: string;
+  status: string;
+  organisationId: string;
+  isActive: boolean;
+  createdAt: string;
+  address: UserAddress;
+  org: UserOrg;
+  config: UserConfig;
 }
 
-export interface Config {
-  subscriptiondetail: string;
+export interface UserConfig {
+  theme: string;
+  language: string;
+  timezone?: string;
+  currency?: string;
+  notifications: {
+    email: boolean;
+    push: boolean;
+    sms: boolean;
+  };
+  dateFormat?: string;
+  showTutorial?: boolean;
+}
+
+export interface UserAddress {
+  addressLine1: string;
+  addressLine2?: string;
+  street: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
+  isVerified: boolean;
+}
+
+export interface UserOrg {
+  id: string;
+  name: string;
 }
 
 export interface LoginResponse {
-  auth: Auth;
-  userDetails: UserDetails;
-  config: Config;
+  authDetails: AuthDetails;
+  user: User;
 }
 
 export interface RefreshRequest {
   refresh_token: string;
 }
 
-export interface User {
-  id: string;
+export interface UserCreate {
   email: string;
-  name: string;
+  password: string;
+  title: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
   role: string;
+  address: UserAddress;
 }
 
-export interface UserCreate {
-  name: string;
-  email: string;
+export interface UserListParams {
+  page: number;
+  limit: number;
+  search?: string;
+  status?: string;
   role?: string;
-  password: string;
+}
+
+export interface Pagination {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages?: number;
+  hasNext?: boolean;
+  hasPrevious?: boolean;
+}
+
+export interface UserListResponse extends ApiResponse<User[]> {
+  pagination: Pagination;
 }
 
 export interface UserUpdate {
@@ -76,31 +128,121 @@ export interface OrgOut {
 }
 
 // Organisation Types based on API response
+export interface OrganisationAddress {
+  line1: string;
+  line2?: string;
+  city: string;
+  state: string;
+  pinCode?: string;
+  country: string;
+}
+
+export interface OrganisationPaymentDetails {
+  upiQR?: string;
+  upiId?: string;
+  merchantId?: string;
+  merchantName?: string;
+  enabledMethods?: string[];
+  gatewayKeys?: {
+    razorpayKey?: string;
+    stripeKey?: string;
+  };
+}
+
+export interface OrganisationUIDesign {
+  logoUrl?: string;
+  bannerUrl?: string;
+  primaryColor?: string;
+  secondaryColor?: string;
+  fontFamily?: string;
+  theme?: string;
+  menuLayout?: string;
+}
+
+export interface OrganisationBusiness {
+  isPremium?: boolean;
+  taxPercentage?: number;
+  taxLabel?: string;
+  currency?: string;
+  currencySymbol?: string;
+  packagingCharge?: number;
+  deliveryCharge?: number;
+  freeDeliveryAbove?: number;
+  minOrderAmount?: number;
+}
+
+export interface OrganisationFeatures {
+  videoMenuEnabled?: boolean;
+  multiLanguageEnabled?: boolean;
+  supportedLanguages?: string[];
+  ratingEnabled?: boolean;
+  reviewsEnabled?: boolean;
+  loyaltyEnabled?: boolean;
+  tableOrderingEnabled?: boolean;
+  takeawayEnabled?: boolean;
+  deliveryEnabled?: boolean;
+}
+
+export interface OrganisationTiming {
+  timezone?: string;
+  openTime?: string;
+  closeTime?: string;
+  weeklyOff?: string[];
+  holidays?: string[];
+}
+
+export interface OrganisationNotifications {
+  emailEnabled?: boolean;
+  smsEnabled?: boolean;
+  whatsappEnabled?: boolean;
+  notificationEmail?: string;
+  notificationPhone?: string;
+}
+
+export interface OrganisationQRConfig {
+  customBaseUrl?: string;
+  useCustomUrl?: boolean;
+}
+
+export interface OrganisationConfigurations {
+  uiDesign?: OrganisationUIDesign;
+  business?: OrganisationBusiness;
+  features?: OrganisationFeatures;
+  timing?: OrganisationTiming;
+  notifications?: OrganisationNotifications;
+  qrConfig?: OrganisationQRConfig;
+  limits?: {
+    maxUsers: number;
+    maxQRs: number;
+    maxBranches: number;
+  };
+}
+
 export interface Organisation {
-  _id: string;
+  id: string;
   parentOrgId: string | null;
   organisationName: string;
   displayName: string;
-  address: {
-    line1: string;
-    city: string;
-    state: string;
-    country: string;
-  };
-  primaryPhone: string;
-  email: string;
+  tagLine?: string;
+  logo?: string;
+  customDomain?: string;
   type: "company" | "branch";
+  tier: "basic" | "pro" | "enterprise";
+  primaryPhone?: string;
+  secondaryPhone?: string;
+  email?: string;
+  secondaryEmail?: string;
+  address: OrganisationAddress;
+  paymentDetails?: OrganisationPaymentDetails;
+  configurations?: OrganisationConfigurations;
   status: "active" | "inactive";
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
 }
 
-export interface OrganisationListResponse {
-  data: Organisation[];
-  total: number;
-  page: number;
-  limit: number;
+export interface OrganisationListResponse extends ApiResponse<Organisation[]> {
+  pagination: Pagination;
 }
 
 export interface StoreCreate {
@@ -246,21 +388,11 @@ export interface ValidationError {
  */
 export interface ApiResponse<T = any> {
   data?: T;
+  pagination?: Pagination;
   error?: string;
   message?: string;
-  success?: boolean;
+  success: boolean;
   errors?: { field: string; message: string }[];
-}
-
-/**
- * Paginated response wrapper
- */
-export interface PaginatedResponse<T = any> {
-  items: T[];
-  total: number;
-  page: number;
-  size: number;
-  hasMore?: boolean;
 }
 
 /**
@@ -298,14 +430,90 @@ export interface OrgMember {
 // Menu & Pricing Types
 // ============================================================================
 
-export interface MenuItem {
+export interface MenuItemType {
   id: string;
+  _id: string;
   name: string;
-  description?: string;
-  price: number;
+  description: string;
+  imageUrls: Array<{
+    url: string;
+    type: "primary" | "thumbnail" | "gallery";
+  }>;
+  cuisine: string;
+  type: string;
+  spicinessLevel: string;
+  preparationTime: number;
+  allergens: string[];
+  isVegetarian: boolean;
+  isVegan: boolean;
+  isGlutenFree: boolean;
+  dietaryTags: string[];
+  pricingModel: string;
+  basePrice: number;
+  currency: string;
+  active: boolean;
+  status: string;
+  variantGroups: Array<{
+    name: string;
+    isRequired: boolean;
+    selectionType: "single" | "multiple";
+    options: Array<{
+      name: string;
+      price: number;
+      calories: number;
+    }>;
+  }>;
+  addonGroups: Array<{
+    name: string;
+    selectionType: "single" | "multiple";
+    options: Array<{
+      name: string;
+      price: number;
+    }>;
+  }>;
+  components: Array<{
+    itemId: string;
+    quantity: number;
+    isOptional: boolean;
+  }>;
+  nutritionalInfo: {
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+    sugar: number;
+  };
+  availability: {
+    days: string[];
+    startTime: string;
+    endTime: string;
+  };
+  rating: {
+    average: number;
+    count: number;
+  };
+  isRecommended: boolean;
+  isPopular: boolean;
+  organisationId: string;
+  category: {
+    id: string;
+    name: string;
+  };
   section?: string;
-  is_available: boolean;
-  image_url?: string;
+  imageUrl?: string;
+  price?: number;
+  nonVeg?: boolean;
+  is_available?: boolean;
+  isVeg?: boolean;
+  displayOrder: number;
+  createdBy: string;
+  updatedBy: string;
+  createdAt: string;
+  updatedAt: string;
+  isAvailable: boolean;
+  isCurrentlyAvailable: boolean;
+  calculatedMinPrice: number;
+  calculatedMaxPrice: number;
 }
 
 export interface PricingBook {
@@ -572,7 +780,9 @@ export interface MenuItemComponent {
 export interface CreateMenuItemRequest {
   name: string;
   description?: string;
+  price: number;
   imageUrl?: string;
+  category: string;
   categoryId: string;
   nonVeg: boolean;
   type?: string;
@@ -580,6 +790,12 @@ export interface CreateMenuItemRequest {
   spicinessLevel?: string;
   pricingModel?: string;
   basePrice: number;
+  currency?: string;
+  preparationTime?: number;
+  allergens?: string[];
+  isVegetarian?: boolean;
+  isVegan?: boolean;
+  isGlutenFree?: boolean;
   active?: boolean;
   status?: string;
   isRecommended?: boolean;
@@ -671,7 +887,7 @@ export interface AdminQRGenerateResponse {
 
 // Admin QR List Response Type
 export interface AdminQRListItem {
-  _id: string;
+  id: string;
   qrString: string;
   qrUrl: string;
   baseUrl: string;
@@ -748,7 +964,7 @@ export interface UpdateAddressRequest {
 // Category Types (from JSON schema)
 // ============================================================================
 export interface Category {
-  _id: string;
+  id: string;
   name: string;
   description?: string;
   active: boolean;

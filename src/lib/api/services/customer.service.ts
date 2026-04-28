@@ -78,6 +78,6 @@ export const customerService = {
   },
 
   async getMenuByQr(qrCode: string) {
-    return apiClient.get<MenuApiResponse>("/customer/menu", { qr: qrCode });
+    return apiClient.get<MenuApiResponse>("/v1/public/menu", { qr: qrCode });
   },
 };

@@ -2,17 +2,22 @@
 
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import PageFooter from "@/components/ui/PageFooter";
-import { RegisterRequest, userService } from "@/lib/api/services/user.service";
+import { RegisterRequest } from "@/lib/api/services/user.service";
+import { adminService } from "@/lib/api/services/admin.service";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import PeopleIcon from "@mui/icons-material/People";
 import SaveIcon from "@mui/icons-material/Save";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import SnackbarAlert from "@/components/ui/SnackbarAlert";
 import {
-  Alert,
   Box,
   Button,
   CircularProgress,
   FormControl,
   Grid,
+  IconButton,
+  InputAdornment,
   InputLabel,
   MenuItem,
   Paper,
@@ -21,17 +26,20 @@ import {
   Typography,
 } from "@mui/material";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import type { UserCreate, ApiError } from "@/lib/api/types";
 import { useState } from "react";
 
 const USER_ROLES = [
-  { value: "USER", label: "User" },
-  { value: "ADMIN", label: "Admin" },
-  { value: "MANAGER", label: "Manager" },
-  { value: "SUPER_ADMIN", label: "Super Admin" },
-  { value: "DELIVERY_PERSONNEL", label: "Delivery Personnel" },
-  { value: "CHEF", label: "Chef" },
-  { value: "WAITER", label: "Waiter" },
-  { value: "STAFF", label: "Staff" },
+  { value: "User", label: "User" },
+  { value: "Admin", label: "Admin" },
+  { value: "Manager", label: "Manager" },
+  { value: "SuperAdmin", label: "Super Admin" },
+  { value: "DeliveryPersonnel", label: "Delivery Personnel" },
+  { value: "Chef", label: "Chef" },
+  { value: "Waiter", label: "Waiter" },
+  { value: "Staff", label: "Staff" },
+  { value: "Owner", label: "Owner" },
 ];
 
 interface FieldError {
@@ -39,89 +47,132 @@ interface FieldError {
   message: string;
 }
 
-interface ApiError {
-  success: boolean;
-  message: string;
-  errors?: FieldError[];
-}
-
 export default function CreateUserPage() {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: "success" | "error";
+  }>({ open: false, message: "", severity: "success" });
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [showPassword, setShowPassword] = useState(false);
 
-  const [formData, setFormData] = useState<RegisterRequest>({
+  const router = useRouter();
+
+  const [formData, setFormData] = useState({
     email: "",
     password: "",
+    title: "",
     firstName: "",
     lastName: "",
-    organisationId: "",
-    role: "USER",
+    phone: "",
+    role: "User",
   });
 
-  const handleChange = (field: keyof RegisterRequest, value: string) => {
+  const handleChange = (field: keyof typeof formData, value: string) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
-    // Clear field error when user starts typing
-    if (fieldErrors[field]) {
+    if (fieldErrors[field as string]) {
       setFieldErrors((prev) => {
         const newErrors = { ...prev };
-        delete newErrors[field];
+        delete newErrors[field as string];
         return newErrors;
       });
     }
   };
 
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
     setFieldErrors({});
-    setSuccess(false);
+    setSnackbar({ open: false, message: "", severity: "success" });
 
     try {
       setLoading(true);
-
-      const response = await userService.register(formData);
+      const response = await adminService.createUser({
+        email: formData.email,
+        password: formData.password,
+        title: formData.title,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        phone: formData.phone || "",
+        role: formData.role,
+      } as UserCreate);
 
       if (response.success) {
-        setSuccess(true);
-        // Reset form
+        setSnackbar({
+          open: true,
+          message: "User created successfully!",
+          severity: "success",
+        });
+        router.push("/administrator/users/list");
         setFormData({
           email: "",
           password: "",
+          title: "",
           firstName: "",
           lastName: "",
-          organisationId: "",
-          role: "USER",
+          phone: "",
+          role: "User",
         });
       } else {
-        // Handle validation errors from successful response
         if (response.errors && Array.isArray(response.errors)) {
           const errors: Record<string, string> = {};
           (response.errors as FieldError[]).forEach((err) => {
             errors[err.field] = err.message;
           });
           setFieldErrors(errors);
-          setError(response.message || "Validation failed");
+          setSnackbar({
+            open: true,
+            message: response.message || "Validation failed",
+            severity: "error",
+          });
         } else {
-          setError(response.message || "Failed to create user");
+          setSnackbar({
+            open: true,
+            message: response.message || "Failed to create user",
+            severity: "error",
+          });
         }
       }
     } catch (err: any) {
-      // Handle error response with errors array
       const errorData = err as ApiError;
-      if (errorData.errors && Array.isArray(errorData.errors)) {
+      if (errorData.status === 403) {
+        if (errorData.message?.includes("limit")) {
+          setSnackbar({
+            open: true,
+            message: "User creation limit reached for this organisation",
+            severity: "error",
+          });
+        } else {
+          setSnackbar({
+            open: true,
+            message: "Access denied: Insufficient permissions to create user",
+            severity: "error",
+          });
+        }
+      } else if (errorData.errors && Array.isArray(errorData.errors)) {
         const errors: Record<string, string> = {};
         (errorData.errors as FieldError[]).forEach((error: FieldError) => {
           errors[error.field] = error.message;
         });
         setFieldErrors(errors);
-        setError(errorData.message || "Validation failed");
+        setSnackbar({
+          open: true,
+          message: errorData.message || "Validation failed",
+          severity: "error",
+        });
       } else {
-        setError(err.message || "Failed to create user");
+        setSnackbar({
+          open: true,
+          message: err.message || "Failed to create user",
+          severity: "error",
+        });
       }
     } finally {
       setLoading(false);
@@ -163,18 +214,6 @@ export default function CreateUserPage() {
           Back to List
         </Button>
       </Box>
-
-      {error && (
-        <Alert severity="error" sx={{ mb: 3 }}>
-          {error}
-        </Alert>
-      )}
-
-      {success && (
-        <Alert severity="success" sx={{ mb: 3 }}>
-          User created successfully!
-        </Alert>
-      )}
 
       <form onSubmit={handleSubmit}>
         <Paper sx={{ p: 3 }}>
@@ -224,7 +263,7 @@ export default function CreateUserPage() {
               <TextField
                 fullWidth
                 label="Password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 value={formData.password}
                 onChange={(e) => handleChange("password", e.target.value)}
                 required
@@ -233,19 +272,40 @@ export default function CreateUserPage() {
                   fieldErrors.password ||
                   "Must contain uppercase, lowercase, and special character"
                 }
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowPassword(!showPassword)}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
             </Grid>
 
             <Grid size={{ xs: 12, md: 6 }}>
               <TextField
                 fullWidth
-                label="Organisation ID"
-                value={formData.organisationId}
-                onChange={(e) => handleChange("organisationId", e.target.value)}
-                required
-                placeholder="e.g., OR000001"
-                error={!!fieldErrors.organisationId}
-                helperText={fieldErrors.organisationId}
+                label="Title"
+                value={formData.title}
+                onChange={(e) => handleChange("title", e.target.value)}
+                error={!!fieldErrors.title}
+                helperText={fieldErrors.title}
+              />
+            </Grid>
+
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                fullWidth
+                label="Phone"
+                value={formData.phone}
+                onChange={(e) => handleChange("phone", e.target.value)}
+                error={!!fieldErrors.phone}
+                helperText={fieldErrors.phone}
               />
             </Grid>
 
@@ -255,7 +315,7 @@ export default function CreateUserPage() {
                 <Select
                   labelId="role-label"
                   id="role-select"
-                  value={formData.role || "USER"}
+                  value={formData.role || "User"}
                   label="Role"
                   onChange={(e) => handleChange("role", e.target.value)}
                 >
@@ -268,7 +328,6 @@ export default function CreateUserPage() {
               </FormControl>
             </Grid>
           </Grid>
-
           <Box
             sx={{ mt: 4, display: "flex", justifyContent: "flex-end", gap: 2 }}
           >
@@ -292,6 +351,13 @@ export default function CreateUserPage() {
           </Box>
         </Paper>
       </form>
+
+      <SnackbarAlert
+        open={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        onClose={handleSnackbarClose}
+      />
 
       <PageFooter
         backHref="/administrator/users/list"

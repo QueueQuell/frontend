@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import SnackbarAlert from "@/components/ui/SnackbarAlert";
 import {
   Typography,
   Box,
@@ -12,18 +13,18 @@ import {
   TableHead,
   TableRow,
   TablePagination,
-  Button,
   Chip,
+  IconButton,
   CircularProgress,
   Alert,
   TextField,
   InputAdornment,
-  IconButton,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogContentText,
   DialogActions,
+  Button,
   Divider,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
@@ -35,12 +36,11 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import Link from "next/link";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import PageFooter from "@/components/ui/PageFooter";
-import { organisationService } from "@/lib/api/services/organisation.service";
-import type { Organisation } from "@/lib/api/types";
-import SnackbarAlert from "@/components/ui/SnackbarAlert";
+import { menuService } from "@/lib/api/services/menu.service";
+import type { MenuItemType } from "@/lib/api/types";
 
-export default function OrganisationListPage() {
-  const [organisations, setOrganisations] = useState<Organisation[]>([]);
+export default function ItemsListPage() {
+  const [items, setItems] = useState<MenuItemType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
 
@@ -49,7 +49,7 @@ export default function OrganisationListPage() {
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const [deleteDialog, setDeleteDialog] = useState<
-    { open: false } | { open: true; orgId: string; orgName: string }
+    { open: false } | { open: true; itemId: string; itemName: string }
   >({ open: false });
   const [deleting, setDeleting] = useState(false);
   const [snackbar, setSnackbar] = useState<{
@@ -58,27 +58,26 @@ export default function OrganisationListPage() {
     severity: "success" | "error";
   }>({ open: false, message: "", severity: "success" });
 
-  const fetchOrganisations = async () => {
+  const fetchItems = async () => {
     setLoading(true);
     setError("");
 
     try {
-      const response = await organisationService.getOrganisations();
+      const response = await menuService.getAll();
       if (response.success && response.data) {
-        const orgData = Array.isArray(response.data) ? response.data : [];
-        setOrganisations(orgData as Organisation[]);
+        setItems(response.data as MenuItemType[]);
       } else {
-        setError(response.message || "Failed to fetch organisations");
+        setError(response.message || "Failed to fetch items");
       }
     } catch (err: any) {
-      setError(err.message || "Failed to fetch organisations");
+      setError(err.message || "Failed to fetch items");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchOrganisations();
+    fetchItems();
   }, []);
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -92,23 +91,26 @@ export default function OrganisationListPage() {
     setPage(0);
   };
 
-  const filteredOrganisations = organisations.filter((org) => {
-    if (!searchQuery) return true;
-    const query = searchQuery.toLowerCase();
-    return (
-      org.organisationName.toLowerCase().includes(query) ||
-      org.displayName.toLowerCase().includes(query) ||
-      org.email?.toLowerCase().includes(query)
-    );
-  });
+  const filteredItems = Array.isArray(items)
+    ? items.filter((item: MenuItemType) => {
+        if (!searchQuery) return true;
+        const query = searchQuery.toLowerCase();
+        return (
+          item.name.toLowerCase().includes(query) ||
+          item.category?.name?.toLowerCase().includes(query) ||
+          item.category?.id?.toLowerCase().includes(query) ||
+          item.type?.toLowerCase().includes(query)
+        );
+      })
+    : [];
 
-  const paginatedOrganisations = filteredOrganisations.slice(
+  const paginatedItems = filteredItems.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage,
   );
 
-  const handleDeleteOpen = (orgId: string, orgName: string) => {
-    setDeleteDialog({ open: true, orgId, orgName });
+  const handleDeleteOpen = (itemId: string, itemName: string) => {
+    setDeleteDialog({ open: true, itemId, itemName });
   };
 
   const handleDeleteClose = () => {
@@ -116,21 +118,21 @@ export default function OrganisationListPage() {
   };
 
   const handleDeleteConfirm = async () => {
-    if (deleteDialog.open && deleteDialog.orgId) {
+    if (deleteDialog.open && deleteDialog.itemId) {
       try {
         setDeleting(true);
-        await organisationService.deleteOrganisation(deleteDialog.orgId);
+        await menuService.delete(deleteDialog.itemId);
         setSnackbar({
           open: true,
-          message: "Organisation deleted successfully",
+          message: "Item deleted successfully",
           severity: "success",
         });
-        fetchOrganisations();
+        fetchItems();
         handleDeleteClose();
       } catch (err: any) {
         setSnackbar({
           open: true,
-          message: err.message || "Failed to delete organisation",
+          message: err.message || "Failed to delete item",
           severity: "error",
         });
       } finally {
@@ -143,21 +145,14 @@ export default function OrganisationListPage() {
     setSnackbar({ ...snackbar, open: false });
   };
 
-  const formatDate = (dateString: string) => {
-    if (!dateString) return "-";
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
+  const getStockStatus = (quantity: number, minStock?: number) => {
+    if (minStock && quantity < minStock) return "Low Stock";
+    return "In Stock";
   };
 
-  const getTypeColor = (type: string) => {
-    return type === "company" ? "primary" : "secondary";
-  };
-
-  const getStatusColor = (status: string) => {
-    return status === "active" ? "success" : "default";
+  const getStockColor = (quantity: number, minStock?: number) => {
+    if (minStock && quantity < minStock) return "warning";
+    return "success";
   };
 
   return (
@@ -165,8 +160,8 @@ export default function OrganisationListPage() {
       <Breadcrumb
         items={[
           { label: "Home", href: "/home" },
-          { label: "Administrator", href: "/administrator" },
-          { label: "Organisations" },
+          { label: "Catalog", href: "/catalog" },
+          { label: "Items" },
         ]}
       />
 
@@ -180,12 +175,13 @@ export default function OrganisationListPage() {
           }}
         >
           <Typography variant="h6" gutterBottom>
-            Organisations ({filteredOrganisations.length} total)
+            Items ({Array.isArray(filteredItems) ? filteredItems.length : 0}{" "}
+            total)
           </Typography>
           <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
             <TextField
               size="small"
-              placeholder="Search organisations by name or email..."
+              placeholder="Search items by name, SKU or category..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               InputProps={{
@@ -201,19 +197,19 @@ export default function OrganisationListPage() {
               variant="outlined"
               size="small"
               startIcon={<RefreshIcon />}
-              onClick={fetchOrganisations}
+              onClick={fetchItems}
               disabled={loading}
             >
               Refresh
             </Button>
             <Button
               component={Link}
-              href="/administrator/organisations/create"
+              href="/catalog/items/create"
               variant="contained"
               size="small"
               startIcon={<AddIcon />}
             >
-              Add Organisation
+              Add Item
             </Button>
           </Box>
         </Box>
@@ -236,20 +232,21 @@ export default function OrganisationListPage() {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell>Organisation Name</TableCell>
-                    <TableCell>Display Name</TableCell>
+                    <TableCell>Item ID</TableCell>
+                    <TableCell>Name</TableCell>
+                    <TableCell>Category</TableCell>
+                    <TableCell align="right">Unit Cost</TableCell>
                     <TableCell>Type</TableCell>
-                    <TableCell>Tier</TableCell>
-                    <TableCell>Location</TableCell>
-                    <TableCell>Phone</TableCell>
-                    <TableCell>Email</TableCell>
+                    <TableCell>Cuisine</TableCell>
                     <TableCell>Status</TableCell>
-                    <TableCell>Created At</TableCell>
+                    <TableCell>Active</TableCell>
+                    <TableCell align="right">Price</TableCell>
+                    <TableCell align="right">Description</TableCell>
                     <TableCell align="center">Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {paginatedOrganisations.length === 0 ? (
+                  {paginatedItems.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={10} align="center">
                         <Typography
@@ -257,53 +254,63 @@ export default function OrganisationListPage() {
                           color="text.secondary"
                           sx={{ py: 4 }}
                         >
-                          No organisations found
+                          No items found
                         </Typography>
                       </TableCell>
                     </TableRow>
                   ) : (
-                    paginatedOrganisations.map((org) => (
-                      <TableRow key={org.id} hover>
-                        <TableCell>{org.organisationName}</TableCell>
-                        <TableCell>{org.displayName}</TableCell>
+                    paginatedItems.map((item) => (
+                      <TableRow key={item.id} hover>
                         <TableCell>
-                          <Chip
-                            label={org.type}
-                            color={getTypeColor(org.type)}
-                            size="small"
-                          />
+                          <Typography variant="body2">{item.id}</Typography>
                         </TableCell>
+                        <TableCell>{item.name}</TableCell>
                         <TableCell>
                           <Chip
-                            label={org.tier}
-                            color={
-                              org.tier === "enterprise"
-                                ? "primary"
-                                : org.tier === "pro"
-                                  ? "secondary"
-                                  : "default"
+                            label={
+                              item.category?.name ||
+                              item.category?.id ||
+                              "Uncategorized"
                             }
                             size="small"
+                            color="primary"
                           />
                         </TableCell>
-                        <TableCell>
-                          {org.address?.city}, {org.address?.state},{" "}
-                          {org.address?.country}
-                        </TableCell>
-                        <TableCell>{org.primaryPhone}</TableCell>
-                        <TableCell>{org.email}</TableCell>
+                        <TableCell>{item.type || "Regular"}</TableCell>
                         <TableCell>
                           <Chip
-                            label={org.status}
-                            color={getStatusColor(org.status)}
+                            label={
+                              (item.isAvailable ?? item.active)
+                                ? "Available"
+                                : "Unavailable"
+                            }
                             size="small"
+                            color={
+                              (item.isAvailable ?? item.active)
+                                ? "success"
+                                : "error"
+                            }
                           />
                         </TableCell>
-                        <TableCell>{formatDate(org.createdAt)}</TableCell>
+                        <TableCell>
+                          <Chip
+                            label={item.active ? "Yes" : "No"}
+                            size="small"
+                            color={item.active ? "success" : "default"}
+                          />
+                        </TableCell>
+                        <TableCell align="right">
+                          ₹{item.basePrice?.toFixed(2) ?? 0}
+                        </TableCell>
+                        <TableCell align="right">
+                          {item.description
+                            ? item.description.substring(0, 30) + "..."
+                            : "No description"}
+                        </TableCell>
                         <TableCell align="center">
                           <IconButton
                             component={Link}
-                            href={`/administrator/organisations/${org.id}`}
+                            href={`/catalog/items/${item.id}`}
                             size="small"
                             title="View"
                           >
@@ -311,7 +318,7 @@ export default function OrganisationListPage() {
                           </IconButton>
                           <IconButton
                             component={Link}
-                            href={`/administrator/organisations/${org.id}/edit`}
+                            href={`/catalog/items/${item.id}/edit`}
                             color="primary"
                             size="small"
                             title="Edit"
@@ -321,9 +328,7 @@ export default function OrganisationListPage() {
                           <IconButton
                             size="small"
                             color="error"
-                            onClick={() =>
-                              handleDeleteOpen(org.id!, org.organisationName)
-                            }
+                            onClick={() => handleDeleteOpen(item.id, item.name)}
                             title="Delete"
                           >
                             <DeleteIcon fontSize="small" />
@@ -339,7 +344,7 @@ export default function OrganisationListPage() {
             <TablePagination
               rowsPerPageOptions={[5, 10, 25, 50]}
               component="div"
-              count={filteredOrganisations.length}
+              count={Array.isArray(filteredItems) ? filteredItems.length : 0}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}
@@ -360,8 +365,8 @@ export default function OrganisationListPage() {
         <DialogContent>
           <DialogContentText id="delete-dialog-description">
             Are you sure you want to delete "
-            {deleteDialog.open ? deleteDialog.orgName : ""}"? This action cannot
-            be undone.
+            {deleteDialog.open ? deleteDialog.itemName : ""}"? This action
+            cannot be undone.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -387,7 +392,7 @@ export default function OrganisationListPage() {
         onClose={handleSnackbarClose}
       />
 
-      <PageFooter backHref="/administrator" backText="Back to Administrator" />
+      <PageFooter backHref="/catalog" backText="Back to Catalog" />
     </Box>
   );
 }

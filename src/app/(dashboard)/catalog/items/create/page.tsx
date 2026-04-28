@@ -16,19 +16,21 @@ export default function CreateItemPage() {
   const [formData, setFormData] = useState<ItemFormData>({
     name: "",
     categoryId: "",
+    organisationId: "",
     description: "",
-    nonVeg: false,
-    type: "",
+    imageUrls: [],
     cuisine: "",
+    type: "",
     spicinessLevel: "",
-    pricingModel: "single",
-    basePrice: "",
-    active: true,
-    status: "Available",
-    isRecommended: false,
-    isPopular: false,
-    displayOrder: "",
+    preparationTime: "",
+    allergens: [],
+    isVegetarian: false,
+    isVegan: false,
+    isGlutenFree: false,
     dietaryTags: [],
+    pricingModel: "SinglePrice",
+    basePrice: "",
+    currency: "INR",
     variantGroups: [],
     addonGroups: [],
     components: [],
@@ -44,12 +46,16 @@ export default function CreateItemPage() {
       startTime: "",
       endTime: "",
     },
-    imageUrl: "",
+    status: "Available",
+    active: true,
+    isRecommended: false,
+    isPopular: false,
+    displayOrder: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const [categories, setCategories] = useState<{ _id: string; name: string }[]>(
+  const [categories, setCategories] = useState<{ id: string; name: string }[]>(
     [],
   );
 
@@ -60,8 +66,8 @@ export default function CreateItemPage() {
         if (response.success && response.data) {
           // Only store categoryId and name
           setCategories(
-            response.data.map((cat: { _id: string; name: string }) => ({
-              _id: cat._id,
+            response.data.map((cat: { id: string; name: string }) => ({
+              id: cat.id,
               name: cat.name,
             })),
           );
@@ -104,20 +110,52 @@ export default function CreateItemPage() {
       // Build the API payload
       const payload: any = {
         name: formData.name,
-        description: formData.description || "",
-        categoryId: formData.categoryId,
-        nonVeg: formData.nonVeg,
-        type: formData.type || undefined,
-        cuisine: formData.cuisine || undefined,
-        spicinessLevel: formData.spicinessLevel || undefined,
+        description: formData.description,
+        imageUrls: formData.imageUrls,
+        cuisine: formData.cuisine,
+        type: formData.type,
+        spicinessLevel: formData.spicinessLevel,
+        preparationTime: formData.preparationTime
+          ? parseInt(formData.preparationTime)
+          : undefined,
+        allergens: formData.allergens,
+        isVegetarian: formData.isVegetarian,
+        isVegan: formData.isVegan,
+        isGlutenFree: formData.isGlutenFree,
+        dietaryTags: formData.dietaryTags,
         pricingModel: formData.pricingModel,
         basePrice: parseFloat(formData.basePrice),
-        active: formData.active,
+        currency: formData.currency,
+        variantGroups: formData.variantGroups,
+        addonGroups: formData.addonGroups,
+        components: formData.components.map((c) => ({
+          itemId: c.itemId,
+          quantity: parseInt(c.quantity) || 1,
+          isOptional: c.isOptional,
+        })),
+        nutritionalInfo: {
+          calories: parseInt(formData.nutritionalInfo.calories) || 0,
+          protein: parseInt(formData.nutritionalInfo.protein) || 0,
+          carbs: parseInt(formData.nutritionalInfo.carbs) || 0,
+          fat: parseInt(formData.nutritionalInfo.fat) || 0,
+          sugar: parseInt(formData.nutritionalInfo.sugar) || 0,
+        },
+        availability:
+          formData.availability.days.length > 0
+            ? {
+                days: formData.availability.days,
+                startTime: formData.availability.startTime || "11:00",
+                endTime: formData.availability.endTime || "22:00",
+              }
+            : undefined,
         status: formData.status,
+        active: formData.active,
         isRecommended: formData.isRecommended,
         isPopular: formData.isPopular,
-        dietaryTags: formData.dietaryTags,
-        imageUrl: formData.imageUrl || undefined,
+        displayOrder: formData.displayOrder
+          ? parseInt(formData.displayOrder)
+          : undefined,
+        categoryId: formData.categoryId,
       };
 
       // Add optional fields if they have values
@@ -169,19 +207,21 @@ export default function CreateItemPage() {
         setFormData({
           name: "",
           categoryId: "",
+          organisationId: "",
           description: "",
-          nonVeg: false,
-          type: "",
+          imageUrls: [],
           cuisine: "",
+          type: "",
           spicinessLevel: "",
-          pricingModel: "single",
-          basePrice: "",
-          active: true,
-          status: "Available",
-          isRecommended: false,
-          isPopular: false,
-          displayOrder: "",
+          preparationTime: "",
+          allergens: [],
+          isVegetarian: false,
+          isVegan: false,
+          isGlutenFree: false,
           dietaryTags: [],
+          pricingModel: "SinglePrice",
+          basePrice: "",
+          currency: "INR",
           variantGroups: [],
           addonGroups: [],
           components: [],
@@ -197,12 +237,16 @@ export default function CreateItemPage() {
             startTime: "",
             endTime: "",
           },
-          imageUrl: "",
+          status: "Available",
+          active: true,
+          isRecommended: false,
+          isPopular: false,
+          displayOrder: "",
         });
 
         setTimeout(() => {
           setSuccess(false);
-          router.push("/catalog/items");
+          router.push("/catalog/items/list");
         }, 2000);
       } else {
         setError(response.error || "Failed to create item. Please try again.");
@@ -220,7 +264,7 @@ export default function CreateItemPage() {
         items={[
           { label: "Home", href: "/home" },
           { label: "Items", href: "/catalog" },
-          { label: "Items", href: "/catalog/items" },
+          { label: "Items", href: "/catalog/items/list" },
           { label: "Create New Menu Item" },
         ]}
       />
@@ -249,7 +293,7 @@ export default function CreateItemPage() {
           >
             <Button
               component={Link}
-              href="/catalog/items"
+              href="/catalog/items/list"
               variant="outlined"
               startIcon={<ArrowBackIcon />}
               disabled={isSubmitting}
@@ -268,7 +312,7 @@ export default function CreateItemPage() {
         </form>
       </Paper>
 
-      <PageFooter backHref="/catalog/items" backText="Back to Items" />
+      <PageFooter backHref="/catalog/items/list" backText="Back to Items" />
     </Box>
   );
 }
