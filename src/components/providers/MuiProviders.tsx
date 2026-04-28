@@ -134,6 +134,14 @@ const lightTheme = createTheme({
         },
       },
     },
+    MuiTableCell: {
+      styleOverrides: {
+        head: {
+          fontSize: "0.875rem",
+          fontWeight: 600,
+        },
+      },
+    },
     MuiSvgIcon: {
       styleOverrides: {
         root: {
@@ -272,6 +280,14 @@ const darkTheme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: 8,
+        },
+      },
+    },
+    MuiTableCell: {
+      styleOverrides: {
+        head: {
+          fontSize: "1rem",
+          fontWeight: 600,
         },
       },
     },
