@@ -432,7 +432,6 @@ export interface OrgMember {
 
 export interface MenuItemType {
   id: string;
-  _id: string;
   name: string;
   description: string;
   imageUrls: Array<{
