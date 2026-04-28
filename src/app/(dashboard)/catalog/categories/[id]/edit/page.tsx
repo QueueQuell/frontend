@@ -7,24 +7,22 @@ import {
   Box,
   Paper,
   Typography,
-  TextField,
   Button,
-  Chip,
   CircularProgress,
   Alert,
-  Grid,
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import PageFooter from "@/components/ui/PageFooter";
-import CategoryForm from "@/components/category/CategoryForm";
+import CategoryForm, {
+  CategoryFormData,
+} from "@/components/category/CategoryForm";
 import { categoryService } from "@/lib/api/services/category.service";
 import type { UpdateCategoryRequest } from "@/lib/api/types";
 
 export default function CategoryEditPage() {
   const router = useRouter();
-
   const params = useParams();
   const id = params?.id as string;
 
@@ -33,7 +31,7 @@ export default function CategoryEditPage() {
   const [error, setError] = useState("");
   const [category, setCategory] = useState<any>(null);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<CategoryFormData>({
     name: "",
     description: "",
     displayOrder: "",
@@ -43,7 +41,7 @@ export default function CategoryEditPage() {
 
   useEffect(() => {
     loadCategory();
-  }, [params.id]);
+  }, [id]);
 
   const loadCategory = async () => {
     try {
@@ -56,7 +54,7 @@ export default function CategoryEditPage() {
           name: data.name || "",
           description: data.description || "",
           displayOrder: data.displayOrder?.toString() || "",
-          isActive: data.active !== false, // default true
+          isActive: data.active !== false,
           color: "#1976d2",
         });
       } else {
@@ -69,11 +67,8 @@ export default function CategoryEditPage() {
     }
   };
 
-  const handleChange = (field: string, value: any) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+  const handleChange = (field: keyof CategoryFormData, value: any) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -100,7 +95,7 @@ export default function CategoryEditPage() {
 
       if (response.success) {
         router.push(`/catalog/categories/${id}`);
-        router.refresh(); // Refresh list page
+        router.refresh();
       } else {
         setError(response.message || "Failed to update category");
       }
@@ -111,17 +106,17 @@ export default function CategoryEditPage() {
     }
   };
 
-  if (error) {
+  const breadcrumbItems = [
+    { label: "Home", href: "/home" },
+    { label: "Catalog", href: "/catalog" },
+    { label: "Categories", href: "/catalog/categories/list" },
+    { label: category?.name || "Edit Category" },
+  ];
+
+  if (error && loading) {
     return (
       <Box sx={{ p: 3 }}>
-        <Breadcrumb
-          items={[
-            { label: "Home", href: "/home" },
-            { label: "Catalog", href: "/catalog" },
-            { label: "Categories", href: "/catalog/categories/list" },
-            { label: "Edit Category" },
-          ]}
-        />
+        <Breadcrumb items={breadcrumbItems} />
         <Alert severity="error" sx={{ mb: 3 }}>
           {error}
         </Alert>
@@ -135,14 +130,7 @@ export default function CategoryEditPage() {
 
   return (
     <Box sx={{ p: 3 }}>
-      <Breadcrumb
-        items={[
-          { label: "Home", href: "/home" },
-          { label: "Catalog", href: "/catalog" },
-          { label: "Categories", href: "/catalog/categories/list" },
-          { label: category?.name || "Edit Category" },
-        ]}
-      />
+      <Breadcrumb items={breadcrumbItems} />
 
       {loading ? (
         <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
@@ -164,7 +152,7 @@ export default function CategoryEditPage() {
               </Typography>
               <Button
                 component={Link}
-                href={`/catalog/categories/${params.id}`}
+                href={`/catalog/categories/${id}`}
                 variant="outlined"
                 startIcon={<ArrowBackIcon />}
               >
@@ -184,13 +172,17 @@ export default function CategoryEditPage() {
                   variant="outlined"
                   component={Link}
                   href="/catalog/categories/list"
+                  disabled={saving}
+                  startIcon={<ArrowBackIcon />}
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
                   variant="contained"
-                  startIcon={<SaveIcon />}
+                  startIcon={
+                    saving ? <CircularProgress size={20} /> : <SaveIcon />
+                  }
                   disabled={saving}
                 >
                   {saving ? "Saving..." : "Update Category"}

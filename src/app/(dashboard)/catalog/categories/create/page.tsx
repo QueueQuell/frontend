@@ -1,14 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Box, Button, Paper, CircularProgress } from "@mui/material";
-import SnackbarAlert from "@/components/ui/SnackbarAlert";
 import Link from "next/link";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useRouter } from "next/navigation";
+import {
+  Box,
+  Paper,
+  Typography,
+  Button,
+  CircularProgress,
+  Alert,
+} from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import PageFooter from "@/components/ui/PageFooter";
+import SnackbarAlert from "@/components/ui/SnackbarAlert";
 import CategoryForm, {
   CategoryFormData,
 } from "@/components/category/CategoryForm";
@@ -16,6 +23,7 @@ import { categoryService } from "@/lib/api/services/category.service";
 
 export default function CreateCategoryPage() {
   const router = useRouter();
+
   const [formData, setFormData] = useState<CategoryFormData>({
     name: "",
     description: "",
@@ -23,7 +31,9 @@ export default function CreateCategoryPage() {
     isActive: true,
     color: "#1976d2",
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
     message: string;
@@ -31,33 +41,24 @@ export default function CreateCategoryPage() {
   }>({ open: false, message: "", severity: "success" });
 
   const handleChange = (field: keyof CategoryFormData, value: any) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSnackbarClose = () => {
-    setSnackbar({ ...snackbar, open: false });
+    setSnackbar((prev) => ({ ...prev, open: false }));
   };
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-
-    // Basic validation
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (!formData.name.trim()) {
-      setSnackbar({
-        open: true,
-        message: "Category name is required",
-        severity: "error",
-      });
+      setError("Category name is required");
       return;
     }
 
-    setIsSubmitting(true);
-    setSnackbar({ open: false, message: "", severity: "success" });
-
     try {
+      setSaving(true);
+      setError("");
+
       const payload = {
         name: formData.name,
         description: formData.description || "",
@@ -88,11 +89,11 @@ export default function CreateCategoryPage() {
     } catch (err: any) {
       setSnackbar({
         open: true,
-        message: err.message || "Failed to create category. Please try again.",
+        message: err.message || "Failed to create category",
         severity: "error",
       });
     } finally {
-      setIsSubmitting(false);
+      setSaving(false);
     }
   };
 
@@ -101,7 +102,7 @@ export default function CreateCategoryPage() {
       <Breadcrumb
         items={[
           { label: "Home", href: "/home" },
-          { label: "Items", href: "/catalog" },
+          { label: "Catalog", href: "/catalog" },
           { label: "Categories", href: "/catalog/categories/list" },
           { label: "Create New Category" },
         ]}
@@ -114,30 +115,44 @@ export default function CreateCategoryPage() {
         onClose={handleSnackbarClose}
       />
 
-      <Paper sx={{ p: 4, maxWidth: 700, mx: "auto" }}>
+      <Paper sx={{ p: 3, mb: 3 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 3,
+          }}
+        >
+          <Typography variant="h4" gutterBottom>
+            Create Category
+          </Typography>
+        </Box>
+
         <form onSubmit={handleSubmit}>
           <CategoryForm formData={formData} onChange={handleChange} />
-          <Box
-            sx={{ display: "flex", gap: 2, justifyContent: "flex-end", mt: 3 }}
-          >
+          {error && (
+            <Alert severity="error" sx={{ mt: 2 }}>
+              {error}
+            </Alert>
+          )}
+          <Box sx={{ display: "flex", gap: 2, mt: 3 }}>
             <Button
+              variant="outlined"
               component={Link}
               href="/catalog/categories/list"
-              variant="outlined"
+              disabled={saving}
               startIcon={<ArrowBackIcon />}
-              disabled={isSubmitting}
             >
               Cancel
             </Button>
             <Button
               type="submit"
               variant="contained"
-              disabled={isSubmitting}
-              startIcon={
-                isSubmitting ? <CircularProgress size={20} /> : <SaveIcon />
-              }
+              startIcon={saving ? <CircularProgress size={20} /> : <SaveIcon />}
+              disabled={saving}
             >
-              {isSubmitting ? "Creating..." : "Create Category"}
+              {saving ? "Creating..." : "Create Category"}
             </Button>
           </Box>
         </form>
