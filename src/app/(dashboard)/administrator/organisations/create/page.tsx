@@ -580,7 +580,7 @@ export default function CreateOrganisationPage() {
                 helperText={
                   clientErrors.organisationName || fieldErrors.organisationName
                 }
-                inputProps={{ maxLength: 200 }}
+                slotProps={{ htmlInput: { maxLength: 200 } }}
               />
             </Grid>
             <Grid size={{ xs: 12, md: 6 }}>
@@ -1098,7 +1098,7 @@ export default function CreateOrganisationPage() {
                       e.target.value,
                     )
                   }
-                  InputLabelProps={{ shrink: true }}
+                  slotProps={{ inputLabel: { shrink: true } }}
                 />
               </Grid>
               <Grid size={{ xs: 12, md: 3 }}>
@@ -1113,7 +1113,7 @@ export default function CreateOrganisationPage() {
                       e.target.value,
                     )
                   }
-                  InputLabelProps={{ shrink: true }}
+                  slotProps={{ inputLabel: { shrink: true } }}
                 />
               </Grid>
               <Grid size={{ xs: 12 }}>
@@ -1303,7 +1303,7 @@ export default function CreateOrganisationPage() {
                       parseInt(e.target.value) || 0,
                     )
                   }
-                  inputProps={{ min: 1 }}
+                  slotProps={{ htmlInput: { min: 1 } }}
                   required
                 />
               </Grid>
@@ -1319,7 +1319,7 @@ export default function CreateOrganisationPage() {
                       parseInt(e.target.value) || 0,
                     )
                   }
-                  inputProps={{ min: 1 }}
+                  slotProps={{ htmlInput: { min: 1 } }}
                   required
                 />
               </Grid>
@@ -1335,7 +1335,7 @@ export default function CreateOrganisationPage() {
                       parseInt(e.target.value) || 0,
                     )
                   }
-                  inputProps={{ min: 1 }}
+                  slotProps={{ htmlInput: { min: 1 } }}
                   required
                 />
               </Grid>

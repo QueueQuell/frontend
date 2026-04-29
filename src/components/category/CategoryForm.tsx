@@ -61,7 +61,7 @@ export default function CategoryForm({
           onChange={(e) => onChange("displayOrder", e.target.value)}
           placeholder="1"
           helperText="Order in which categories appear (lower numbers first)"
-          inputProps={{ min: 1 }}
+          slotProps={{ htmlInput: { min: 1 } }}
         />
       </Grid>
 

@@ -1,5 +1,15 @@
 import React from "react";
-import { Box, Typography, Grid, Card, CardContent, CardMedia, Chip, Button, IconButton } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Grid,
+  Card,
+  CardContent,
+  CardMedia,
+  Chip,
+  Button,
+  IconButton,
+} from "@mui/material";
 import { Grass, Search, Whatshot } from "@mui/icons-material";
 import { TextField } from "@mui/material";
 
@@ -39,8 +49,10 @@ export default function MenuItems({
           placeholder="Search menu items..."
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
-          InputProps={{
-            startAdornment: <Search sx={{ mr: 1, color: "action.active" }} />,
+          slotProps={{
+            input: {
+              startAdornment: <Search sx={{ mr: 1, color: "action.active" }} />,
+            },
           }}
           sx={{ width: isSmallScreen ? 200 : 300 }}
           size="small"
@@ -57,7 +69,14 @@ export default function MenuItems({
                 loading="lazy"
                 sx={{ width: 140, height: 140, objectFit: "cover" }}
               />
-              <CardContent sx={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+              <CardContent
+                sx={{
+                  flex: 1,
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                }}
+              >
                 <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
                   <Typography variant="h6" sx={{ flex: 1 }}>
                     {item.name}
@@ -70,16 +89,30 @@ export default function MenuItems({
                     )}
                   </IconButton>
                 </Box>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ mb: 1 }}
+                >
                   {item.description}
                 </Typography>
-                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
                   <Chip label={`${item.weight}`} size="small" />
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                     <Typography variant="h6" color="primary">
                       ₹{item.price}
                     </Typography>
-                    <Button variant="contained" size="small" onClick={() => onAddToCart(item)}>
+                    <Button
+                      variant="contained"
+                      size="small"
+                      onClick={() => onAddToCart(item)}
+                    >
                       Add to Cart
                     </Button>
                   </Box>

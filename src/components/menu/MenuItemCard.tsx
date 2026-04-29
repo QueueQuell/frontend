@@ -386,11 +386,9 @@ export default function MenuItemCard({
         onClose={() => setShowAddons(false)}
         maxWidth="sm"
         fullWidth
-        TransitionComponent={Slide}
-        PaperProps={{
-          sx: {
-            borderRadius: 1,
-          },
+        slots={{ transition: Slide }}
+        slotProps={{
+          paper: { sx: { borderRaius: 1 } },
         }}
       >
         <DialogTitle sx={{ pb: 1, borderBottom: "1px solid #E5E7EB" }}>

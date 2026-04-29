@@ -62,9 +62,7 @@ export default function ProfilePage() {
             }
             onChange={(e) => handleFieldChange("title", e.target.value)}
             sx={{ flex: 1 }}
-            InputProps={{
-              readOnly: !isEditing,
-            }}
+            slotProps={{ input: { readOnly: !isEditing } }}
           />
           <TextField
             label="First Name"
@@ -75,9 +73,7 @@ export default function ProfilePage() {
             }
             onChange={(e) => handleFieldChange("firstName", e.target.value)}
             sx={{ flex: 2 }}
-            InputProps={{
-              readOnly: !isEditing,
-            }}
+            slotProps={{ input: { readOnly: !isEditing } }}
           />
           <TextField
             label="Last Name"
@@ -88,9 +84,7 @@ export default function ProfilePage() {
             }
             onChange={(e) => handleFieldChange("lastName", e.target.value)}
             sx={{ flex: 2 }}
-            InputProps={{
-              readOnly: !isEditing,
-            }}
+            slotProps={{ input: { readOnly: !isEditing } }}
           />
         </Box>
 
@@ -104,9 +98,7 @@ export default function ProfilePage() {
               isEditing ? editedDetails?.email || "" : userDetails?.email || ""
             }
             onChange={(e) => handleFieldChange("email", e.target.value)}
-            InputProps={{
-              readOnly: !isEditing,
-            }}
+            slotProps={{ input: { readOnly: !isEditing } }}
           />
           <TextField
             fullWidth
@@ -115,9 +107,7 @@ export default function ProfilePage() {
               isEditing ? editedDetails?.phone || "" : userDetails?.phone || ""
             }
             onChange={(e) => handleFieldChange("phone", e.target.value)}
-            InputProps={{
-              readOnly: !isEditing,
-            }}
+            slotProps={{ input: { readOnly: !isEditing } }}
           />
         </Box>
 
@@ -147,9 +137,7 @@ export default function ProfilePage() {
                   : null,
               )
             }
-            InputProps={{
-              readOnly: !isEditing,
-            }}
+            slotProps={{ input: { readOnly: !isEditing } }}
             sx={{ mb: 1 }}
           />
           <TextField
@@ -173,9 +161,7 @@ export default function ProfilePage() {
                   : null,
               )
             }
-            InputProps={{
-              readOnly: !isEditing,
-            }}
+            slotProps={{ input: { readOnly: !isEditing } }}
             sx={{ mb: 2 }}
           />
           <TextField
@@ -199,9 +185,7 @@ export default function ProfilePage() {
                   : null,
               )
             }
-            InputProps={{
-              readOnly: !isEditing,
-            }}
+            slotProps={{ input: { readOnly: !isEditing } }}
             sx={{ mb: 2 }}
           />
           {/* City, Postal Code, State, Country in one row */}
@@ -227,9 +211,7 @@ export default function ProfilePage() {
                 )
               }
               sx={{ flex: 2 }}
-              InputProps={{
-                readOnly: !isEditing,
-              }}
+              slotProps={{ input: { readOnly: !isEditing } }}
             />
             <TextField
               label="Postal Code"
@@ -252,9 +234,7 @@ export default function ProfilePage() {
                 )
               }
               sx={{ flex: 1 }}
-              InputProps={{
-                readOnly: !isEditing,
-              }}
+              slotProps={{ input: { readOnly: !isEditing } }}
             />
             <TextField
               label="State"
@@ -277,9 +257,7 @@ export default function ProfilePage() {
                 )
               }
               sx={{ flex: 1.5 }}
-              InputProps={{
-                readOnly: !isEditing,
-              }}
+              slotProps={{ input: { readOnly: !isEditing } }}
             />
             <TextField
               label="Country"
@@ -302,9 +280,7 @@ export default function ProfilePage() {
                 )
               }
               sx={{ flex: 1.5 }}
-              InputProps={{
-                readOnly: !isEditing,
-              }}
+              slotProps={{ input: { readOnly: !isEditing } }}
             />
           </Box>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>

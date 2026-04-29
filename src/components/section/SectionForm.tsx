@@ -1,5 +1,12 @@
 "use client";
-import { Grid, TextField, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import {
+  Grid,
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from "@mui/material";
 
 export interface SectionFormData {
   name: string;
@@ -51,7 +58,7 @@ export default function SectionForm({ formData, onChange }: SectionFormProps) {
           onChange={(e) => onChange("displayOrder", e.target.value)}
           placeholder="1"
           helperText="Order in which sections appear (lower numbers first)"
-          inputProps={{ min: 1 }}
+          slotProps={{ htmlInput: { min: 1 } }}
         />
       </Grid>
 
@@ -82,4 +89,3 @@ export default function SectionForm({ formData, onChange }: SectionFormProps) {
     </Grid>
   );
 }
-

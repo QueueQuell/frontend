@@ -399,7 +399,7 @@ export default function ItemForm({
                 label="Preparation Time (minutes)"
                 value={formData.preparationTime}
                 onChange={(e) => onChange("preparationTime", e.target.value)}
-                inputProps={{ min: "1", max: "120" }}
+                slotProps={{ htmlInput: { min: 1, max: 120 } }}
               />
             </Grid>
             <Grid size={{ xs: 12, sm: 4 }}>
@@ -529,7 +529,7 @@ export default function ItemForm({
                 label="Base Price *"
                 value={formData.basePrice}
                 onChange={(e) => onChange("basePrice", e.target.value)}
-                inputProps={{ step: "0.01", min: "0.01" }}
+                slotProps={{ htmlInput: { step: "0.01", min: "0.01" } }}
               />
             </Grid>
             <Grid size={{ xs: 12, sm: 3 }}>
@@ -574,7 +574,7 @@ export default function ItemForm({
                 label="Display Order"
                 value={formData.displayOrder}
                 onChange={(e) => onChange("displayOrder", e.target.value)}
-                inputProps={{ min: "0" }}
+                slotProps={{ htmlInput: { min: 1 } }}
               />
             </Grid>
           </Grid>
@@ -682,7 +682,7 @@ export default function ItemForm({
                     startTime: e.target.value,
                   })
                 }
-                InputLabelProps={{ shrink: true }}
+                slotProps={{ inputLabel: { shrink: true } }}
               />
             </Grid>
             <Grid size={{ xs: 12, sm: 3 }}>
@@ -697,7 +697,7 @@ export default function ItemForm({
                     endTime: e.target.value,
                   })
                 }
-                InputLabelProps={{ shrink: true }}
+                slotProps={{ inputLabel: { shrink: true } }}
               />
             </Grid>
           </Grid>
@@ -872,7 +872,7 @@ export default function ItemForm({
                           e.target.value,
                         )
                       }
-                      inputProps={{ step: "0.01" }}
+                      slotProps={{ htmlInput: { step: "0.01" } }}
                     />
                   </Grid>
                   <Grid size={3}>
@@ -1017,7 +1017,7 @@ export default function ItemForm({
                           e.target.value,
                         )
                       }
-                      inputProps={{ step: "0.01" }}
+                      slotProps={{ htmlInput: { step: "0.01" } }}
                     />
                   </Grid>
                   <Grid size={2}>
@@ -1075,7 +1075,7 @@ export default function ItemForm({
                   onChange={(e) =>
                     updateComponent(index, "quantity", e.target.value)
                   }
-                  inputProps={{ min: 1 }}
+                  slotProps={{ htmlInput: { min: 1 } }}
                 />
               </Grid>
               <Grid size={3}>

@@ -905,7 +905,7 @@ export default function EditOrganisationPage() {
                       e.target.value,
                     )
                   }
-                  InputLabelProps={{ shrink: true }}
+                  slotProps={{ inputLabel: { shrink: true } }}
                 />
               </Grid>
               <Grid size={{ xs: 12, md: 3 }}>
@@ -920,7 +920,7 @@ export default function EditOrganisationPage() {
                       e.target.value,
                     )
                   }
-                  InputLabelProps={{ shrink: true }}
+                  slotProps={{ inputLabel: { shrink: true } }}
                 />
               </Grid>
               <Grid size={{ xs: 12 }}>
@@ -1110,7 +1110,7 @@ export default function EditOrganisationPage() {
                       parseInt(e.target.value) || 0,
                     )
                   }
-                  inputProps={{ min: 1 }}
+                  slotProps={{ htmlInput: { min: 1 } }}
                   required
                 />
               </Grid>
@@ -1126,7 +1126,7 @@ export default function EditOrganisationPage() {
                       parseInt(e.target.value) || 0,
                     )
                   }
-                  inputProps={{ min: 1 }}
+                  slotProps={{ htmlInput: { min: 1 } }}
                   required
                 />
               </Grid>
@@ -1142,7 +1142,7 @@ export default function EditOrganisationPage() {
                       parseInt(e.target.value) || 0,
                     )
                   }
-                  inputProps={{ min: 1 }}
+                  slotProps={{ htmlInput: { min: 1 } }}
                   required
                 />
               </Grid>
