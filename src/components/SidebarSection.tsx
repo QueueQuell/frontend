@@ -151,7 +151,7 @@ export default function SidebarSection({
   );
 
   return (
-    <Box mb={1} >
+    <Box sx={{ mb: 1 }}>
       <ListItem disablePadding>{mainButton}</ListItem>
 
       {/* Sub-items (only show when expanded and open) */}

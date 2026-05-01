@@ -175,7 +175,7 @@ export default function OrganisationLimits() {
                     <Typography variant="body2" color="text.secondary">
                       {limit.label}
                     </Typography>
-                    <Typography variant="body2" fontWeight="medium">
+                    <Typography variant="body2" sx={{ fontWeight: "medium" }}>
                       {limit.current}
                       {limit.unit}/{limit.max}
                       {limit.unit}

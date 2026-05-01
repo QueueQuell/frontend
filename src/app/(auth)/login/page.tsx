@@ -261,8 +261,7 @@ export default function SignInSide() {
 
             <Grid
               container
-              justifyContent="flex-end"
-              sx={{ mt: 2, position: "relative" }}
+              sx={{ mt: 2, position: "relative", justifyContent: "flex-end" }}
             >
               {error && (
                 <Alert

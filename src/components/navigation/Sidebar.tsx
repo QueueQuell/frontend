@@ -392,9 +392,11 @@ export default function Sidebar({
               minWidth: 200,
             },
           }}
-          PaperProps={{
-            onMouseEnter: handlePopoverEnter,
-            onMouseLeave: handlePopoverClose,
+          slotProps={{
+            paper: {
+              onMouseEnter: handlePopoverEnter,
+              onMouseLeave: handlePopoverClose,
+            },
           }}
         >
           {popoverContent && (
@@ -417,10 +419,14 @@ export default function Sidebar({
               >
                 <ListItemText
                   primary={popoverContent.title}
-                  primaryTypographyProps={{
-                    fontSize: "0.875rem",
-                    fontWeight: 600,
-                    color: "text.primary",
+                  slotProps={{
+                    primary: {
+                      sx: {
+                        fontSize: "0.875rem",
+                        fontWeight: 600,
+                        color: "text.primary",
+                      },
+                    },
                   }}
                 />
               </MenuItem>
@@ -447,10 +453,14 @@ export default function Sidebar({
                 >
                   <ListItemText
                     primary={subItem.label}
-                    primaryTypographyProps={{
-                      fontSize: "0.875rem",
-                      fontWeight: 500,
-                      color: "text.secondary",
+                    slotProps={{
+                      primary: {
+                        sx: {
+                          fontSize: "0.875rem",
+                          fontWeight: 500,
+                          color: "text.secondary",
+                        },
+                      },
                     }}
                   />
                 </MenuItem>

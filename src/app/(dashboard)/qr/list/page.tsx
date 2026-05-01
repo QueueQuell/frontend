@@ -422,8 +422,12 @@ export default function QRListPage() {
         onClose={handleCloseDialog}
         maxWidth="sm"
         fullWidth
-        PaperProps={{
-          sx: { borderRadius: 0.5 },
+        slotProps={{
+          paper: {
+            sx: {
+              borderRadius: 0.5,
+            },
+          },
         }}
       >
         <DialogTitle

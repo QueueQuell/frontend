@@ -192,9 +192,13 @@ function CategorySidebar({
                 </ListItemIcon>
                 <ListItemText
                   primary={category.name}
-                  primaryTypographyProps={{
-                    fontSize: "0.9rem",
-                    fontWeight: isSelected ? 600 : 400,
+                  slotProps={{
+                    primary: {
+                      sx: {
+                        fontSize: "0.9rem",
+                        fontWeight: isSelected ? 600 : 400,
+                      },
+                    },
                   }}
                 />
                 <Chip

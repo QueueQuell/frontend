@@ -35,8 +35,6 @@ type Item = {
   lastUpdated: string;
 };
 
-
-
 export default function InventoryListPage() {
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
@@ -84,8 +82,8 @@ export default function InventoryListPage() {
         ];
         setItems(mockItems);
       } catch (err) {
-        console.error('Failed to fetch inventory items:', err);
-        setError('Failed to load inventory items. Please try again.');
+        console.error("Failed to fetch inventory items:", err);
+        setError("Failed to load inventory items. Please try again.");
       } finally {
         setLoading(false);
       }
@@ -94,12 +92,22 @@ export default function InventoryListPage() {
     fetchItems();
   }, []);
 
-  const totalValue = items.reduce((sum, item) => sum + (item.quantity * item.unitCost), 0);
+  const totalValue = items.reduce(
+    (sum, item) => sum + item.quantity * item.unitCost,
+    0,
+  );
 
   return (
     <Box sx={{ p: 3 }}>
       <Box sx={{ mb: 3 }}>
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 3,
+          }}
+        >
           <Breadcrumb
             items={[
               { label: "Home", href: "/home" },
@@ -107,11 +115,24 @@ export default function InventoryListPage() {
               { label: "List" },
             ]}
           />
-          <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}>
-            <Button component={Link} href="/inventory/add" variant="contained" startIcon={<Inventory2Icon />}>
+          <Stack
+            direction="row"
+            spacing={2}
+            sx={{ justifyContent: "flex-end", alignItems: "center" }}
+          >
+            <Button
+              component={Link}
+              href="/inventory/add"
+              variant="contained"
+              startIcon={<Inventory2Icon />}
+            >
               Add New Item
             </Button>
-            <Button component={Link} href="/inventory/adjust" variant="outlined">
+            <Button
+              component={Link}
+              href="/inventory/adjust"
+              variant="outlined"
+            >
               Adjust Stock
             </Button>
             <Button variant="outlined">Export</Button>
@@ -161,8 +182,14 @@ export default function InventoryListPage() {
               items.map((item) => (
                 <TableRow key={item.id} hover>
                   <TableCell>
-                    <Stack direction="row" spacing={2} alignItems="center">
-                      <Avatar sx={{ width: 34, height: 34, bgcolor: "primary.main" }}>
+                    <Stack
+                      direction="row"
+                      spacing={2}
+                      sx={{ alignItems: "center" }}
+                    >
+                      <Avatar
+                        sx={{ width: 34, height: 34, bgcolor: "primary.main" }}
+                      >
                         {item.name.charAt(0)}
                       </Avatar>
                       <Box>
@@ -178,16 +205,25 @@ export default function InventoryListPage() {
                     <Chip label={item.category} size="small" color="primary" />
                   </TableCell>
                   <TableCell align="right">
-                    <Typography variant="body1" fontWeight="medium">
+                    <Typography variant="body1" sx={{ fontWeight: "medium" }}>
                       {item.quantity}
                     </Typography>
                   </TableCell>
                   <TableCell>{item.unit}</TableCell>
-                  <TableCell align="right">${item.unitCost.toFixed(2)}</TableCell>
+                  <TableCell align="right">
+                    ${item.unitCost.toFixed(2)}
+                  </TableCell>
                   <TableCell>{item.location}</TableCell>
-                  <TableCell align="right">${(item.quantity * item.unitCost).toFixed(2)}</TableCell>
+                  <TableCell align="right">
+                    ${(item.quantity * item.unitCost).toFixed(2)}
+                  </TableCell>
                   <TableCell>
-                    <Button component={Link} href={`/inventory/${item.id}`} size="small" variant="outlined">
+                    <Button
+                      component={Link}
+                      href={`/inventory/${item.id}`}
+                      size="small"
+                      variant="outlined"
+                    >
                       View
                     </Button>
                   </TableCell>

@@ -1,5 +1,18 @@
 import React from "react";
-import { Grid, Card, CardContent, Typography, Avatar, Stack, LinearProgress, Chip, alpha, Button, IconButton, Box } from "@mui/material";
+import {
+  Grid,
+  Card,
+  CardContent,
+  Typography,
+  Avatar,
+  Stack,
+  LinearProgress,
+  Chip,
+  alpha,
+  Button,
+  IconButton,
+  Box,
+} from "@mui/material";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import TrendingDownIcon from "@mui/icons-material/TrendingDown";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
@@ -60,13 +73,20 @@ export default function StatsCards() {
               boxShadow: (theme) =>
                 `0 0 2px 0 ${alpha(theme.palette.grey[500], 0.2)}, 0 12px 24px -4px ${alpha(
                   theme.palette.grey[500],
-                  0.12
+                  0.12,
                 )}`,
               borderRadius: 2,
             }}
           >
             <CardContent sx={{ p: 2 }}>
-              <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 2 }}>
+              <Stack
+                direction="row"
+                sx={{
+                  mb: 2,
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
                 <Box
                   sx={{
                     width: 48,
@@ -81,7 +101,9 @@ export default function StatsCards() {
                     },
                   }}
                 >
-                  <stat.icon sx={{ fontSize: 24, color: `${stat.color}.main` }} />
+                  <stat.icon
+                    sx={{ fontSize: 24, color: `${stat.color}.main` }}
+                  />
                 </Box>
                 <IconButton size="small">
                   <MoreVertIcon fontSize="small" />
@@ -91,15 +113,27 @@ export default function StatsCards() {
               <Typography variant="h5" sx={{ fontWeight: 700, mb: 0.5 }}>
                 {stat.value}
               </Typography>
-              <Typography variant="caption" color="text.secondary" sx={{ mb: 1.5, display: 'block' }}>
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ mb: 1.5, display: "block" }}
+              >
                 {stat.title}
               </Typography>
 
-              <Stack direction="row" alignItems="center" spacing={0.5}>
+              <Stack
+                direction="row"
+                spacing={0.5}
+                sx={{ alignItems: "center" }}
+              >
                 {stat.trend === "up" ? (
-                  <TrendingUpIcon sx={{ fontSize: 20, color: "success.main" }} />
+                  <TrendingUpIcon
+                    sx={{ fontSize: 20, color: "success.main" }}
+                  />
                 ) : (
-                  <TrendingDownIcon sx={{ fontSize: 20, color: "error.main" }} />
+                  <TrendingDownIcon
+                    sx={{ fontSize: 20, color: "error.main" }}
+                  />
                 )}
                 <Typography
                   variant="caption"

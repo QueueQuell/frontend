@@ -42,14 +42,20 @@ export default function TopItems() {
             <Box key={index}>
               <Stack
                 direction="row"
-                alignItems="center"
-                justifyContent="space-between"
-                sx={{ mb: 0.5 }}
+                sx={{
+                  mb: 0.5,
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
               >
                 <Typography variant="body2" sx={{ fontWeight: 600 }}>
                   {item.name}
                 </Typography>
-                <Stack direction="row" alignItems="center" spacing={0.5}>
+                <Stack
+                  direction="row"
+                  spacing={0.5}
+                  sx={{ alignItems: "center" }}
+                >
                   {item.trend > 0 ? (
                     <TrendingUpIcon
                       sx={{ fontSize: 14, color: "success.main" }}
@@ -74,9 +80,11 @@ export default function TopItems() {
 
               <Stack
                 direction="row"
-                alignItems="center"
-                justifyContent="space-between"
-                sx={{ mb: 0.75 }}
+                sx={{
+                  mb: 0.75,
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
               >
                 <Typography variant="caption" color="text.secondary">
                   {item.orders} orders

@@ -188,8 +188,10 @@ export default function UserMenuDrawer({ open, onClose }: UserMenuDrawerProps) {
                 primary={item.text}
                 slotProps={{
                   primary: {
-                    fontWeight:
-                      item.text === "Account settings" ? "normal" : "medium",
+                    sx: {
+                      fontWeight:
+                        item.text === "Account settings" ? "normal" : "medium",
+                    },
                   },
                 }}
                 sx={{ my: 0 }}

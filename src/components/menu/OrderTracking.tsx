@@ -185,7 +185,11 @@ export default function OrderTracking() {
                   </Typography>
                 </Box>
                 <Box sx={{ textAlign: "right" }}>
-                  <Typography variant="h6" color="primary" fontWeight={600}>
+                  <Typography
+                    variant="h6"
+                    color="primary"
+                    sx={{ fontWeight: 600 }}
+                  >
                     ₹{order.total.toFixed(2)}
                   </Typography>
                   {order.estimatedTime && order.estimatedTime > 0 && (
@@ -207,28 +211,30 @@ export default function OrderTracking() {
                   return (
                     <Step key={label}>
                       <StepLabel
-                        StepIconComponent={() => (
-                          <Box
-                            sx={{
-                              width: 40,
-                              height: 40,
-                              borderRadius: "50%",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              backgroundColor:
-                                index <= getActiveStep()
-                                  ? "var(--primary)"
-                                  : "var(--surface-hover)",
-                              color:
-                                index <= getActiveStep()
-                                  ? "#fff"
-                                  : "text.secondary",
-                            }}
-                          >
-                            <IconComponent fontSize="small" />
-                          </Box>
-                        )}
+                        slots={{
+                          stepIcon: () => (
+                            <Box
+                              sx={{
+                                width: 40,
+                                height: 40,
+                                borderRadius: "50%",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                backgroundColor:
+                                  index <= getActiveStep()
+                                    ? "var(--primary)"
+                                    : "var(--surface-hover)",
+                                color:
+                                  index <= getActiveStep()
+                                    ? "#fff"
+                                    : "text.secondary",
+                              }}
+                            >
+                              <IconComponent fontSize="small" />
+                            </Box>
+                          ),
+                        }}
                       >
                         <Typography
                           variant="caption"

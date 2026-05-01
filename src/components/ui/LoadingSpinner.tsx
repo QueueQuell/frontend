@@ -5,10 +5,12 @@ import { Box, CircularProgress } from "@mui/material";
 export default function LoadingSpinner({ size = 40 }: { size?: number }) {
   return (
     <Box
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-      minHeight="200px"
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "200px",
+      }}
     >
       <motion.div
         animate={{ rotate: 360 }}

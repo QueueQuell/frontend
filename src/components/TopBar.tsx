@@ -59,19 +59,21 @@ export default function TopBar() {
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
-        MenuListProps={{
-          "aria-labelledby": "account-button",
-        }}
-        PaperProps={{
-          sx: {
-            bgcolor: "background.paper",
-            border: 1,
-            borderColor: "divider",
-            boxShadow: 1,
-            "& .MuiMenuItem-root": {
-              color: "text.primary",
-              "&:hover": {
-                bgcolor: "action.hover",
+        slotProps={{
+          list: {
+            "aria-labelledby": "account-button",
+          },
+          paper: {
+            sx: {
+              bgcolor: "background.paper",
+              border: 1,
+              borderColor: "divider",
+              boxShadow: 1,
+              "& .MuiMenuItem-root": {
+                color: "text.primary",
+                "&:hover": {
+                  bgcolor: "action.hover",
+                },
               },
             },
           },

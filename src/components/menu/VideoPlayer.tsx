@@ -1,9 +1,23 @@
 "use client";
 
-import React, { useState, useRef } from 'react';
-import { Box, IconButton, Typography, Dialog, DialogContent } from '@mui/material';
-import { PlayCircle, Pause, VolumeUp, VolumeOff, Fullscreen, Close, HighQuality } from '@mui/icons-material';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useRef } from "react";
+import {
+  Box,
+  IconButton,
+  Typography,
+  Dialog,
+  DialogContent,
+} from "@mui/material";
+import {
+  PlayCircle,
+  Pause,
+  VolumeUp,
+  VolumeOff,
+  Fullscreen,
+  Close,
+  HighQuality,
+} from "@mui/icons-material";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface VideoPlayerProps {
   videoUrl: string;
@@ -75,14 +89,14 @@ export default function VideoPlayer({
     <>
       <Box
         sx={{
-          position: 'relative',
-          width: '100%',
-          height: '100%',
+          position: "relative",
+          width: "100%",
+          height: "100%",
           minHeight: 200,
-          backgroundColor: '#000',
+          backgroundColor: "#000",
           borderRadius: 2,
-          overflow: 'hidden',
-          cursor: showControls ? 'default' : 'none',
+          overflow: "hidden",
+          cursor: showControls ? "default" : "none",
         }}
         onMouseMove={handleMouseMove}
         onMouseLeave={() => isPlaying && setShowControls(false)}
@@ -92,9 +106,9 @@ export default function VideoPlayer({
           src={videoUrl}
           poster={posterUrl}
           style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
           }}
           onClick={handlePlayPause}
           playsInline
@@ -106,10 +120,10 @@ export default function VideoPlayer({
         {!isPlaying && (
           <Box
             sx={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
             }}
           >
             <motion.div
@@ -119,13 +133,13 @@ export default function VideoPlayer({
               <IconButton
                 onClick={handlePlayPause}
                 sx={{
-                  backgroundColor: 'rgba(0,0,0,0.6)',
-                  color: '#fff',
-                  '&:hover': {
-                    backgroundColor: 'rgba(0,0,0,0.8)',
-                    transform: 'scale(1.1)',
+                  backgroundColor: "rgba(0,0,0,0.6)",
+                  color: "#fff",
+                  "&:hover": {
+                    backgroundColor: "rgba(0,0,0,0.8)",
+                    transform: "scale(1.1)",
                   },
-                  transition: 'all 0.3s',
+                  transition: "all 0.3s",
                 }}
               >
                 <PlayCircle sx={{ fontSize: 64 }} />
@@ -142,31 +156,31 @@ export default function VideoPlayer({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
               style={{
-                position: 'absolute',
+                position: "absolute",
                 bottom: 0,
                 left: 0,
                 right: 0,
-                background: 'linear-gradient(transparent, rgba(0,0,0,0.8))',
-                padding: '40px 16px 16px',
+                background: "linear-gradient(transparent, rgba(0,0,0,0.8))",
+                padding: "40px 16px 16px",
               }}
             >
               <Box
                 sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
                 }}
               >
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <IconButton onClick={handlePlayPause} sx={{ color: '#fff' }}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <IconButton onClick={handlePlayPause} sx={{ color: "#fff" }}>
                     {isPlaying ? <Pause /> : <PlayCircle />}
                   </IconButton>
-                  <IconButton onClick={handleMuteUnmute} sx={{ color: '#fff' }}>
+                  <IconButton onClick={handleMuteUnmute} sx={{ color: "#fff" }}>
                     {isMuted ? <VolumeOff /> : <VolumeUp />}
                   </IconButton>
                 </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <IconButton onClick={handleFullscreen} sx={{ color: '#fff' }}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <IconButton onClick={handleFullscreen} sx={{ color: "#fff" }}>
                     <Fullscreen />
                   </IconButton>
                 </Box>
@@ -178,20 +192,23 @@ export default function VideoPlayer({
         {/* Premium Badge */}
         <Box
           sx={{
-            position: 'absolute',
+            position: "absolute",
             top: 12,
             left: 12,
-            display: 'flex',
-            alignItems: 'center',
+            display: "flex",
+            alignItems: "center",
             gap: 0.5,
-            backgroundColor: 'rgba(0,0,0,0.6)',
+            backgroundColor: "rgba(0,0,0,0.6)",
             px: 1,
             py: 0.5,
             borderRadius: 1,
           }}
         >
-          <HighQuality sx={{ fontSize: 16, color: '#FFD700' }} />
-          <Typography variant="caption" sx={{ color: '#FFD700', fontWeight: 600 }}>
+          <HighQuality sx={{ fontSize: 16, color: "#FFD700" }} />
+          <Typography
+            variant="caption"
+            sx={{ color: "#FFD700", fontWeight: 600 }}
+          >
             PREMIUM
           </Typography>
         </Box>
@@ -200,16 +217,16 @@ export default function VideoPlayer({
         {title && (
           <Box
             sx={{
-              position: 'absolute',
+              position: "absolute",
               top: 12,
               right: 12,
-              backgroundColor: 'rgba(0,0,0,0.6)',
+              backgroundColor: "rgba(0,0,0,0.6)",
               px: 1.5,
               py: 0.5,
               borderRadius: 1,
             }}
           >
-            <Typography variant="body2" sx={{ color: '#fff', fontWeight: 500 }}>
+            <Typography variant="body2" sx={{ color: "#fff", fontWeight: 500 }}>
               {title}
             </Typography>
           </Box>
@@ -222,24 +239,26 @@ export default function VideoPlayer({
         onClose={handleCloseFullscreen}
         maxWidth="lg"
         fullWidth
-        PaperProps={{
-          sx: {
-            backgroundColor: '#000',
-            maxHeight: '100vh',
-            height: '100%',
+        slotProps={{
+          paper: {
+            sx: {
+              backgroundColor: "#000",
+              maxHeight: "100vh",
+              height: "100%",
+            },
           },
         }}
       >
-        <DialogContent sx={{ p: 0, position: 'relative', height: '90vh' }}>
+        <DialogContent sx={{ p: 0, position: "relative", height: "90vh" }}>
           <IconButton
             onClick={handleCloseFullscreen}
             sx={{
-              position: 'absolute',
+              position: "absolute",
               top: 8,
               right: 8,
               zIndex: 1,
-              color: '#fff',
-              backgroundColor: 'rgba(0,0,0,0.5)',
+              color: "#fff",
+              backgroundColor: "rgba(0,0,0,0.5)",
             }}
           >
             <Close />
@@ -253,9 +272,9 @@ export default function VideoPlayer({
             loop
             playsInline
             style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'contain',
+              width: "100%",
+              height: "100%",
+              objectFit: "contain",
             }}
           />
         </DialogContent>

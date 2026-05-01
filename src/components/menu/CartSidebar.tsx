@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React from "react";
 import {
   Drawer,
   Box,
@@ -10,16 +10,16 @@ import {
   Divider,
   Avatar,
   Slide,
-} from '@mui/material';
+} from "@mui/material";
 import {
   Add,
   Remove,
   Delete,
   Close,
   ShoppingCartCheckout,
-} from '@mui/icons-material';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useCartStore, CartItem } from '@/lib/store/cartStore';
+} from "@mui/icons-material";
+import { motion, AnimatePresence } from "framer-motion";
+import { useCartStore, CartItem } from "@/lib/store/cartStore";
 
 interface CartSidebarProps {
   open: boolean;
@@ -27,7 +27,11 @@ interface CartSidebarProps {
   onCheckout: () => void;
 }
 
-export default function CartSidebar({ open, onClose, onCheckout }: CartSidebarProps) {
+export default function CartSidebar({
+  open,
+  onClose,
+  onCheckout,
+}: CartSidebarProps) {
   const { items, updateQuantity, removeItem, getTotalPrice } = useCartStore();
 
   const totalPrice = getTotalPrice();
@@ -39,32 +43,34 @@ export default function CartSidebar({ open, onClose, onCheckout }: CartSidebarPr
       anchor="right"
       open={open}
       onClose={onClose}
-      PaperProps={{
-        sx: {
-          width: { xs: '100%', sm: 400 },
-          maxWidth: '100vw',
-          borderRadius: { xs: 0, sm: '4px 0 0 4px' },
+      slotProps={{
+        paper: {
+          sx: {
+            width: { xs: "100%", sm: 400 },
+            maxWidth: "100vw",
+            borderRadius: { xs: 0, sm: "4px 0 0 4px" },
+          },
         },
       }}
     >
       {/* Header */}
       <Box
         sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
           p: 2,
-          borderBottom: '1px solid #E5E7EB',
-          backgroundColor: '#FFFFFF',
+          borderBottom: "1px solid #E5E7EB",
+          backgroundColor: "#FFFFFF",
         }}
       >
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <ShoppingCartCheckout sx={{ color: '#8B0000' }} />
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <ShoppingCartCheckout sx={{ color: "#8B0000" }} />
 
-          <Typography variant="h6" sx={{ fontWeight: 600, color: '#111111' }}>
+          <Typography variant="h6" sx={{ fontWeight: 600, color: "#111111" }}>
             Your Cart
           </Typography>
-          <Typography variant="body2" sx={{ color: '#666666' }}>
+          <Typography variant="body2" sx={{ color: "#666666" }}>
             ({items.reduce((sum, item) => sum + item.quantity, 0)} items)
           </Typography>
         </Box>
@@ -77,26 +83,28 @@ export default function CartSidebar({ open, onClose, onCheckout }: CartSidebarPr
       <Box
         sx={{
           flex: 1,
-          overflowY: 'auto',
+          overflowY: "auto",
           p: 2,
         }}
       >
         {items.length === 0 ? (
           <Box
             sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: '100%',
-              textAlign: 'center',
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "100%",
+              textAlign: "center",
             }}
           >
-            <ShoppingCartCheckout sx={{ fontSize: 64, color: '#9CA3AF', mb: 2 }} />
-            <Typography variant="h6" sx={{ color: '#666666' }}>
+            <ShoppingCartCheckout
+              sx={{ fontSize: 64, color: "#9CA3AF", mb: 2 }}
+            />
+            <Typography variant="h6" sx={{ color: "#666666" }}>
               Your cart is empty
             </Typography>
-            <Typography variant="body2" sx={{ color: '#666666' }}>
+            <Typography variant="body2" sx={{ color: "#666666" }}>
               Add some delicious items to get started!
             </Typography>
           </Box>
@@ -119,30 +127,43 @@ export default function CartSidebar({ open, onClose, onCheckout }: CartSidebarPr
         <Box
           sx={{
             p: 2,
-            borderTop: '1px solid #E5E7EB',
-            backgroundColor: '#FFFFFF',
+            borderTop: "1px solid #E5E7EB",
+            backgroundColor: "#FFFFFF",
           }}
         >
           <Box sx={{ mb: 2 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-              <Typography variant="body2" sx={{ color: '#666666' }}>
+            <Box
+              sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}
+            >
+              <Typography variant="body2" sx={{ color: "#666666" }}>
                 Subtotal
               </Typography>
-              <Typography variant="body2" sx={{ color: '#111111' }}>₹{totalPrice.toFixed(2)}</Typography>
+              <Typography variant="body2" sx={{ color: "#111111" }}>
+                ₹{totalPrice.toFixed(2)}
+              </Typography>
             </Box>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-              <Typography variant="body2" sx={{ color: '#666666' }}>
+            <Box
+              sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}
+            >
+              <Typography variant="body2" sx={{ color: "#666666" }}>
                 Tax (10%)
               </Typography>
-              <Typography variant="body2" sx={{ color: '#111111' }}>₹{tax.toFixed(2)}</Typography>
+              <Typography variant="body2" sx={{ color: "#111111" }}>
+                ₹{tax.toFixed(2)}
+              </Typography>
             </Box>
             <Divider sx={{ my: 1 }} />
-            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-              <Typography variant="h6" sx={{ fontWeight: 600, color: '#111111' }}>
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Typography
+                variant="h6"
+                sx={{ fontWeight: 600, color: "#111111" }}
+              >
                 Total
               </Typography>
-              <Typography variant="h6" sx={{ color: '#8B0000', fontWeight: 700 }}>
-
+              <Typography
+                variant="h6"
+                sx={{ color: "#8B0000", fontWeight: 700 }}
+              >
                 ₹{finalTotal.toFixed(2)}
               </Typography>
             </Box>
@@ -157,20 +178,19 @@ export default function CartSidebar({ open, onClose, onCheckout }: CartSidebarPr
               py: 1.5,
               borderRadius: 1,
               fontWeight: 600,
-              textTransform: 'none',
-              backgroundColor: '#FFFFFF',
-              border: '2px solid #8B0000',
-              color: '#111111',
-              '&:hover': {
-                backgroundColor: '#FFF5F5',
-                borderColor: '#8B0000',
-                color: '#111111',
+              textTransform: "none",
+              backgroundColor: "#FFFFFF",
+              border: "2px solid #8B0000",
+              color: "#111111",
+              "&:hover": {
+                backgroundColor: "#FFF5F5",
+                borderColor: "#8B0000",
+                color: "#111111",
               },
             }}
           >
             Proceed to Checkout
           </Button>
-
         </Box>
       )}
     </Drawer>
@@ -185,7 +205,8 @@ interface CartItemCardProps {
 }
 
 function CartItemCard({ item, onUpdateQuantity, onRemove }: CartItemCardProps) {
-  const addonsPrice = item.selectedAddons?.reduce((sum, a) => sum + a.price, 0) || 0;
+  const addonsPrice =
+    item.selectedAddons?.reduce((sum, a) => sum + a.price, 0) || 0;
   const itemTotal = (item.price + addonsPrice) * item.quantity;
 
   return (
@@ -197,13 +218,13 @@ function CartItemCard({ item, onUpdateQuantity, onRemove }: CartItemCardProps) {
     >
       <Box
         sx={{
-          display: 'flex',
+          display: "flex",
           gap: 2,
           p: 2,
           mb: 2,
           borderRadius: 1,
-          backgroundColor: '#FFFFFF',
-          border: '1px solid #E5E7EB',
+          backgroundColor: "#FFFFFF",
+          border: "1px solid #E5E7EB",
         }}
       >
         <Avatar
@@ -212,36 +233,58 @@ function CartItemCard({ item, onUpdateQuantity, onRemove }: CartItemCardProps) {
           sx={{ width: 70, height: 70 }}
         />
         <Box sx={{ flex: 1, minWidth: 0 }}>
-          <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-            <Typography variant="subtitle2" sx={{ fontWeight: 600, lineHeight: 1.2, color: '#111111' }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "flex-start",
+              justifyContent: "space-between",
+            }}
+          >
+            <Typography
+              variant="subtitle2"
+              sx={{ fontWeight: 600, lineHeight: 1.2, color: "#111111" }}
+            >
               {item.name}
             </Typography>
             <IconButton size="small" onClick={() => onRemove(item.id)}>
-              <Delete fontSize="small" sx={{ color: '#EF4444' }} />
+              <Delete fontSize="small" sx={{ color: "#EF4444" }} />
             </IconButton>
           </Box>
 
           {/* Selected Addons */}
           {item.selectedAddons && item.selectedAddons.length > 0 && (
-            <Typography variant="caption" sx={{ color: '#666666', display: 'block' }}>
-              + {item.selectedAddons.map((a) => a.name).join(', ')}
+            <Typography
+              variant="caption"
+              sx={{ color: "#666666", display: "block" }}
+            >
+              + {item.selectedAddons.map((a) => a.name).join(", ")}
             </Typography>
           )}
 
           {/* Special Instructions */}
           {item.specialInstructions && (
-            <Typography variant="caption" sx={{ color: '#666666', display: 'block', fontStyle: 'italic' }}>
+            <Typography
+              variant="caption"
+              sx={{ color: "#666666", display: "block", fontStyle: "italic" }}
+            >
               Note: {item.specialInstructions}
             </Typography>
           )}
 
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 1 }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              mt: 1,
+            }}
+          >
             <Box
               sx={{
-                display: 'flex',
-                alignItems: 'center',
+                display: "flex",
+                alignItems: "center",
                 gap: 1,
-                border: '1px solid #E5E7EB',
+                border: "1px solid #E5E7EB",
                 borderRadius: 0,
               }}
             >
@@ -252,7 +295,10 @@ function CartItemCard({ item, onUpdateQuantity, onRemove }: CartItemCardProps) {
               >
                 <Remove fontSize="small" />
               </IconButton>
-              <Typography variant="body2" sx={{ minWidth: 20, textAlign: 'center', color: '#111111' }}>
+              <Typography
+                variant="body2"
+                sx={{ minWidth: 20, textAlign: "center", color: "#111111" }}
+              >
                 {item.quantity}
               </Typography>
               <IconButton
@@ -264,8 +310,10 @@ function CartItemCard({ item, onUpdateQuantity, onRemove }: CartItemCardProps) {
               </IconButton>
             </Box>
 
-            <Typography variant="subtitle2" sx={{ color: '#8B0000', fontWeight: 600 }}>
-
+            <Typography
+              variant="subtitle2"
+              sx={{ color: "#8B0000", fontWeight: 600 }}
+            >
               ₹{itemTotal.toFixed(2)}
             </Typography>
           </Box>

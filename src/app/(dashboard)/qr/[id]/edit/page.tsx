@@ -220,14 +220,14 @@ export default function QREditPage() {
               >
                 ID
               </Typography>
-              <Typography variant="body2" fontFamily="monospace">
+              <Typography variant="body2" sx={{ fontFamily: "monospace" }}>
                 {qr.id}
               </Typography>
 
               <Typography variant="body2" color="text.secondary">
                 QR String
               </Typography>
-              <Typography variant="body2" fontFamily="monospace">
+              <Typography variant="body2" sx={{ fontFamily: "monospace" }}>
                 {qr.qrString}
               </Typography>
 

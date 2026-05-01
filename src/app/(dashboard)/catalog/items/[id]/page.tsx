@@ -228,13 +228,13 @@ export default function ItemDetailPage() {
         </Typography>
         <Grid container spacing={3}>
           <Grid size={{ xs: 12, sm: 6 }}>
-            <Typography variant="subtitle1" fontWeight={600} sx={{ mb: 1 }}>
+            <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 600 }}>
               Name
             </Typography>
             <Typography variant="body1">{item.name}</Typography>
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }}>
-            <Typography variant="subtitle1" fontWeight={600} sx={{ mb: 1 }}>
+            <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 600 }}>
               Category
             </Typography>
             <Typography variant="body1">
@@ -242,7 +242,7 @@ export default function ItemDetailPage() {
             </Typography>
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }}>
-            <Typography variant="subtitle1" fontWeight={600} sx={{ mb: 1 }}>
+            <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 600 }}>
               Price
             </Typography>
             <Typography variant="body1">
@@ -250,7 +250,7 @@ export default function ItemDetailPage() {
             </Typography>
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }}>
-            <Typography variant="subtitle1" fontWeight={600} sx={{ mb: 1 }}>
+            <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 600 }}>
               Status
             </Typography>
             <Chip
@@ -259,7 +259,7 @@ export default function ItemDetailPage() {
             />
           </Grid>
           <Grid size={{ xs: 12 }}>
-            <Typography variant="subtitle1" fontWeight={600} sx={{ mb: 1 }}>
+            <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 600 }}>
               Description
             </Typography>
             <Typography variant="body2">
@@ -267,7 +267,7 @@ export default function ItemDetailPage() {
             </Typography>
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }}>
-            <Typography variant="subtitle1" fontWeight={600} sx={{ mb: 1 }}>
+            <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 600 }}>
               Type
             </Typography>
             <Typography variant="body1">{item.type || "N/A"}</Typography>
