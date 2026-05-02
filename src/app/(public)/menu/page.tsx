@@ -444,7 +444,7 @@ function MenuComponent() {
     }
 
     return items;
-  }, [selectedCategory, searchQuery, isVegOnly]);
+  }, [selectedCategory, searchQuery, isVegOnly, menuData.items]);
 
   // Category item counts
   const categoryCounts = useMemo(() => {
@@ -463,7 +463,7 @@ function MenuComponent() {
       counts[categoryId] = (counts[categoryId] || 0) + 1;
     });
     return counts;
-  }, [isVegOnly]);
+  }, [isVegOnly, menuData.items]);
 
   // Handlers
   const handleCategorySelect = (categoryId: string) => {
