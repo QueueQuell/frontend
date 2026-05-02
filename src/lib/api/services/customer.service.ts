@@ -4,33 +4,67 @@ import { Customer, CreateCustomerRequest, LoyaltyProgram } from "../types";
 
 // Types for Menu API response
 export interface ApiMenuItem {
-  _id?: string;
   id: string;
   name: string;
   description?: string;
-  category: string;
-  categoryId?: string | null;
-  type?: string;
-  spicinessLevel?: string;
-  dietaryTags?: string[];
-  pricingModel?: string;
-  basePrice: number;
-  active: boolean;
+  price: number;
+  category: {
+    id: string;
+    name: string;
+  };
+  images: Array<{
+    url: string;
+    type: string;
+  }>;
+  isAvailable: boolean;
+  isVegetarian: boolean;
+  isVegan: boolean;
+  isGlutenFree: boolean;
+  variants: any[];
+  addOns: any[];
+  preparationTime?: number;
+  allergens?: string[];
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface ApiOrganisationPayment {
+  upiId?: string;
+  merchantId?: string;
+  merchantName?: string;
+  enabledMethods?: string[];
+}
+
+export interface ApiOrganisationUIDesign {
+  primaryColor?: string;
+  secondaryColor?: string;
+  fontFamily?: string;
+  theme?: string;
+  menuLayout?: string;
+}
+
+export interface ApiOrganisationBusiness {
+  taxPercentage?: number;
+  taxLabel?: string;
   currency?: string;
-  status?: string;
-  isRecommended?: boolean;
-  isPopular?: boolean;
-  imageUrl?: string;
-  restaurantId?: string;
-  nonVeg?: boolean;
-  variantGroups?: any[];
-  addonGroups?: any[];
-  components?: any[];
+  currencySymbol?: string;
+  packagingCharge?: number;
+  deliveryCharge?: number;
+  freeDeliveryAbove?: number;
+  minOrderAmount?: number;
+  isPremium?: boolean;
+}
+
+export interface ApiOrganisationConfigurations {
+  uiDesign?: ApiOrganisationUIDesign;
+  business?: ApiOrganisationBusiness;
 }
 
 export interface ApiOrganisation {
   id: string;
   name: string;
+  payment?: ApiOrganisationPayment;
+  configurations?: ApiOrganisationConfigurations;
 }
 
 export interface ApiContext {
@@ -42,9 +76,8 @@ export interface ApiContext {
 export interface MenuApiResponse {
   success: boolean;
   data: {
+    items: ApiMenuItem[];
     organisation: ApiOrganisation;
-    context: ApiContext;
-    menuItems: ApiMenuItem[];
   };
 }
 

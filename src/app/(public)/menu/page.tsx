@@ -43,9 +43,6 @@ import PaymentPage from "@/components/menu/PaymentPage";
 import LoadingSkeleton from "@/components/menu/LoadingSkeleton";
 import VegNonVegFilter from "@/components/menu/VegNonVegFilter";
 
-// Data
-import { menuData as mockMenuData } from "./menuData";
-
 // Store
 import { useCartStore, MenuItemType } from "@/lib/store/cartStore";
 
@@ -78,37 +75,37 @@ function getMenuItemCategoryId(item: MenuItemType) {
 }
 
 // Helper function to map API menu item to MenuItemType
+// This transforms API response format to match cart store's MenuItemType
 function mapApiMenuItemToMenuItemType(apiItem: ApiMenuItem): MenuItemType {
+  const firstImage = apiItem.images?.[0];
   return {
-    id: apiItem._id || apiItem.id,
+    id: apiItem.id,
     name: apiItem.name,
     description: apiItem.description || "",
-    price: apiItem.basePrice,
-    categoryId: apiItem.categoryId || undefined,
-    categoryName: apiItem.category || undefined,
-    category:
-      apiItem.categoryId || apiItem.category
-        ? {
-            id: apiItem.categoryId || apiItem.category,
-            name: apiItem.category || apiItem.categoryId || "",
-          }
-        : undefined,
-    image: apiItem.imageUrl || "",
-    images: apiItem.imageUrl
-      ? [
-          {
-            url: apiItem.imageUrl,
-            type: "primary",
-          },
-        ]
-      : [],
-    isAvailable: apiItem.active !== false,
-    isVegetarian: apiItem.nonVeg === false,
-    isVegan: false,
-    isGlutenFree: false,
-    allergens: [],
-    variants: [],
-    addOns: [],
+    price: apiItem.price,
+    // Extract category fields for cart store compatibility
+    categoryId: apiItem.category?.id,
+    categoryName: apiItem.category?.name,
+    category: apiItem.category,
+    // Map images array to both image (single) and images (array) fields
+    image: firstImage?.url || "",
+    images:
+      apiItem.images?.map((img) => ({
+        url: img.url,
+        type: (img.type as "primary" | "thumbnail" | "gallery") || "primary",
+      })) || [],
+    // Availability and dietary info
+    isAvailable: apiItem.isAvailable !== false,
+    isVegetarian: apiItem.isVegetarian || false,
+    isVegan: apiItem.isVegan || false,
+    isGlutenFree: apiItem.isGlutenFree || false,
+    allergens: apiItem.allergens || [],
+    // Additional fields
+    preparationTime: apiItem.preparationTime,
+    variants: apiItem.variants || [],
+    addOns: apiItem.addOns || [],
+    createdAt: apiItem.createdAt,
+    updatedAt: apiItem.updatedAt,
   };
 }
 
@@ -224,8 +221,91 @@ function CategorySidebar({
 
 export default function MenuPage() {
   return (
-    // You could have a loading skeleton as the `fallback` too
-    <Suspense>
+    <Suspense
+      fallback={
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            minHeight: "100vh",
+            backgroundColor: "#FFFFFF",
+          }}
+        >
+          {/* Header Skeleton */}
+          <Box
+            sx={{
+              position: "sticky",
+              top: 0,
+              zIndex: 1100,
+              backgroundColor: "#FFFFFF",
+              borderBottom: "1px solid #E5E7EB",
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 2,
+                px: { xs: 2, md: 3 },
+                py: 1.5,
+              }}
+            >
+              <Box
+                sx={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: 2,
+                  backgroundColor: "#8B0000",
+                }}
+              />
+              <Box sx={{ flex: 1, maxWidth: 500 }}>
+                <Box
+                  sx={{
+                    height: 40,
+                    borderRadius: 3,
+                    backgroundColor: "#F3F4F6",
+                  }}
+                />
+              </Box>
+            </Box>
+          </Box>
+          {/* Content Skeleton */}
+          <Box sx={{ p: { xs: 2, md: 3 } }}>
+            <Box
+              sx={{
+                height: 40,
+                width: 200,
+                borderRadius: 2,
+                backgroundColor: "#F3F4F6",
+                mb: 3,
+              }}
+            />
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: {
+                  xs: "1fr",
+                  sm: "1fr",
+                  md: "repeat(2, 1fr)",
+                },
+                gap: 3,
+              }}
+            >
+              {[1, 2, 3, 4].map((i) => (
+                <Box
+                  key={i}
+                  sx={{
+                    height: 200,
+                    borderRadius: 2,
+                    backgroundColor: "#F3F4F6",
+                  }}
+                />
+              ))}
+            </Box>
+          </Box>
+        </Box>
+      }
+    >
       <MenuComponent />
     </Suspense>
   );
@@ -243,7 +323,10 @@ function MenuComponent() {
   const setCartOpen = useCartStore((state) => state.setCartOpen);
 
   // Menu data state
-  const [menuData, setMenuData] = useState<MenuDataType>(mockMenuData);
+  const [menuData, setMenuData] = useState<MenuDataType>({
+    categories: [{ id: "all", name: "All", icon: RestaurantMenu }],
+    items: [],
+  });
 
   // Local state
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -265,12 +348,13 @@ function MenuComponent() {
         setIsLoading(true);
         try {
           const response = await customerService.getMenuByQr(qrCode);
+          console.log("API Response:", response);
           if (response.success && response.data) {
-            // response.data is MenuApiResponse which has { success, data: { organisation, context, menuItems } }
-            const menuItems = (response.data as any)?.menuItems || [];
+            // response.data is MenuApiResponse which has { success, data: { items, organisation } }
+            const menuItems = (response.data as any)?.items || [];
 
             // Map API items to MenuItemType
-            const mappedItems = menuItems.map((item: any) =>
+            const mappedItems = menuItems.map((item: ApiMenuItem) =>
               mapApiMenuItemToMenuItemType(item),
             );
 
@@ -308,14 +392,20 @@ function MenuComponent() {
           }
         } catch (error) {
           console.error("Failed to fetch menu from API:", error);
-          // Fallback to mock data on error
-          setMenuData(mockMenuData);
+          // On error, keep showing empty state with categories
+          setMenuData({
+            categories: [{ id: "all", name: "All", icon: RestaurantMenu }],
+            items: [],
+          });
         } finally {
           setIsLoading(false);
         }
       } else {
-        // No QR code, use mock data
-        setMenuData(mockMenuData);
+        // No QR code, show empty state
+        setMenuData({
+          categories: [{ id: "all", name: "All", icon: RestaurantMenu }],
+          items: [],
+        });
       }
     };
 
