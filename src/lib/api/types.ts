@@ -776,37 +776,10 @@ export interface MenuItemComponent {
   isOptional: boolean;
 }
 
-export interface CreateMenuItemRequest {
-  name: string;
-  description?: string;
-  price: number;
-  imageUrl?: string;
-  category: string;
-  categoryId: string;
-  nonVeg: boolean;
-  type?: string;
-  cuisine?: string;
-  spicinessLevel?: string;
-  pricingModel?: string;
-  basePrice: number;
-  currency?: string;
-  preparationTime?: number;
-  allergens?: string[];
-  isVegetarian?: boolean;
-  isVegan?: boolean;
-  isGlutenFree?: boolean;
-  active?: boolean;
-  status?: string;
-  isRecommended?: boolean;
-  isPopular?: boolean;
-  displayOrder?: number;
-  dietaryTags?: string[];
-  variantGroups?: VariantGroup[];
-  addonGroups?: AddonGroup[];
-  components?: MenuItemComponent[];
-  nutritionalInfo?: NutritionalInfo;
-  availability?: Availability;
-}
+import type { CreateMenuItemDTO } from "../../types/menu.types";
+
+export type CreateMenuItemRequest = CreateMenuItemDTO;
+export type UpdateMenuItemRequest = Partial<CreateMenuItemDTO>;
 
 // ============================================================================
 // Supplier Types (from old types)

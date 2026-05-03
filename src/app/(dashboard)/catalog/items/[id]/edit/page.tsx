@@ -23,7 +23,7 @@ export default function ItemEditPage() {
     categoryId: "",
     organisationId: "",
     description: "",
-    imageUrls: [],
+    images: [],
     cuisine: "",
     type: "",
     spicinessLevel: "",
@@ -98,7 +98,7 @@ export default function ItemEditPage() {
           categoryId: data.category?.id || data.category?.name || "",
           organisationId: "",
           description: data.description || "",
-          imageUrls: data.imageUrls || [],
+          images: data.imageUrls || [],
           cuisine: data.cuisine || "",
           type: data.type || "",
           spicinessLevel: data.spicinessLevel || "",
@@ -225,7 +225,7 @@ export default function ItemEditPage() {
         isRecommended: formData.isRecommended,
         isPopular: formData.isPopular,
         dietaryTags: formData.dietaryTags,
-        imageUrl: formData.imageUrls?.[0]?.url || undefined,
+        images: formData.images || [],
         displayOrder: formData.displayOrder
           ? parseInt(formData.displayOrder)
           : undefined,

@@ -1,6 +1,6 @@
 import { apiClient } from "../client";
 import { MENU_ENDPOINTS } from "../endpoints";
-import { MenuItemType, CreateMenuItemRequest } from "../types";
+import type { MenuItemType, CreateMenuItemRequest } from "../types";
 
 export const menuService = {
   async getAll() {

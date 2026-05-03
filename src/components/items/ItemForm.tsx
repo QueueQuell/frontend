@@ -20,33 +20,40 @@ import {
 } from "@mui/material";
 import { Delete as DeleteIcon, Add as AddIcon } from "@mui/icons-material";
 
-const SPICINESS_LEVEL_VALUES = [
+import type {
+  CreateMenuItemDTO,
+  ImageDto,
+  NutritionalInfoDTO,
+  VariantGroupDto,
+  VariantOptionDto,
+  AddonGroupDto,
+  AddonOptionDto,
+  ComponentDto,
+  AvailabilityDto,
+} from "@/types/menu.types";
+
+const SPICINESS_LEVEL_VALUES: CreateMenuItemDTO["spicinessLevel"][] = [
   "None",
   "Mild",
   "Medium",
   "Spicy",
   "Extra Spicy",
-] as const;
+];
 
-const PRICING_MODEL_VALUES = [
+const PRICING_MODEL_VALUES: CreateMenuItemDTO["pricingModel"][] = [
   "SinglePrice",
   "Variants",
   "Customizable",
   "ComboPricing",
-] as const;
-
-const STATUS_VALUES = [
-  "Available",
-  "Out of Stock",
-  "Temporarily Unavailable",
-] as const;
+];
 
 export interface ItemFormData {
   name: string;
   categoryId: string;
   organisationId: string;
   description: string;
-  imageUrls: { url: string; type: "primary" | "thumbnail" | "gallery" }[];
+  images: ImageDto[];
+
   cuisine: string;
   type: string;
   spicinessLevel: string;
@@ -136,10 +143,8 @@ export default function ItemForm({
     "Sunday",
   ];
 
-  const imageUrls =
-    formData.imageUrls && formData.imageUrls.length
-      ? formData.imageUrls
-      : [{ url: "", type: "primary" }];
+  const images = formData.images ?? [{ url: "", type: "primary" }];
+
   const allergens = formData.allergens ?? [];
   const dietaryTags = formData.dietaryTags ?? [];
   const variantGroups = formData.variantGroups ?? [];
@@ -147,21 +152,17 @@ export default function ItemForm({
   const components = formData.components ?? [];
   const loadingCategories = categories.length === 0;
 
-  const addImageUrl = () =>
-    onChange("imageUrls", [...imageUrls, { url: "", type: "primary" }]);
-  const removeImageUrl = (index: number) =>
+  const addImage = () =>
+    onChange("images", [...images, { url: "", type: "primary" }]);
+  const removeImage = (index: number) =>
     onChange(
-      "imageUrls",
-      imageUrls.filter((_, i) => i !== index),
+      "images",
+      images.filter((_, i) => i !== index),
     );
-  const updateImageUrl = (
-    index: number,
-    field: "url" | "type",
-    value: string,
-  ) => {
+  const updateImage = (index: number, field: "url" | "type", value: string) => {
     onChange(
-      "imageUrls",
-      imageUrls.map((item, i) =>
+      "images",
+      images.map((item, i) =>
         i === index ? { ...item, [field]: value } : item,
       ),
     );
@@ -549,19 +550,13 @@ export default function ItemForm({
               <FormControl fullWidth>
                 <InputLabel>Pricing Model</InputLabel>
                 <Select
-                  value={
-                    PRICING_MODEL_VALUES.includes(
-                      formData.pricingModel as (typeof PRICING_MODEL_VALUES)[number],
-                    )
-                      ? formData.pricingModel
-                      : ""
-                  }
+                  value={formData.pricingModel || ""}
                   onChange={(e) => onChange("pricingModel", e.target.value)}
                   label="Pricing Model"
                 >
                   {PRICING_MODEL_VALUES.map((model) => (
                     <MenuItem key={model} value={model}>
-                      {model.replace(/([A-Z])/g, " $1").trim()}
+                      {model && model.replace(/([A-Z])/g, " $1").trim()}
                     </MenuItem>
                   ))}
                 </Select>
@@ -593,11 +588,11 @@ export default function ItemForm({
                   onChange={(e) => onChange("status", e.target.value)}
                   label="Status"
                 >
-                  {STATUS_VALUES.map((status) => (
-                    <MenuItem key={status} value={status}>
-                      {status}
-                    </MenuItem>
-                  ))}
+                  <MenuItem value="Available">Available</MenuItem>
+                  <MenuItem value="Out of Stock">Out of Stock</MenuItem>
+                  <MenuItem value="Temporarily Unavailable">
+                    Temporarily Unavailable
+                  </MenuItem>
                 </Select>
               </FormControl>
             </Grid>
@@ -708,16 +703,16 @@ export default function ItemForm({
         <AccordionSummary>Images</AccordionSummary>
         <AccordionDetails>
           <Typography variant="subtitle1" gutterBottom>
-            Image URLs
+            Images
           </Typography>
-          {imageUrls.map((img, index) => (
+          {images.map((img, index) => (
             <Grid container spacing={2} key={index} sx={{ mb: 2 }}>
               <Grid size={7}>
                 <TextField
                   fullWidth
                   label={`Image URL ${index + 1}`}
                   value={img.url}
-                  onChange={(e) => updateImageUrl(index, "url", e.target.value)}
+                  onChange={(e) => updateImage(index, "url", e.target.value)}
                 />
               </Grid>
               <Grid size={3}>
@@ -725,9 +720,7 @@ export default function ItemForm({
                   <InputLabel>Type</InputLabel>
                   <Select
                     value={img.type}
-                    onChange={(e) =>
-                      updateImageUrl(index, "type", e.target.value)
-                    }
+                    onChange={(e) => updateImage(index, "type", e.target.value)}
                     label="Type"
                   >
                     <MenuItem value="primary">Primary</MenuItem>
@@ -738,7 +731,7 @@ export default function ItemForm({
               </Grid>
               <Grid size={2}>
                 <IconButton
-                  onClick={() => removeImageUrl(index)}
+                  onClick={() => removeImage(index)}
                   color="error"
                   size="large"
                 >
@@ -747,7 +740,7 @@ export default function ItemForm({
               </Grid>
             </Grid>
           ))}
-          <Button startIcon={<AddIcon />} onClick={addImageUrl}>
+          <Button startIcon={<AddIcon />} onClick={addImage}>
             Add Image
           </Button>
         </AccordionDetails>
