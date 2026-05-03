@@ -233,18 +233,19 @@ export default function ItemsListPage() {
             <TableContainer>
               <Table>
                 <TableHead>
-                  <TableRow>
-                    <TableCell>Item ID</TableCell>
-                    <TableCell>Name</TableCell>
-                    <TableCell>Category</TableCell>
-                    <TableCell align="right">Unit Cost</TableCell>
-                    <TableCell>Type</TableCell>
-                    <TableCell>Cuisine</TableCell>
-                    <TableCell>Status</TableCell>
-                    <TableCell>Active</TableCell>
-                    <TableCell align="right">Price</TableCell>
-                    <TableCell align="right">Description</TableCell>
-                    <TableCell align="center">Actions</TableCell>
+                  <TableRow sx={{ whiteSpace: "nowrap" }}>
+                    <TableCell sx={{ width: 120 }}>Item ID</TableCell>
+                    <TableCell sx={{ width: 200 }}>Name</TableCell>
+                    <TableCell sx={{ width: 150 }}>Category</TableCell>
+                    <TableCell sx={{ width: 120, textAlign: "right" }}>
+                      Price
+                    </TableCell>
+                    <TableCell sx={{ width: 100 }}>Type</TableCell>
+                    <TableCell sx={{ width: 100 }}>Cuisine</TableCell>
+                    <TableCell sx={{ width: 140 }}>Status</TableCell>
+                    <TableCell sx={{ width: 80 }}>Active</TableCell>
+                    <TableCell sx={{ width: 120 }}>Display Order</TableCell>
+                    <TableCell sx={{ width: 120 }}>Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -262,11 +263,17 @@ export default function ItemsListPage() {
                     </TableRow>
                   ) : (
                     paginatedItems.map((item) => (
-                      <TableRow key={item.id} hover>
-                        <TableCell>
-                          <Typography variant="body2">{item.id}</Typography>
+                      <TableRow
+                        key={item.id}
+                        hover
+                        sx={{ whiteSpace: "nowrap" }}
+                      >
+                        <TableCell>{item.id}</TableCell>
+                        <TableCell sx={{ maxWidth: 200 }}>
+                          <Typography variant="body2" noWrap title={item.name}>
+                            {item.name}
+                          </Typography>
                         </TableCell>
-                        <TableCell>{item.name}</TableCell>
                         <TableCell>
                           <Chip
                             label={
@@ -278,7 +285,19 @@ export default function ItemsListPage() {
                             color="primary"
                           />
                         </TableCell>
+                        <TableCell sx={{ textAlign: "right" }}>
+                          ₹{item.basePrice?.toFixed(2) ?? 0}
+                        </TableCell>
                         <TableCell>{item.type || "Regular"}</TableCell>
+                        <TableCell sx={{ maxWidth: 100 }}>
+                          <Typography
+                            variant="body2"
+                            noWrap
+                            title={item.cuisine}
+                          >
+                            {item.cuisine || "-"}
+                          </Typography>
+                        </TableCell>
                         <TableCell>
                           <Chip
                             label={
@@ -301,40 +320,37 @@ export default function ItemsListPage() {
                             color={item.active ? "success" : "default"}
                           />
                         </TableCell>
-                        <TableCell align="right">
-                          ₹{item.basePrice?.toFixed(2) ?? 0}
-                        </TableCell>
-                        <TableCell align="right">
-                          {item.description
-                            ? item.description.substring(0, 30) + "..."
-                            : "No description"}
-                        </TableCell>
-                        <TableCell align="center">
-                          <IconButton
-                            component={Link}
-                            href={`/catalog/items/${item.id}`}
-                            size="small"
-                            title="View"
-                          >
-                            <VisibilityIcon fontSize="small" />
-                          </IconButton>
-                          <IconButton
-                            component={Link}
-                            href={`/catalog/items/${item.id}/edit`}
-                            color="primary"
-                            size="small"
-                            title="Edit"
-                          >
-                            <EditIcon fontSize="small" />
-                          </IconButton>
-                          <IconButton
-                            size="small"
-                            color="error"
-                            onClick={() => handleDeleteOpen(item.id, item.name)}
-                            title="Delete"
-                          >
-                            <DeleteIcon fontSize="small" />
-                          </IconButton>
+                        <TableCell>{item.displayOrder || 0}</TableCell>
+                        <TableCell>
+                          <Box sx={{ display: "flex", gap: 0.5 }}>
+                            <IconButton
+                              component={Link}
+                              href={`/catalog/items/${item.id}`}
+                              size="small"
+                              title="View"
+                            >
+                              <VisibilityIcon fontSize="small" />
+                            </IconButton>
+                            <IconButton
+                              component={Link}
+                              href={`/catalog/items/${item.id}/edit`}
+                              color="primary"
+                              size="small"
+                              title="Edit"
+                            >
+                              <EditIcon fontSize="small" />
+                            </IconButton>
+                            <IconButton
+                              size="small"
+                              color="error"
+                              onClick={() =>
+                                handleDeleteOpen(item.id, item.name)
+                              }
+                              title="Delete"
+                            >
+                              <DeleteIcon fontSize="small" />
+                            </IconButton>
+                          </Box>
                         </TableCell>
                       </TableRow>
                     ))
