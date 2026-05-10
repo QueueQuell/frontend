@@ -263,7 +263,7 @@ export default function CreateItemPage() {
       <Breadcrumb
         items={[
           { label: "Home", href: "/home" },
-          { label: "Items", href: "/catalog" },
+          { label: "Catalog", href: "/catalog" },
           { label: "Items", href: "/catalog/items/list" },
           { label: "Create New Menu Item" },
         ]}
