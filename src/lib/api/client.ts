@@ -17,6 +17,10 @@ type ApiRequestOptions = RequestInit & {
   retryOn401?: boolean;
 };
 
+type FormDataRequestOptions = Omit<ApiRequestOptions, "body"> & {
+  body: FormData;
+};
+
 class ApiClient {
   private baseURL: string;
   private isRefreshing = false;
@@ -264,6 +268,140 @@ class ApiClient {
     options: ApiRequestOptions = {},
   ): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, { method: "DELETE", ...options });
+  }
+
+  // FormData methods - no Content-Type header for multipart
+  private buildFormHeaders(skipAuth = false): Headers {
+    const built = new Headers();
+    // NO Content-Type - let browser set multipart/form-data with boundary
+
+    if (!skipAuth) {
+      const token = this.getAuthToken();
+      if (token?.trim()) {
+        built.set("Authorization", `Bearer ${token}`);
+      }
+    }
+
+    return built;
+  }
+
+  private async requestFormData<T>(
+    endpoint: string,
+    options: FormDataRequestOptions,
+  ): Promise<ApiResponse<T>> {
+    const { skipAuth, retryOn401 = true, body, ...fetchOptions } = options;
+    const headers = this.buildFormHeaders(skipAuth);
+
+    try {
+      const response = await fetch(`${this.baseURL}${endpoint}`, {
+        ...fetchOptions,
+        headers,
+        body, // FormData directly
+      });
+
+      if (
+        response.status === 401 &&
+        typeof window !== "undefined" &&
+        retryOn401
+      ) {
+        return this.handleForm401<T>(endpoint, options, headers);
+      }
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw this.createApiError(data, response.status);
+      }
+
+      return {
+        success: true,
+        data: data.data ?? data,
+        pagination: data.pagination,
+        message: data.message,
+      };
+    } catch (error: any) {
+      if (error?.success === false) throw error;
+      throw this.createNetworkError(error);
+    }
+  }
+
+  private async handleForm401<T>(
+    endpoint: string,
+    options: ApiRequestOptions & { body: FormData },
+    headers: Headers,
+  ): Promise<ApiResponse<T>> {
+    if (this.isRefreshing) {
+      return new Promise((resolve, reject) => {
+        this.subscribeTokenRefresh((newToken) => {
+          if (!newToken) {
+            reject({
+              success: false,
+              message: "Session expired. Please login again.",
+              status: 401,
+            } as ApiError);
+            return;
+          }
+
+          headers.set("Authorization", `Bearer ${newToken}`);
+          resolve(
+            this.requestFormData<T>(endpoint, {
+              ...options,
+              retryOn401: false,
+            }),
+          );
+        });
+      });
+    }
+
+    this.isRefreshing = true;
+    try {
+      const newToken = await this.refreshToken();
+
+      if (!newToken) {
+        this.onTokenRefreshed(null);
+        await this.clearAuthAndRedirect();
+        throw {
+          success: false,
+          message: "Session expired. Please login again.",
+          status: 401,
+        } as ApiError;
+      }
+
+      this.onTokenRefreshed(newToken);
+      headers.set("Authorization", `Bearer ${newToken}`);
+      return this.requestFormData<T>(endpoint, {
+        ...options,
+        retryOn401: false,
+      });
+    } finally {
+      this.isRefreshing = false;
+    }
+  }
+
+  async postFormData<T>(
+    endpoint: string,
+    formData: FormData,
+    options: ApiRequestOptions = {},
+  ): Promise<ApiResponse<T>> {
+    const { body, ...restOptions } = options;
+    return this.requestFormData<T>(endpoint, {
+      method: "POST",
+      body: formData,
+      ...restOptions,
+    });
+  }
+
+  async putFormData<T>(
+    endpoint: string,
+    formData: FormData,
+    options: ApiRequestOptions = {},
+  ): Promise<ApiResponse<T>> {
+    const { body, ...restOptions } = options;
+    return this.requestFormData<T>(endpoint, {
+      method: "PUT",
+      body: formData,
+      ...restOptions,
+    });
   }
 
   async getPaginated<T = any>(

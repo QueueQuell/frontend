@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useMemo } from "react";
 import {
   Accordion,
   AccordionDetails,
@@ -123,15 +124,21 @@ export interface AvailabilityFormData {
 }
 
 interface ItemFormProps {
-  formData: ItemFormData;
-  onChange: (field: keyof ItemFormData, value: any) => void;
+  formData: Omit<ItemFormData, "images">;
+  onChange: (field: keyof Omit<ItemFormData, "images">, value: any) => void;
   categories?: { id: string; name: string }[];
+  files: File[];
+  onFilesChange: (files: File[]) => void;
+  existingImages?: ImageDto[];
 }
 
 export default function ItemForm({
   formData,
   onChange,
   categories = [],
+  files,
+  onFilesChange,
+  existingImages = [],
 }: ItemFormProps) {
   const daysOfWeek = [
     "Monday",
@@ -143,7 +150,7 @@ export default function ItemForm({
     "Sunday",
   ];
 
-  const images = formData.images ?? [{ url: "", type: "primary" }];
+  // Images handled by files and existingImages props
 
   const allergens = formData.allergens ?? [];
   const dietaryTags = formData.dietaryTags ?? [];
@@ -152,21 +159,36 @@ export default function ItemForm({
   const components = formData.components ?? [];
   const loadingCategories = categories.length === 0;
 
-  const addImage = () =>
-    onChange("images", [...images, { url: "", type: "primary" }]);
-  const removeImage = (index: number) =>
-    onChange(
-      "images",
-      images.filter((_, i) => i !== index),
-    );
-  const updateImage = (index: number, field: "url" | "type", value: string) => {
-    onChange(
-      "images",
-      images.map((item, i) =>
-        i === index ? { ...item, [field]: value } : item,
-      ),
-    );
+  const handleFilesChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newFiles = Array.from(event.target.files || []);
+    const totalFiles = existingImages.length + newFiles.length;
+
+    if (totalFiles > 5) {
+      alert("Please upload at most 5 images in total");
+      event.target.value = "";
+      return;
+    }
+
+    const invalid = newFiles.find((file) => !file.type.startsWith("image/"));
+    if (invalid) {
+      alert(`${invalid.name} is not an image file`);
+      event.target.value = "";
+      return;
+    }
+
+    onFilesChange(newFiles);
   };
+
+  const filePreviews = useMemo(
+    () => files.map((file) => URL.createObjectURL(file)),
+    [files],
+  );
+
+  useEffect(() => {
+    return () => {
+      filePreviews.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [filePreviews]);
 
   const addAllergen = () => onChange("allergens", [...allergens, ""]);
   const removeAllergen = (index: number) =>
@@ -703,46 +725,109 @@ export default function ItemForm({
         <AccordionSummary>Images</AccordionSummary>
         <AccordionDetails>
           <Typography variant="subtitle1" gutterBottom>
-            Images
+            Upload Images (Max 5, 5MB each)
           </Typography>
-          {images.map((img, index) => (
-            <Grid container spacing={2} key={index} sx={{ mb: 2 }}>
-              <Grid size={7}>
-                <TextField
-                  fullWidth
-                  label={`Image URL ${index + 1}`}
-                  value={img.url}
-                  onChange={(e) => updateImage(index, "url", e.target.value)}
-                />
-              </Grid>
-              <Grid size={3}>
-                <FormControl fullWidth>
-                  <InputLabel>Type</InputLabel>
-                  <Select
-                    value={img.type}
-                    onChange={(e) => updateImage(index, "type", e.target.value)}
-                    label="Type"
-                  >
-                    <MenuItem value="primary">Primary</MenuItem>
-                    <MenuItem value="thumbnail">Thumbnail</MenuItem>
-                    <MenuItem value="gallery">Gallery</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid size={2}>
-                <IconButton
-                  onClick={() => removeImage(index)}
-                  color="error"
-                  size="large"
-                >
-                  <DeleteIcon />
-                </IconButton>
-              </Grid>
-            </Grid>
-          ))}
-          <Button startIcon={<AddIcon />} onClick={addImage}>
-            Add Image
+          <Button variant="contained" component="label" sx={{ mb: 2 }}>
+            Choose Images
+            <input
+              type="file"
+              multiple
+              accept="image/*"
+              hidden
+              onChange={handleFilesChange}
+            />
           </Button>
+          {files.length > 0 && (
+            <Typography variant="body2" color="success.main" sx={{ mb: 2 }}>
+              {files.length} file(s) selected
+            </Typography>
+          )}
+          {(existingImages.length > 0 || files.length > 0) && (
+            <Typography variant="body2" sx={{ mb: 2 }}>
+              Preview:
+            </Typography>
+          )}
+          <Grid container spacing={2}>
+            {existingImages.map((img, index) => (
+              <Grid size={6} key={`existing-${index}`}>
+                <Box
+                  sx={{
+                    position: "relative",
+                    borderRadius: 1,
+                    overflow: "hidden",
+                    height: 120,
+                    bgcolor: "grey.200",
+                  }}
+                >
+                  <img
+                    src={
+                      img.url || (img as any).imageUrl || "/QueueQuell_HD.png"
+                    }
+                    alt={`Existing ${index + 1}`}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      position: "absolute",
+                      bottom: 4,
+                      left: 4,
+                      bgcolor: "rgba(0,0,0,0.7)",
+                      color: "white",
+                      px: 1,
+                      borderRadius: 1,
+                    }}
+                  >
+                    Existing
+                  </Typography>
+                </Box>
+              </Grid>
+            ))}
+            {files.map((file, index) => {
+              const url = filePreviews[index];
+              return (
+                <Grid size={6} key={`new-${index}`}>
+                  <Box
+                    sx={{
+                      position: "relative",
+                      borderRadius: 1,
+                      overflow: "hidden",
+                      height: 120,
+                      bgcolor: "grey.200",
+                    }}
+                  >
+                    <img
+                      src={url}
+                      alt={file.name}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        position: "absolute",
+                        bottom: 4,
+                        left: 4,
+                        bgcolor: "rgba(0,123,255,0.8)",
+                        color: "white",
+                        px: 1,
+                        borderRadius: 1,
+                      }}
+                    >
+                      {file.name} ({(file.size / 1024).toFixed(0)}KB)
+                    </Typography>
+                  </Box>
+                </Grid>
+              );
+            })}
+          </Grid>
         </AccordionDetails>
       </Accordion>
 

@@ -1,33 +1,77 @@
 :root {
-  --background: #F9FAFC;
-  --foreground: #ffffff;
-  --primary: #00B4FF;
-  --secondary: #4A4A4A;
-  --accent: #00B4FF;
+  /* ===== Core Brand Colors (Warm Food Palette) ===== */
+  --primary: #8B0000;        /* Maroon Red - Food Oriented */
+
+  --secondary: #4ECDC4;      /* Fresh Teal */
+  --accent: #FFE66D;         /* Sunny Yellow */
+
+  /* ===== Semantic Colors ===== */
+  --success: #2ECC71;
+  --warning: #F39C12;
+  --error: #E74C3C;
+  --info: #3498DB;
+
+  /* ===== Background & Surface (Pure White) ===== */
+  --background: #FFFFFF;
+  --foreground: #FFFFFF;
   --surface: #FFFFFF;
-  --surface-hover: #E6F7FF;
-  --text-primary: #000000;
-  --text-secondary: #4A4A4A;
-  --shadow: 0 2px 12px rgba(0,0,0,0.08);
-  --border-radius: 16px;
-  --sidebar-width: 260px;
-  --sidebar-collapsed: 80px;
+  --surface-hover: #F8F9FA;
+  --surface-secondary: #F1F3F4;
+
+  /* ===== Text (High Contrast Black) ===== */
+  --text-primary: #111111;
+  --text-secondary: #333333;
+  --text-muted: #666666;
+
+
+
+  /* ===== UI Tokens ===== */
+  --border: #E5E7EB;
+  --border-light: #F3F4F6;
+  
+  /* Shadows for menu items */
+  --shadow-item: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-item-hover: 0 8px 24px rgba(0, 0, 0, 0.15);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+
+  --border-radius-sm: 4px;
+  --border-radius-md: 6px;
+  --border-radius-lg: 8px;
+
+
+  --sidebar-width: 240px;
+  --sidebar-collapsed: 70px;
+
 }
 
+/* ===== Dark Mode (Pure Black) ===== */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    --foreground: #ffffff;
-    --primary: #0f3460;
-    --secondary: #16213e;
-    --accent: #e94560;
-    --surface: rgba(255, 255, 255, 0.05);
-    --surface-hover: rgba(255, 255, 255, 0.1);
-    --text-primary: #ffffff;
-    --text-secondary: rgba(255, 255, 255, 0.7);
-    --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    --background: #000000;
+    --foreground: #111111;
+    --surface: #111111;
+    --surface-hover: #1A1A1A;
+    --surface-secondary: #222222;
+
+
+    --text-primary: #FFFFFF;
+    --text-secondary: #E5E5E5;
+    --text-muted: #9CA3AF;
+
+    --border: #2D2D2D;
+    --border-light: #333333;
+
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+    --shadow-item: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-item-hover: 0 8px 24px rgba(0, 0, 0, 0.4);
   }
 }
+
+
 
 html,
 body {
@@ -37,73 +81,78 @@ body {
 }
 
 body {
-  color: var(--text-primary);
-  background: var(--background);
-  background-attachment: fixed;
-  font-family: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background-color: #FFFFFF;
+  color: #111111;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.5;
+  font-size: 15px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  line-height: 1.6;
-  font-size: 12px;
 }
 
-* {
+
+
+/* ===== Reset ===== */
+*,
+*::before,
+*::after {
   box-sizing: border-box;
-  padding: 0;
   margin: 0;
+  padding: 0;
 }
 
+/* ===== Links ===== */
 a {
-  color: inherit;
+  color: var(--primary);
   text-decoration: none;
-  transition: all 0.3s ease;
 }
 
 a:hover {
-  color: var(--accent);
-  text-decoration: none;
+  text-decoration: underline;
 }
 
+/* ===== Buttons ===== */
 button {
-  transition: all 0.3s ease;
+  font-family: inherit;
+  border-radius: var(--border-radius-md);
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-input, textarea, select {
-  transition: all 0.3s ease;
+/* ===== Inputs ===== */
+input,
+textarea,
+select {
+  font-family: inherit;
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--border);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Custom scrollbar */
+/* ===== Scrollbar (Minimal & Clean) ===== */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--surface);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--accent);
-  border-radius: 4px;
+  background-color: #D1D5DB;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--primary);
+  background-color: #9CA3AF;
 }
 
-/* Loading animation */
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
 
+/* ===== Animations (Subtle & Smooth) ===== */
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
@@ -111,41 +160,67 @@ input, textarea, select {
   }
 }
 
-@keyframes slideIn {
-  from {
-    transform: translateX(-100%);
-  }
-  to {
-    transform: translateX(0);
-  }
-}
-
 .fade-in {
-  animation: fadeIn 0.6s ease-out;
+  animation: fadeIn 0.3s ease-out;
 }
 
-.slide-in {
-  animation: slideIn 0.5s ease-out;
+
+/* ===== Menu Item Card Styles ===== */
+.menu-item-card {
+  background-color: var(--surface);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-item);
+  border: 1px solid var(--border-light);
+  transition: all 0.2s ease;
 }
 
-.pulse {
-  animation: pulse 2s infinite;
-}
-
-/* Glassmorphism effect */
-.glass {
-  background: var(--surface);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow);
-}
-
-.glass:hover {
-  background: var(--surface-hover);
+.menu-item-card:hover {
+  box-shadow: var(--shadow-item-hover);
   transform: translateY(-2px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* ===== Category Tab Styles ===== */
+.category-tab {
+  transition: all 0.2s ease;
+  border-radius: var(--border-radius-sm);
+}
+
+.category-tab:hover {
+  background-color: var(--surface-hover);
+}
+
+.category-tab.active {
+  background-color: var(--primary);
+  color: white;
+}
+
+/* ===== Price Tag ===== */
+.price-tag {
+  font-weight: 700;
+  color: var(--primary);
+  font-size: 1.1rem;
+}
+
+/* ===== Veg/Non-Veg Indicators ===== */
+.veg-indicator {
+  color: #22C55E;
+}
+
+.non-veg-indicator {
+  color: #EF4444;
+}
+
+/* ===== Header Styles ===== */
+.app-header {
+  background-color: var(--surface);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ===== Sidebar Styles ===== */
+.category-sidebar {
+  background-color: var(--surface);
+  border-right: 1px solid var(--border);
 }
 
 @media (prefers-color-scheme: dark) {

@@ -287,10 +287,7 @@ export default function ItemDetailPage() {
                 item.category?.name || item.category?.id || "Uncategorized",
               description: item.description || "",
               weight: "250g",
-              image:
-                item.imageUrls?.[0]?.url ||
-                item.imageUrl ||
-                "/placeholder-menu.jpg",
+              image: item.imageUrls?.[0]?.url || item.imageUrl || "",
               price: item.basePrice,
               isVeg: item.isVegetarian ?? false,
               addons: [],

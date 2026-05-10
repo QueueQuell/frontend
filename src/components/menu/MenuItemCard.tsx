@@ -23,6 +23,7 @@ import {
   Remove,
   LocalFireDepartment,
   ChevronLeft,
+  Image as ImageIcon,
 } from "@mui/icons-material";
 import { motion } from "framer-motion";
 import { MenuItemType, Addon, useCartStore } from "@/lib/store/cartStore";
@@ -52,7 +53,28 @@ export default function MenuItemCard({
   const availableAddons = (item.addOns ?? item.addons ?? []).filter(
     (addon) => addon.isAvailable !== false,
   );
-  const itemImage = item.image || item.images?.[0]?.url || "";
+
+  const [imageLoadFailed, setImageLoadFailed] = useState(false);
+
+  const getImageFromItem = (menuItem: MenuItemType) => {
+    if (menuItem.image) return menuItem.image;
+    if ((menuItem as any).imageUrl) return (menuItem as any).imageUrl;
+
+    const imageArray = menuItem.images || (menuItem as any).imageUrls || [];
+
+    for (const image of imageArray) {
+      if (!image) continue;
+      if (typeof image === "string") return image;
+      if (image.url) return image.url;
+      if ((image as any).imageUrl) return (image as any).imageUrl;
+      if ((image as any).src) return (image as any).src;
+    }
+
+    return null;
+  };
+
+  const itemImage = getImageFromItem(item);
+  const shouldShowImage = Boolean(itemImage) && !imageLoadFailed;
 
   // Check if this item is in the cart
   const cartItem = cartItems.find((ci) => ci.id === item.id);
@@ -271,16 +293,33 @@ export default function MenuItemCard({
               flexShrink: 0,
             }}
           >
-            <img
-              src={itemImage}
-              alt={item.name}
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                borderRadius: 4,
-              }}
-            />
+            {shouldShowImage ? (
+              <img
+                src={itemImage!}
+                alt={item.name}
+                onError={() => setImageLoadFailed(true)}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  borderRadius: 4,
+                }}
+              />
+            ) : (
+              <Box
+                sx={{
+                  width: "100%",
+                  height: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  bgcolor: "#F3F4F6",
+                  borderRadius: 2,
+                }}
+              >
+                <ImageIcon sx={{ fontSize: 48, color: "#9CA3AF" }} />
+              </Box>
+            )}
 
             {/* Add Button or Quantity Controls - Below image */}
             {isInCart ? (

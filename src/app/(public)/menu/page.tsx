@@ -77,7 +77,17 @@ function getMenuItemCategoryId(item: MenuItemType) {
 // Helper function to map API menu item to MenuItemType
 // This transforms API response format to match cart store's MenuItemType
 function mapApiMenuItemToMenuItemType(apiItem: ApiMenuItem): MenuItemType {
-  const firstImage = apiItem.images?.[0];
+  const apiImageItem = apiItem as any;
+  const sourceImages = apiItem.images || apiImageItem.imageUrls || [];
+  const firstImage =
+    apiItem.images?.[0] ||
+    (sourceImages[0]
+      ? { url: sourceImages[0].url, type: sourceImages[0].type || "primary" }
+      : undefined) ||
+    (apiImageItem.imageUrl
+      ? { url: apiImageItem.imageUrl, type: "primary" }
+      : undefined);
+
   return {
     id: apiItem.id,
     name: apiItem.name,
@@ -90,7 +100,7 @@ function mapApiMenuItemToMenuItemType(apiItem: ApiMenuItem): MenuItemType {
     // Map images array to both image (single) and images (array) fields
     image: firstImage?.url || "",
     images:
-      apiItem.images?.map((img) => ({
+      sourceImages?.map((img) => ({
         url: img.url,
         type: (img.type as "primary" | "thumbnail" | "gallery") || "primary",
       })) || [],

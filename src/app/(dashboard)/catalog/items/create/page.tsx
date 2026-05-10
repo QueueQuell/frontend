@@ -8,17 +8,17 @@ import { useRouter } from "next/navigation";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import PageFooter from "@/components/ui/PageFooter";
 import ItemForm, { ItemFormData } from "@/components/items/ItemForm";
+import type { ImageDto } from "@/types/menu.types";
 import { menuService } from "@/lib/api/services/menu.service";
 import { categoryService } from "@/lib/api/services/category.service";
 
 export default function CreateItemPage() {
   const router = useRouter();
-  const [formData, setFormData] = useState<ItemFormData>({
+  const [formData, setFormData] = useState<any>({
     name: "",
     categoryId: "",
     organisationId: "",
     description: "",
-    images: [],
     cuisine: "",
     type: "",
     spicinessLevel: "",
@@ -52,6 +52,7 @@ export default function CreateItemPage() {
     isPopular: false,
     displayOrder: "",
   });
+  const [files, setFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -79,11 +80,15 @@ export default function CreateItemPage() {
     fetchCategories();
   }, []);
 
-  const handleChange = (field: keyof ItemFormData, value: any) => {
-    setFormData((prev) => ({
+  const handleChange = (field: string, value: any) => {
+    setFormData((prev: any) => ({
       ...prev,
       [field]: value,
     }));
+  };
+
+  const handleFilesChange = (newFiles: File[]) => {
+    setFiles(newFiles);
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -108,99 +113,155 @@ export default function CreateItemPage() {
 
     try {
       // Build the API payload
-      const payload: any = {
-        name: formData.name,
-        description: formData.description,
-        images: formData.images,
-        cuisine: formData.cuisine,
-        type: formData.type,
-        spicinessLevel: formData.spicinessLevel,
-        preparationTime: formData.preparationTime
-          ? parseInt(formData.preparationTime)
-          : undefined,
-        allergens: formData.allergens,
-        isVegetarian: formData.isVegetarian,
-        isVegan: formData.isVegan,
-        isGlutenFree: formData.isGlutenFree,
-        dietaryTags: formData.dietaryTags,
-        pricingModel: formData.pricingModel,
-        basePrice: parseFloat(formData.basePrice),
-        currency: formData.currency,
-        variantGroups: formData.variantGroups,
-        addonGroups: formData.addonGroups,
-        components: formData.components.map((c) => ({
-          itemId: c.itemId,
-          quantity: parseInt(c.quantity) || 1,
-          isOptional: c.isOptional,
-        })),
-        nutritionalInfo: {
-          calories: parseInt(formData.nutritionalInfo.calories) || 0,
-          protein: parseInt(formData.nutritionalInfo.protein) || 0,
-          carbs: parseInt(formData.nutritionalInfo.carbs) || 0,
-          fat: parseInt(formData.nutritionalInfo.fat) || 0,
-          sugar: parseInt(formData.nutritionalInfo.sugar) || 0,
-        },
-        availability:
-          formData.availability.days.length > 0
-            ? {
-                days: formData.availability.days,
-                startTime: formData.availability.startTime || "11:00",
-                endTime: formData.availability.endTime || "22:00",
-              }
-            : undefined,
-        status: formData.status,
-        active: formData.active,
-        isRecommended: formData.isRecommended,
-        isPopular: formData.isPopular,
-        displayOrder: formData.displayOrder
-          ? parseInt(formData.displayOrder)
-          : undefined,
-        categoryId: formData.categoryId,
-      };
+      // Remove old payload code, use FormData only
+      const formDataSubmit = new FormData();
 
-      // Add optional fields if they have values
-      if (formData.displayOrder) {
-        payload.displayOrder = parseInt(formData.displayOrder);
-      }
-      if (formData.variantGroups && formData.variantGroups.length > 0) {
-        payload.variantGroups = formData.variantGroups;
-      }
-      if (formData.addonGroups && formData.addonGroups.length > 0) {
-        payload.addonGroups = formData.addonGroups;
-      }
-      if (formData.components && formData.components.length > 0) {
-        payload.components = formData.components.map((c) => ({
-          itemId: c.itemId,
-          quantity: parseInt(c.quantity) || 1,
-          isOptional: c.isOptional,
-        }));
-      }
-      if (
-        formData.nutritionalInfo &&
-        (formData.nutritionalInfo.calories ||
-          formData.nutritionalInfo.protein ||
-          formData.nutritionalInfo.carbs ||
-          formData.nutritionalInfo.fat ||
-          formData.nutritionalInfo.sugar)
-      ) {
-        payload.nutritionalInfo = {
-          calories: parseInt(formData.nutritionalInfo.calories) || 0,
-          protein: parseInt(formData.nutritionalInfo.protein) || 0,
-          carbs: parseInt(formData.nutritionalInfo.carbs) || 0,
-          fat: parseInt(formData.nutritionalInfo.fat) || 0,
-          sugar: parseInt(formData.nutritionalInfo.sugar) || 0,
-        };
-      }
-      if (formData.availability && formData.availability.days.length > 0) {
-        payload.availability = {
-          days: formData.availability.days,
-          startTime: formData.availability.startTime || "11:00",
-          endTime: formData.availability.endTime || "22:00",
-        };
+      // Append form fields
+      formDataSubmit.append("name", formData.name);
+      if (formData.description)
+        formDataSubmit.append("description", formData.description);
+      formDataSubmit.append("categoryId", formData.categoryId);
+      formDataSubmit.append("pricingModel", formData.pricingModel);
+      formDataSubmit.append("basePrice", formData.basePrice);
+      if (formData.currency)
+        formDataSubmit.append("currency", formData.currency);
+      if (formData.cuisine) formDataSubmit.append("cuisine", formData.cuisine);
+      if (formData.type) formDataSubmit.append("type", formData.type);
+      if (formData.spicinessLevel)
+        formDataSubmit.append("spicinessLevel", formData.spicinessLevel);
+      if (formData.preparationTime)
+        formDataSubmit.append("preparationTime", formData.preparationTime);
+
+      // Booleans
+      formDataSubmit.append("isVegetarian", formData.isVegetarian.toString());
+      formDataSubmit.append("isVegan", formData.isVegan.toString());
+      formDataSubmit.append("isGlutenFree", formData.isGlutenFree.toString());
+      formDataSubmit.append("active", formData.active.toString());
+      formDataSubmit.append("isRecommended", formData.isRecommended.toString());
+      formDataSubmit.append("isPopular", formData.isPopular.toString());
+
+      // Arrays
+      formData.allergens.forEach((allergen: any) =>
+        formDataSubmit.append("allergens", allergen),
+      );
+      formData.dietaryTags.forEach((tag: any) =>
+        formDataSubmit.append("dietaryTags", tag),
+      );
+
+      // Variant groups
+      formData.variantGroups?.forEach((group: any, gIndex: number) => {
+        formDataSubmit.append(`variantGroups[${gIndex}].name`, group.name);
+        formDataSubmit.append(
+          `variantGroups[${gIndex}].isRequired`,
+          group.isRequired.toString(),
+        );
+        formDataSubmit.append(
+          `variantGroups[${gIndex}].selectionType`,
+          group.selectionType,
+        );
+        group.options?.forEach((option: any, oIndex: number) => {
+          formDataSubmit.append(
+            `variantGroups[${gIndex}].options[${oIndex}].name`,
+            option.name,
+          );
+          if (option.price)
+            formDataSubmit.append(
+              `variantGroups[${gIndex}].options[${oIndex}].price`,
+              option.price,
+            );
+          if (option.calories)
+            formDataSubmit.append(
+              `variantGroups[${gIndex}].options[${oIndex}].calories`,
+              option.calories,
+            );
+        });
+      });
+
+      // Addon groups
+      formData.addonGroups?.forEach((group: any, gIndex: number) => {
+        formDataSubmit.append(`addonGroups[${gIndex}].name`, group.name);
+        formDataSubmit.append(
+          `addonGroups[${gIndex}].selectionType`,
+          group.selectionType,
+        );
+        group.options?.forEach((option: any, oIndex: number) => {
+          formDataSubmit.append(
+            `addonGroups[${gIndex}].options[${oIndex}].name`,
+            option.name,
+          );
+          if (option.price)
+            formDataSubmit.append(
+              `addonGroups[${gIndex}].options[${oIndex}].price`,
+              option.price,
+            );
+        });
+      });
+
+      // Components
+      formData.components?.forEach((comp: any, index: number) => {
+        formDataSubmit.append(`components[${index}].itemId`, comp.itemId);
+        formDataSubmit.append(`components[${index}].quantity`, comp.quantity);
+        formDataSubmit.append(
+          `components[${index}].isOptional`,
+          comp.isOptional.toString(),
+        );
+      });
+
+      // Nutritional info
+      const hasNutrition = Object.values(formData.nutritionalInfo).some(
+        (val: any) => val !== "",
+      );
+      if (hasNutrition) {
+        formDataSubmit.append(
+          "nutritionalInfo.calories",
+          formData.nutritionalInfo.calories,
+        );
+        formDataSubmit.append(
+          "nutritionalInfo.protein",
+          formData.nutritionalInfo.protein,
+        );
+        formDataSubmit.append(
+          "nutritionalInfo.carbs",
+          formData.nutritionalInfo.carbs,
+        );
+        formDataSubmit.append(
+          "nutritionalInfo.fat",
+          formData.nutritionalInfo.fat,
+        );
+        formDataSubmit.append(
+          "nutritionalInfo.sugar",
+          formData.nutritionalInfo.sugar,
+        );
       }
 
-      // Call the menu service to create the item
-      const response = await menuService.create(payload);
+      // Availability
+      if (formData.availability.days && formData.availability.days.length > 0) {
+        (formData.availability.days as string[]).forEach((day) =>
+          formDataSubmit.append("availability.days", day),
+        );
+        if (formData.availability.startTime)
+          formDataSubmit.append(
+            "availability.startTime",
+            formData.availability.startTime,
+          );
+        if (formData.availability.endTime)
+          formDataSubmit.append(
+            "availability.endTime",
+            formData.availability.endTime,
+          );
+      }
+
+      if (formData.displayOrder)
+        formDataSubmit.append("displayOrder", formData.displayOrder);
+      formDataSubmit.append("status", formData.status);
+
+      // Append files
+      files.forEach((file) => {
+        formDataSubmit.append("images", file);
+      });
+
+      // Call menu service
+      const response = await menuService.createWithFiles(formDataSubmit);
 
       if (response.success) {
         setSuccess(true);
@@ -209,7 +270,6 @@ export default function CreateItemPage() {
           categoryId: "",
           organisationId: "",
           description: "",
-          images: [],
           cuisine: "",
           type: "",
           spicinessLevel: "",
@@ -243,6 +303,7 @@ export default function CreateItemPage() {
           isPopular: false,
           displayOrder: "",
         });
+        setFiles([]);
 
         setTimeout(() => {
           setSuccess(false);
@@ -287,6 +348,9 @@ export default function CreateItemPage() {
             formData={formData}
             onChange={handleChange}
             categories={categories}
+            files={files}
+            onFilesChange={handleFilesChange}
+            existingImages={[]}
           />
           <Box
             sx={{ display: "flex", gap: 2, justifyContent: "flex-end", mt: 3 }}

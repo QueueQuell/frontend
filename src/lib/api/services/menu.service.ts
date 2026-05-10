@@ -26,4 +26,12 @@ export const menuService = {
   async delete(id: string) {
     return apiClient.delete(MENU_ENDPOINTS.DELETE(id));
   },
+
+  async createWithFiles(formData: FormData) {
+    return apiClient.postFormData(MENU_ENDPOINTS.CREATE, formData);
+  },
+
+  async updateWithFiles(id: string, formData: FormData) {
+    return apiClient.putFormData(MENU_ENDPOINTS.UPDATE(id), formData);
+  },
 };

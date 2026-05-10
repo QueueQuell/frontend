@@ -9,6 +9,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import PageFooter from "@/components/ui/PageFooter";
 import ItemForm, { ItemFormData } from "@/components/items/ItemForm";
+import type { ImageDto } from "@/types/menu.types";
 import { menuService } from "@/lib/api/services/menu.service";
 import { categoryService } from "@/lib/api/services/category.service";
 import type { MenuItemType } from "@/lib/api/types";
@@ -18,12 +19,11 @@ export default function ItemEditPage() {
   const router = useRouter();
   const id = params.id as string;
 
-  const [formData, setFormData] = useState<ItemFormData>({
+  const [formData, setFormData] = useState<Omit<ItemFormData, "images">>({
     name: "",
     categoryId: "",
     organisationId: "",
     description: "",
-    images: [],
     cuisine: "",
     type: "",
     spicinessLevel: "",
@@ -57,6 +57,8 @@ export default function ItemEditPage() {
     isPopular: false,
     displayOrder: "",
   });
+  const [files, setFiles] = useState<File[]>([]);
+  const [existingImages, setExistingImages] = useState<ImageDto[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -93,12 +95,11 @@ export default function ItemEditPage() {
       const response = await menuService.getById(id);
       if (response.success && response.data) {
         const data = response.data as MenuItemType;
-        setFormData({
+        const newFormData: Omit<ItemFormData, "images"> = {
           name: data.name || "",
           categoryId: data.category?.id || data.category?.name || "",
           organisationId: "",
           description: data.description || "",
-          images: data.imageUrls || [],
           cuisine: data.cuisine || "",
           type: data.type || "",
           spicinessLevel: data.spicinessLevel || "",
@@ -157,7 +158,11 @@ export default function ItemEditPage() {
           isRecommended: data.isRecommended ?? false,
           isPopular: data.isPopular ?? false,
           displayOrder: data.displayOrder?.toString() || "",
-        });
+        };
+        setFormData(newFormData);
+        setExistingImages(data.imageUrls || []);
+        console.log(data.imageUrls);
+        setFiles([]);
       } else {
         setError(response.message || "Item not found");
       }
@@ -169,11 +174,18 @@ export default function ItemEditPage() {
     }
   };
 
-  const handleChange = (field: keyof ItemFormData, value: any) => {
-    setFormData((prev) => ({
+  const handleChange = (
+    field: keyof Omit<ItemFormData, "images">,
+    value: any,
+  ) => {
+    setFormData((prev: any) => ({
       ...prev,
       [field]: value,
     }));
+  };
+
+  const handleFilesChange = (newFiles: File[]) => {
+    setFiles(newFiles);
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -200,73 +212,159 @@ export default function ItemEditPage() {
         categories.find((cat) => cat.id === formData.categoryId)?.name ||
         formData.categoryId;
 
-      const payload: any = {
-        name: formData.name,
-        description: formData.description || undefined,
-        category: categoryName,
-        categoryId: formData.categoryId,
-        type: formData.type || undefined,
-        cuisine: formData.cuisine || undefined,
-        spicinessLevel: formData.spicinessLevel || undefined,
-        pricingModel: formData.pricingModel,
-        price: parseFloat(formData.basePrice),
-        basePrice: parseFloat(formData.basePrice),
-        currency: formData.currency || undefined,
-        preparationTime: formData.preparationTime
-          ? parseInt(formData.preparationTime)
-          : undefined,
-        allergens: formData.allergens,
-        isVegetarian: formData.isVegetarian,
-        isVegan: formData.isVegan,
-        isGlutenFree: formData.isGlutenFree,
-        nonVeg: !formData.isVegetarian,
-        active: formData.active,
-        status: formData.status,
-        isRecommended: formData.isRecommended,
-        isPopular: formData.isPopular,
-        dietaryTags: formData.dietaryTags,
-        images: formData.images || [],
-        displayOrder: formData.displayOrder
-          ? parseInt(formData.displayOrder)
-          : undefined,
-        variantGroups: formData.variantGroups.map((group) => ({
-          name: group.name,
-          isRequired: group.isRequired,
-          selectionType: group.selectionType,
-          options: group.options.map((option) => ({
-            name: option.name,
-            price: parseFloat(option.price) || 0,
-            calories: parseFloat(option.calories) || 0,
-          })),
-        })),
-        addonGroups: formData.addonGroups.map((group) => ({
-          name: group.name,
-          selectionType: group.selectionType,
-          options: group.options.map((option) => ({
-            name: option.name,
-            price: parseFloat(option.price) || 0,
-          })),
-        })),
-        components: formData.components.map((c) => ({
-          itemId: c.itemId,
-          quantity: parseInt(c.quantity) || 1,
-          isOptional: c.isOptional,
-        })),
-        nutritionalInfo: {
-          calories: parseInt(formData.nutritionalInfo.calories) || 0,
-          protein: parseInt(formData.nutritionalInfo.protein) || 0,
-          carbs: parseInt(formData.nutritionalInfo.carbs) || 0,
-          fat: parseInt(formData.nutritionalInfo.fat) || 0,
-          sugar: parseInt(formData.nutritionalInfo.sugar) || 0,
-        },
-        availability: {
-          days: formData.availability.days,
-          startTime: formData.availability.startTime || "11:00",
-          endTime: formData.availability.endTime || "22:00",
-        },
-      };
+      // Build FormData (same as create)
+      const formDataSubmit = new FormData();
 
-      const response = await menuService.update(id, payload);
+      // Append form fields
+      formDataSubmit.append("name", formData.name);
+      if (formData.description)
+        formDataSubmit.append("description", formData.description);
+      formDataSubmit.append("categoryId", formData.categoryId);
+      formDataSubmit.append("pricingModel", formData.pricingModel);
+      formDataSubmit.append("basePrice", formData.basePrice);
+      if (formData.currency)
+        formDataSubmit.append("currency", formData.currency);
+      if (formData.cuisine) formDataSubmit.append("cuisine", formData.cuisine);
+      if (formData.type) formDataSubmit.append("type", formData.type);
+      if (formData.spicinessLevel)
+        formDataSubmit.append("spicinessLevel", formData.spicinessLevel);
+      if (formData.preparationTime)
+        formDataSubmit.append("preparationTime", formData.preparationTime);
+
+      // Booleans
+      formDataSubmit.append("isVegetarian", formData.isVegetarian.toString());
+      formDataSubmit.append("isVegan", formData.isVegan.toString());
+      formDataSubmit.append("isGlutenFree", formData.isGlutenFree.toString());
+      formDataSubmit.append("active", formData.active.toString());
+      formDataSubmit.append("isRecommended", formData.isRecommended.toString());
+      formDataSubmit.append("isPopular", formData.isPopular.toString());
+
+      // Arrays
+      formData.allergens.forEach((allergen: string) =>
+        formDataSubmit.append("allergens", allergen),
+      );
+      formData.dietaryTags.forEach((tag: string) =>
+        formDataSubmit.append("dietaryTags", tag),
+      );
+
+      // Nested objects (same as create)
+      if (formData.variantGroups.length > 0) {
+        formData.variantGroups.forEach((group, gIndex) => {
+          formDataSubmit.append(`variantGroups[${gIndex}].name`, group.name);
+          formDataSubmit.append(
+            `variantGroups[${gIndex}].isRequired`,
+            group.isRequired.toString(),
+          );
+          formDataSubmit.append(
+            `variantGroups[${gIndex}].selectionType`,
+            group.selectionType,
+          );
+          group.options.forEach((option, oIndex) => {
+            formDataSubmit.append(
+              `variantGroups[${gIndex}].options[${oIndex}].name`,
+              option.name,
+            );
+            if (option.price)
+              formDataSubmit.append(
+                `variantGroups[${gIndex}].options[${oIndex}].price`,
+                option.price,
+              );
+            if (option.calories)
+              formDataSubmit.append(
+                `variantGroups[${gIndex}].options[${oIndex}].calories`,
+                option.calories,
+              );
+          });
+        });
+      }
+
+      if (formData.addonGroups.length > 0) {
+        formData.addonGroups.forEach((group, gIndex) => {
+          formDataSubmit.append(`addonGroups[${gIndex}].name`, group.name);
+          formDataSubmit.append(
+            `addonGroups[${gIndex}].selectionType`,
+            group.selectionType,
+          );
+          group.options.forEach((option, oIndex) => {
+            formDataSubmit.append(
+              `addonGroups[${gIndex}].options[${oIndex}].name`,
+              option.name,
+            );
+            if (option.price)
+              formDataSubmit.append(
+                `addonGroups[${gIndex}].options[${oIndex}].price`,
+                option.price,
+              );
+          });
+        });
+      }
+
+      if (formData.components.length > 0) {
+        formData.components.forEach((comp, index) => {
+          formDataSubmit.append(`components[${index}].itemId`, comp.itemId);
+          formDataSubmit.append(`components[${index}].quantity`, comp.quantity);
+          formDataSubmit.append(
+            `components[${index}].isOptional`,
+            comp.isOptional.toString(),
+          );
+        });
+      }
+
+      // Nutritional info
+      const hasNutrition = Object.values(formData.nutritionalInfo).some(
+        (val) => val !== "",
+      );
+      if (hasNutrition) {
+        formDataSubmit.append(
+          "nutritionalInfo.calories",
+          formData.nutritionalInfo.calories,
+        );
+        formDataSubmit.append(
+          "nutritionalInfo.protein",
+          formData.nutritionalInfo.protein,
+        );
+        formDataSubmit.append(
+          "nutritionalInfo.carbs",
+          formData.nutritionalInfo.carbs,
+        );
+        formDataSubmit.append(
+          "nutritionalInfo.fat",
+          formData.nutritionalInfo.fat,
+        );
+        formDataSubmit.append(
+          "nutritionalInfo.sugar",
+          formData.nutritionalInfo.sugar,
+        );
+      }
+
+      // Availability
+      if (formData.availability.days.length > 0) {
+        formData.availability.days.forEach((day: string) =>
+          formDataSubmit.append("availability.days", day),
+        );
+        if (formData.availability.startTime)
+          formDataSubmit.append(
+            "availability.startTime",
+            formData.availability.startTime,
+          );
+        if (formData.availability.endTime)
+          formDataSubmit.append(
+            "availability.endTime",
+            formData.availability.endTime,
+          );
+      }
+
+      if (formData.displayOrder)
+        formDataSubmit.append("displayOrder", formData.displayOrder);
+      formDataSubmit.append("status", formData.status);
+
+      // Append files (new uploads)
+      files.forEach((file) => {
+        formDataSubmit.append("images", file);
+      });
+
+      // Call service
+      const response = await menuService.updateWithFiles(id, formDataSubmit);
 
       if (response.success) {
         setSuccess(true);
@@ -323,6 +421,9 @@ export default function ItemEditPage() {
             formData={formData}
             onChange={handleChange}
             categories={categories}
+            files={files}
+            onFilesChange={handleFilesChange}
+            existingImages={existingImages}
           />
           <Box
             sx={{ display: "flex", gap: 2, justifyContent: "flex-end", mt: 3 }}
