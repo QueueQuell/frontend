@@ -92,7 +92,7 @@ function mapApiMenuItemToMenuItemType(apiItem: ApiMenuItem): MenuItemType {
     id: apiItem.id,
     name: apiItem.name,
     description: apiItem.description || "",
-    price: apiItem.price,
+    price: apiItem.basePrice,
     // Extract category fields for cart store compatibility
     categoryId: apiItem.category?.id,
     categoryName: apiItem.category?.name,

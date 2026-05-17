@@ -7,7 +7,7 @@ export interface ApiMenuItem {
   id: string;
   name: string;
   description?: string;
-  price: number;
+  basePrice: number;
   category: {
     id: string;
     name: string;
