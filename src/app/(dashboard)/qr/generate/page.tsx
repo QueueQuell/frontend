@@ -86,6 +86,7 @@ export default function GenerateQRPage() {
         items={[
           { label: "Home", href: "/home" },
           { label: "QR", href: "/qr" },
+          { label: "QR Codes", href: "/qr/list" },
           { label: "Generate" },
         ]}
       />
@@ -258,7 +259,7 @@ export default function GenerateQRPage() {
           </Grid>
         )}
       </Grid>
-      <PageFooter backHref="/qr" backText="Back to QR Codes" />
+      <PageFooter backHref="/qr/list" backText="Back to QR Codes" />
     </Box>
   );
 }

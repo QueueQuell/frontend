@@ -24,7 +24,6 @@ import {
   DialogContentText,
   DialogActions,
   Button,
-  Link,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import QrCodeIcon from "@mui/icons-material/QrCode";
@@ -41,6 +40,7 @@ import { AdminQRListItem } from "@/lib/api/types";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import PageFooter from "@/components/ui/PageFooter";
 import SnackbarAlert from "@/components/ui/SnackbarAlert";
+import Link from "next/link";
 
 export default function QRListPage() {
   const [qrCodes, setQrCodes] = useState<AdminQRListItem[]>([]);
