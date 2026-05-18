@@ -1,5 +1,7 @@
 "use client";
-import { Box, Button, Alert, Paper } from "@mui/material";
+import { Box, Button, Paper } from "@mui/material";
+import SnackbarAlert from "@/components/ui/SnackbarAlert";
+
 import Link from "next/link";
 import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -7,8 +9,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import PageFooter from "@/components/ui/PageFooter";
-import ItemForm, { ItemFormData } from "@/components/items/ItemForm";
-import type { ImageDto } from "@/types/menu.types";
+import ItemForm from "@/components/items/ItemForm";
 import { menuService } from "@/lib/api/services/menu.service";
 import { categoryService } from "@/lib/api/services/category.service";
 
@@ -54,8 +55,17 @@ export default function CreateItemPage() {
   });
   const [files, setFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
+
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: "success" | "error";
+  }>({ open: false, message: "", severity: "success" });
+
+  const handleSnackbarClose = () => {
+    setSnackbar((prev) => ({ ...prev, open: false }));
+  };
+
   const [categories, setCategories] = useState<{ id: string; name: string }[]>(
     [],
   );
@@ -91,25 +101,91 @@ export default function CreateItemPage() {
     setFiles(newFiles);
   };
 
+  const compressImageFile = async (file: File) => {
+    // Simple client-side compression using canvas.
+    // Keeps aspect ratio, outputs JPEG (quality 0.75) to reduce payload size.
+    // If anything fails, fall back to original file.
+    try {
+      if (!file.type.startsWith("image/")) return file;
+
+      const MAX_WIDTH = 1280;
+      const MIME_TYPE = "image/jpeg";
+      const QUALITY = 0.75;
+
+      const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+        const url = URL.createObjectURL(file);
+        const image = new Image();
+        image.onload = () => {
+          URL.revokeObjectURL(url);
+          resolve(image);
+        };
+        image.onerror = (e) => {
+          URL.revokeObjectURL(url);
+          reject(e);
+        };
+        image.src = url;
+      });
+
+      const { width, height } = img;
+      if (!width || !height) return file;
+
+      const scale = Math.min(1, MAX_WIDTH / width);
+      const targetW = Math.round(width * scale);
+      const targetH = Math.round(height * scale);
+
+      const canvas = document.createElement("canvas");
+      canvas.width = targetW;
+      canvas.height = targetH;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return file;
+
+      ctx.drawImage(img, 0, 0, targetW, targetH);
+
+      const blob = await new Promise<Blob | null>((resolve) => {
+        canvas.toBlob((b) => resolve(b), MIME_TYPE, QUALITY);
+      });
+
+      if (!blob) return file;
+
+      return new File([blob], file.name.replace(/\.[^/.]+$/, "") + ".jpg", {
+        type: MIME_TYPE,
+      });
+    } catch {
+      return file;
+    }
+  };
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
     // Basic validation
+
     if (!formData.name.trim()) {
-      setError("Item name is required");
+      setSnackbar({
+        open: true,
+        message: "Item name is required",
+        severity: "error",
+      });
       return;
     }
     if (!formData.categoryId) {
-      setError("Category is required");
+      setSnackbar({
+        open: true,
+        message: "Category is required",
+        severity: "error",
+      });
       return;
     }
     if (!formData.basePrice || parseFloat(formData.basePrice) <= 0) {
-      setError("Valid price is required");
+      setSnackbar({
+        open: true,
+        message: "Valid price is required",
+        severity: "error",
+      });
       return;
     }
 
     setIsSubmitting(true);
-    setError(null);
 
     try {
       // Build the API payload
@@ -255,8 +331,14 @@ export default function CreateItemPage() {
         formDataSubmit.append("displayOrder", formData.displayOrder);
       formDataSubmit.append("status", formData.status);
 
-      // Append files
-      files.forEach((file) => {
+      // Append (compressed) files
+      const compressedFiles: File[] = [];
+      for (const file of files) {
+        const compressed = await compressImageFile(file);
+        compressedFiles.push(compressed);
+      }
+
+      compressedFiles.forEach((file) => {
         formDataSubmit.append("images", file);
       });
 
@@ -264,7 +346,12 @@ export default function CreateItemPage() {
       const response = await menuService.createWithFiles(formDataSubmit);
 
       if (response.success) {
-        setSuccess(true);
+        setSnackbar({
+          open: true,
+          message: "Item added successfully! Redirecting to catalog...",
+          severity: "success",
+        });
+
         setFormData({
           name: "",
           categoryId: "",
@@ -306,14 +393,21 @@ export default function CreateItemPage() {
         setFiles([]);
 
         setTimeout(() => {
-          setSuccess(false);
           router.push("/catalog/items/list");
         }, 2000);
       } else {
-        setError(response.error || "Failed to create item. Please try again.");
+        setSnackbar({
+          open: true,
+          message: response.error || "Failed to create item. Please try again.",
+          severity: "error",
+        });
       }
     } catch (err: any) {
-      setError(err.message || "Failed to create item. Please try again.");
+      setSnackbar({
+        open: true,
+        message: err.message,
+        severity: "error",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -330,17 +424,12 @@ export default function CreateItemPage() {
         ]}
       />
 
-      {error && (
-        <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
-          {error}
-        </Alert>
-      )}
-
-      {success && (
-        <Alert severity="success" sx={{ mb: 3 }}>
-          Item added successfully! Redirecting to catalog...
-        </Alert>
-      )}
+      <SnackbarAlert
+        open={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        onClose={handleSnackbarClose}
+      />
 
       <Paper sx={{ p: 4, mx: "auto" }}>
         <form onSubmit={handleSubmit}>
